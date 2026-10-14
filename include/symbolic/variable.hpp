@@ -174,7 +174,7 @@ template<class T> class Variable<Vector<T>>
     explicit Variable(const Identifier& name, SizeType size) : UntypedVariable(name,variable_type<Vector<T>>()), _size(size) { }
     Variable<Vector<T>> const& base() const { return *this; }
     SizeType size() const { return this->_size; }
-    Variable<T> operator[] (SizeType i) const { assert(i<this->_size); return Variable<T>(this->name()+'['+to_str(i)+']'); }
+    Variable<T> operator[] (SizeType i) const { ARIADNE_PRECONDITION(i<this->_size); return Variable<T>(this->name()+'['+to_str(i)+']'); }
     inline Assignment<Variable<Vector<T>>,Vector<T>> operator=(const Vector<T>& c) const;
     Expression<Vector<T>> create_zero() const { return Expression<Vector<T>>::constant(Vector<T>(this->_size,static_cast<T>(0))); }
 };

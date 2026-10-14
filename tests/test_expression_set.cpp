@@ -115,6 +115,13 @@ class TestExpressionSet {
         ARIADNE_TEST_ASSERT(not bx1.is_empty());
         ARIADNE_TEST_PRINT(bx1);
 
+        RealVariablesBox empty_box(
+            RealSpace({x}),RealBox({RealInterval(EmptyInterval())}));
+        ARIADNE_TEST_ASSERT(empty_box.is_empty());
+
+        ARIADNE_TEST_FAIL((void)RealVariablesBox(
+            RealSpace({x,y}),RealBox({{0.1_dec,0.5_dec}})));
+
         RealVariablesBox bx2(RealSpace({x,y}),RealBox({{0.1_dec,0.5_dec},{-2.3_dec,1}}));
         ARIADNE_TEST_EQUALS(bx2.variables().size(),2);
         ARIADNE_TEST_PRINT(bx2);

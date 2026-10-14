@@ -131,6 +131,14 @@ class TestExpression {
 
         ARIADNE_TEST_ASSERT(boolean_variable.name()==Identifier("flag"));
         ARIADNE_TEST_ASSERT(kleenean_variable.name()==Identifier("predicate"));
+
+        TimeVariable time_variable;
+        ARIADNE_TEST_EQUALS(time_variable.name(),Identifier("t"));
+
+        Variable<RealVector> vector_variable("vector_variable",2u);
+        ARIADNE_TEST_EQUALS(vector_variable.size(),2u);
+        ARIADNE_TEST_EQUALS(vector_variable[1u].name(),Identifier("vector_variable[1]"));
+        ARIADNE_TEST_FAIL((void)vector_variable[2u]);
     }
 
     Void test_space() {
@@ -524,6 +532,19 @@ class TestExpression {
         StringVariable string_variable("source_string");
         ARIADNE_TEST_EXECUTE((void)(string_variable!=String("value")));
 
+        ContinuousPredicate comparison=RealExpression(x)<=RealExpression(y);
+        ARIADNE_TEST_BINARY_PREDICATE(
+            identical,comparison.cmp1<Real>(),RealExpression(x));
+        ARIADNE_TEST_BINARY_PREDICATE(
+            identical,comparison.cmp2<Real>(),RealExpression(y));
+
+        RealExpression graded_expression=pow(RealExpression(x),3);
+        ARIADNE_TEST_BINARY_PREDICATE(
+            identical,graded_expression.arg(),RealExpression(x));
+        RealExpression unary_expression=sin(RealExpression(x));
+        ARIADNE_TEST_BINARY_PREDICATE(
+            identical,unary_expression.arg(),RealExpression(x));
+
         IntegerVariable integer_a("integer_a"), integer_b("integer_b");
         IntegerExpression integer_ea(integer_a), integer_eb(integer_b);
         ARIADNE_TEST_EXECUTE(+integer_ea);
@@ -595,6 +616,8 @@ class TestExpression {
         ARIADNE_TEST_EXECUTE(indicator(!ge,Sign::POSITIVE));
         ARIADNE_TEST_EXECUTE(indicator(sgn(RealExpression(x)),Sign::NEGATIVE));
         ARIADNE_TEST_BINARY_PREDICATE(
+            identical,indicator(sgn(RealExpression(x)),Sign::POSITIVE),RealExpression(x));
+        ARIADNE_TEST_BINARY_PREDICATE(
             identical,indicator(ContinuousPredicate(true),Sign::POSITIVE),RealExpression(1));
         ARIADNE_TEST_BINARY_PREDICATE(
             identical,indicator(ContinuousPredicate(false),Sign::POSITIVE),RealExpression(-1));
@@ -660,6 +683,13 @@ class TestExpression {
 
         List<RealVariable> xy_variables({x,y});
         ARIADNE_TEST_EXECUTE(make_formula(RealExpression(x)+RealExpression(y),xy_variables));
+
+        Formula<EffectiveNumber> cubic_formula=
+            make_formula(pow(RealExpression(x),3),RealSpace({x}));
+        EffectiveProcedure cubic_procedure(1u,cubic_formula);
+        Vector<FloatDPBounds> cubic_argument({FloatDPBounds(2,dp)});
+        ARIADNE_TEST_EQUAL(
+            evaluate(cubic_procedure,cubic_argument),FloatDPBounds(8,dp));
 
         Vector<RealExpression> multivariate_outputs({x+y,x-y});
         EffectiveVectorMultivariateFunction vector_multivariate_function=
@@ -943,6 +973,13 @@ class TestExpression {
         ARIADNE_TEST_BINARY_PREDICATE(identical,simplify(sub(neg(zero),zero)),zero);
         ARIADNE_TEST_BINARY_PREDICATE(identical,simplify(sub(x,x)),zero);
         ARIADNE_TEST_BINARY_PREDICATE(identical,simplify(div(x,x)),one);
+
+        RealExpression quotient=RealExpression(x)/RealExpression(y);
+        ARIADNE_TEST_BINARY_PREDICATE(identical,simplify(quotient),quotient);
+        RealExpression maximum=max(RealExpression(x),RealExpression(y));
+        ARIADNE_TEST_BINARY_PREDICATE(identical,simplify(maximum),maximum);
+        RealExpression minimum=min(RealExpression(x),RealExpression(y));
+        ARIADNE_TEST_BINARY_PREDICATE(identical,simplify(minimum),minimum);
         ARIADNE_TEST_BINARY_PREDICATE(identical,simplify(x+zero),RealExpression(x));
         ARIADNE_TEST_BINARY_PREDICATE(identical,simplify(zero+x),RealExpression(x));
         ARIADNE_TEST_BINARY_PREDICATE(identical,simplify(x-zero),RealExpression(x));
@@ -1006,6 +1043,10 @@ class TestExpression {
         ARIADNE_TEST_ASSERT(before(getter_vector[0],getter_vector[1]));
         RealVectorExpression other_getter_vector({x,z});
         ARIADNE_TEST_EXECUTE(before(getter_vector[0],other_getter_vector[0]));
+
+        RealVectorExpression equal_vector_left(RealVector({1,2}));
+        RealVectorExpression equal_vector_right(RealVector({1,2}));
+        ARIADNE_TEST_ASSERT(not before(equal_vector_left,equal_vector_right));
     }
 
     Void test_count_nodes() {
