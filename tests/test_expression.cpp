@@ -45,10 +45,6 @@
 
 using namespace Ariadne;
 
-namespace Ariadne {
-extern template class Expression<Real>;
-}
-
 typedef ElementaryAlgebra<Real> RealElementaryAlgebra;
 typedef ElementaryAlgebra<EffectiveNumber> EffectiveElementaryAlgebra;
 typedef SymbolicAlgebra<EffectiveNumber> EffectiveSymbolicAlgebra;

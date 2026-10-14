@@ -32,12 +32,6 @@
 #include "symbolic/expression.tpl.hpp"
 #include "macro/testing.hpp"
 
-namespace Ariadne {
-extern template class Expression<Real>;
-extern template class Expression<Boolean>;
-extern template class Expression<String>;
-}
-
 using namespace Ariadne;
 
 class TestSymbolicTemplates {
