@@ -148,6 +148,8 @@ class Expression
 
 template<class T> Bool same(Expression<T> const& e1, Expression<T> const& e2) { return identical(e1,e2); }
 
+template<> Expression<String>::Expression(const String& c);
+
 extern template class Expression<Boolean>;
 extern template class Expression<Kleenean>;
 extern template class Expression<String>;
