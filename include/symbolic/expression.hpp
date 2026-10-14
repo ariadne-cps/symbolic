@@ -80,8 +80,8 @@ class Expression
     typedef SharedPointer<const ExpressionNode<T>> Pointer;
     static Writer<Expression<T>> _default_writer;
   public:
-    static Void set_default_writer(Writer<Expression<T>> w) { _default_writer=w; }
-    static Writer<Expression<T>> default_writer() { return _default_writer; }
+    static Void set_default_writer(Writer<Expression<T>> w);
+    static Writer<Expression<T>> default_writer();
   public:
     typedef Real NumericType;
     //! \brief The type represented by the expression.
@@ -137,9 +137,9 @@ class Expression
     //! \brief The variables needed to compute the expression.
     Set<UntypedVariable> arguments() const;
   public:
-    SharedPointer<const ExpressionNode<T>> node_ptr() const { return _root; }
-    const ExpressionNode<T>* node_raw_ptr() const { return _root.operator->(); }
-    const ExpressionNode<T>& node_ref() const { return _root.operator*(); }
+    SharedPointer<const ExpressionNode<T>> node_ptr() const;
+    const ExpressionNode<T>* node_raw_ptr() const;
+    const ExpressionNode<T>& node_ref() const;
   private:
     OutputStream& _write(OutputStream& os) const;
   private:

@@ -174,6 +174,13 @@ template<class T> Expression<T>::Expression(const T& c) : Expression(Constant<T>
 template<class T> Expression<T>::Expression(const Constant<T>& c) : _root(new ExpressionNode<T>(c)) { }
 template<class T> Expression<T>::Expression(const Variable<T>& v) : _root(new ExpressionNode<T>(v)) { }
 
+template<class T> Void Expression<T>::set_default_writer(Writer<Expression<T>> w) { _default_writer=w; }
+template<class T> Writer<Expression<T>> Expression<T>::default_writer() { return _default_writer; }
+template<class T> SharedPointer<const ExpressionNode<T>> Expression<T>::node_ptr() const { return _root; }
+template<class T> const ExpressionNode<T>* Expression<T>::node_raw_ptr() const { return _root.operator->(); }
+template<class T> const ExpressionNode<T>& Expression<T>::node_ref() const { return _root.operator*(); }
+
+
 
 template<class T> Expression<T> Expression<T>::constant(const T& c) {
     return Expression<T>(c); }
