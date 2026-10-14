@@ -57,6 +57,8 @@ template<class T> Expression<T>::operator ElementaryAlgebra<Real>() const requir
     return ElementaryAlgebra<Real>(new ElementaryAlgebraWrapper<Expression<Real>,Real>(*this));
 }
 
+template<class T> Writer<Expression<T>> Expression<T>::_default_writer = Writer<Expression<T>>(OperatorExpressionWriter());
+
 template class Expression<Boolean>;
 template class Expression<Kleenean>;
 template class Expression<String>;
@@ -454,8 +456,6 @@ Bool is_additive_in(const Vector<Expression<Real>>& ev, const Set<Variable<Real>
     }
     return true;
 }
-
-template<class T> Writer<Expression<T>> Expression<T>::_default_writer = Writer<Expression<T>>(OperatorExpressionWriter());
 
 namespace {
 
