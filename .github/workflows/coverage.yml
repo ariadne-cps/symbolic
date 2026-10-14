@@ -9,6 +9,10 @@ on:
 env:
   SCCACHE_GHA_ENABLED: "true"
 
+permissions:
+  contents: read
+  statuses: write
+
 jobs:
   build:
     name: ${{ matrix.config.name }}
@@ -56,6 +60,80 @@ jobs:
     - name: Build, Test and Generate Code Coverage
       working-directory: ${{ runner.workspace }}/build
       run: cmake --build . --parallel $($NPROC) --target coverage
+
+    - name: Diagnose LLVM coverage hash mismatches
+      if: runner.os == 'macOS'
+      working-directory: ${{ runner.workspace }}/build
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -eu
+        LIB="$(find . -type f -name 'libariadne-symbolic.dylib' -print -quit)"
+        TEST_EXPRESSION="$(find . -type f -name 'test_expression' -perm -111 -print -quit)"
+        TEST_EXPRESSION_SET="$(find . -type f -name 'test_expression_set' -perm -111 -print -quit)"
+        TEST_SYMBOLIC_TEMPLATES="$(find . -type f -name 'test_symbolic_templates' -perm -111 -print -quit)"
+        DUMP_FILE="$(mktemp)"
+        xcrun llvm-cov report "$LIB" \
+          "-object=$TEST_EXPRESSION" \
+          "-object=$TEST_EXPRESSION_SET" \
+          "-object=$TEST_SYMBOLIC_TEMPLATES" \
+          "-instr-profile=coverage/coverage.profdata" \
+          -dump >/dev/null 2>"$DUMP_FILE" || true
+        python3 - "$DUMP_FILE" <<'PY'
+        import json
+        import os
+        import re
+        import subprocess
+        import sys
+        import urllib.request
+
+        path = sys.argv[1]
+        pattern = re.compile(
+            r"^hash-mismatch: No profile record found for '(.+)' with hash = (0x[0-9A-Fa-f]+)$")
+        mismatches = []
+        with open(path, encoding="utf-8", errors="replace") as stream:
+            for raw in stream:
+                match = pattern.match(raw.rstrip())
+                if match:
+                    mismatches.append(match.groups())
+
+        if not mismatches:
+            mismatches = [("<none>", "0x0")]
+
+        repo = os.environ["GITHUB_REPOSITORY"]
+        sha = os.environ["GITHUB_SHA"]
+        token = os.environ["GH_TOKEN"]
+        for index, (name, func_hash) in enumerate(mismatches, 1):
+            prefix = ""
+            mangled = name
+            if ":" in name and not name.startswith("_Z"):
+                prefix, mangled = name.split(":", 1)
+                prefix += ": "
+            try:
+                demangled = subprocess.check_output(
+                    ["xcrun", "llvm-cxxfilt", mangled],
+                    text=True).strip()
+            except Exception:
+                demangled = mangled
+            description = (prefix + demangled + " [" + func_hash + "]")[:140]
+            payload = json.dumps({
+                "state": "success",
+                "context": f"coverage-mismatch/{index}",
+                "description": description,
+            }).encode()
+            request = urllib.request.Request(
+                f"https://api.github.com/repos/{repo}/statuses/{sha}",
+                data=payload,
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Accept": "application/vnd.github+json",
+                    "X-GitHub-Api-Version": "2022-11-28",
+                    "Content-Type": "application/json",
+                },
+                method="POST",
+            )
+            urllib.request.urlopen(request).read()
+        PY
 
     - name: Check Codecov Token
       if: runner.os == 'macOS'
