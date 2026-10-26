@@ -36,7 +36,7 @@
 #include "geometry/function_set.hpp"
 #include "algebra/algebra.hpp"
 #include "function/function.hpp"
-#include "drawing/command_line_interface.hpp"
+#include "logging/logging_command_line_interface.hpp"
 
 #include "macro/testing.hpp"
 
@@ -205,7 +205,7 @@ class TestExpressionSet {
 
 Int main(Int argc, const char* argv[])
 {
-    if (not kernel_command_line_interface().acquire(argc,argv)) return -1;
+    if (not LoggingCommandLineInterface().acquire(argc,argv)) return -1;
 
     TestExpressionSet().test();
     return ARIADNE_TEST_FAILURES;
