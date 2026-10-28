@@ -114,56 +114,12 @@ def tutorial_symbolic():
     show("x coordinate index", xyz.index(x))
     show("z coordinate index", xyz.index(z))
 
-    section("Symbolic boxes and predicates")
-
-    x_range = RealVariableInterval(
-        x, RealInterval(real(0), real(1))
-    )
-    y_range = RealVariableInterval(
-        y, RealInterval(real(-1), real(1))
-    )
-
-    domain = RealVariablesBox([x_range, y_range])
-
-    constraints = RealExpressionConstraintSet([
-        x + y <= real(3, 2),
-        sqr(x) + sqr(y) <= real(2),
-    ])
-
-    show("symbolic box", domain)
-    show("number of box variables", len(domain))
-    show("symbolic constraints", constraints)
-    show("constraint variables", constraints.number_of_variables())
-    show("constraint count", constraints.number_of_constraints())
-
-    section("Combining bounds and constraints")
-
-    feasible_region = intersection(domain, constraints)
-
-    show("bounded symbolic set", feasible_region)
-    show("bounded-set variables", feasible_region.number_of_variables())
-    show("bounded-set constraints", feasible_region.number_of_constraints())
-
-    xy = RealSpace([x, y])
-    euclidean_region = feasible_region.euclidean_set(xy)
-
-    show("Euclidean bounded constraint set", euclidean_region)
-
-    validated_region = approximate_euclidean_set(
-        feasible_region, xy
-    )
-
-    show("validated approximation", validated_region)
-    show("validated bounding box", validated_region.bounding_box())
-
     section("Choosing a symbolic abstraction")
     print("Variable / RealSpace: give names to quantities and define coordinate order.")
     print("Expression: build and manipulate formulas before numerical evaluation.")
     print("Valuation: evaluate named expressions at concrete values.")
     print("let / prime / dot assignments: describe algebraic, discrete and differential rules.")
     print("make_function: compile named expressions into coordinate-based functions.")
-    print("RealVariablesBox and expression constraint sets: define labelled feasible regions.")
-    print("approximate_euclidean_set: turn symbolic regions into validated computational sets.")
 
 
 if __name__ == "__main__":

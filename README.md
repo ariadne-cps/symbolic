@@ -7,7 +7,7 @@
 [![Coverage Status](https://github.com/ariadne-cps/symbolic/actions/workflows/coverage.yml/badge.svg)](https://github.com/ariadne-cps/symbolic/actions/workflows/coverage.yml)
 [![codecov](https://codecov.io/gh/ariadne-cps/symbolic/branch/main/graph/badge.svg)](https://codecov.io/gh/ariadne-cps/symbolic)
 
-Ariadne Symbolic is the standalone C++20 symbolic-expression layer used by Ariadne. It provides named variables and spaces, expressions, valuations, assignments, symbolic sets and conversions from symbolic descriptions to callable and validated computational objects on top of Ariadne Kernel.
+Ariadne Symbolic is the standalone C++20 symbolic-expression layer used by Ariadne. It provides named variables and spaces, expressions, valuations, assignments, conversions from symbolic descriptions to callable functions on top of Ariadne Function.
 
 ## Layout
 
@@ -19,10 +19,10 @@ The umbrella header is `include/ariadne-symbolic.hpp`.
 
 Symbolic depends directly on:
 
-- [ariadne-cps/kernel](https://github.com/ariadne-cps/kernel), included as a Git submodule.
+- [ariadne-cps/function](https://github.com/ariadne-cps/function), included as a Git submodule.
 - [ariadne-cps/configuration](https://github.com/ariadne-cps/configuration), used for shared build configuration.
 
-Kernel supplies the lower Ariadne layers and their external dependencies.
+Function supplies the lower Ariadne layers and their external dependencies.
 
 ## Build
 
@@ -36,7 +36,7 @@ ctest --test-dir build --output-on-failure
 
 ## Python bindings
 
-When a compatible Python development environment is available, the standalone build produces `pyariadne` from the Kernel bindings plus the Symbolic bindings.
+When a compatible Python development environment is available, the standalone build produces `pyariadne` from the Function bindings plus the Symbolic bindings.
 
 ## Contribution guidelines
 

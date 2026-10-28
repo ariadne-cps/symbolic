@@ -118,8 +118,6 @@ template<class T> class Variable
     explicit Variable(const Identifier& name) : UntypedVariable(name,variable_type<T>()) { }
     Variable<T> const& base() const { return *this; }
     inline Assignment<Variable<T>,T> operator=(const T& c) const;
-    template<class XL, class XU> inline VariableInterval<XU> in(const XL& l, const XU& u);
-    template<class XU> inline VariableInterval<XU> in(const Interval<XU>& ivl);
     Expression<T> create_zero() const { return Expression<T>::constant(0); }
   public:
     //! \brief Allows \a v to be used as the left-hand-side of an assignment \c let(v)=e defines the assignment \f$v:=e\f$.
@@ -154,7 +152,6 @@ template<class T> class Variables : public List<Variable<T>> {
     inline List<Assignment<Variable<T>,T>> operator=(const List<T>& c) const;
     //! \brief The Construct \a n variables with name \a name.
     Variable<T> const& operator[] (SizeType i) const { return this->List<Variable<T>>::operator[](i); }
-    template<class IVL> inline VariablesBox<IVL> in(const List<IVL>& bx) const;
     List<Identifier> names() const {
         List<Variable<T>> const& lst=*this; return apply([](Variable<T>const& var){return var.name();},lst); }
 };

@@ -154,28 +154,6 @@ class DiscreteValuation;
 template<class X> class ContinuousValuation;
 
 
-template<class UB> class Interval;
-using RealInterval = Interval<Real>;
-
-template<class UB> class VariableInterval;
-template<class UB> class VariableLowerInterval;
-template<class UB> class VariableUpperInterval;
-template<class IVL> class VariablesBox;
-
-//!@{
-//! \relates RealVariableInterval
-//! \name Type synonyms
-using RealVariableInterval = VariableInterval<Real>; //!< <p/>
-using RealVariableLowerInterval = VariableLowerInterval<Real>; //!< <p/>
-using RealVariableUpperInterval = VariableUpperInterval<Real>; //!< <p/>
-using RealVariableIntervals = List<RealVariableInterval>; //!< <p/>
-//!@}
-
-//!@{
-//! \relates VariablesBox
-//! \name Type synonyms
-using RealVariablesBox = VariablesBox<RealInterval>; //!< <p/>
-//!@}
 
 } // namespace Ariadne
 

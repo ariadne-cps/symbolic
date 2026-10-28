@@ -1,5 +1,5 @@
 include(CTest)
-set(UNIT_TESTS test_expression test_expression_set test_symbolic_templates)
+set(UNIT_TESTS test_expression test_symbolic_templates)
 foreach(TEST ${UNIT_TESTS})
  add_executable(${TEST} ${TEST}.cpp)
  target_link_libraries(${TEST} ariadne-symbolic symbolic)

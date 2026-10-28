@@ -20,7 +20,7 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/.git")
     require_same_dependency_commit(Configuration
         CHAINS
             "configuration"
-            "kernel|configuration"
+            "function|configuration"
     )
 endif()
 
@@ -33,7 +33,7 @@ target_include_directories(symbolic INTERFACE
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include/ariadne-symbolic>
 )
-target_link_libraries(symbolic INTERFACE kernel)
+target_link_libraries(symbolic INTERFACE function)
 
 add_subdirectory(src)
 target_link_libraries(SYMBOLIC_SRC PRIVATE symbolic)

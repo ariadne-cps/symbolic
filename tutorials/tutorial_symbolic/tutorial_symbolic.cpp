@@ -131,52 +131,13 @@ int main() {
     show("x coordinate index", xyz.index(x));
     show("z coordinate index", xyz.index(z));
 
-    section("Symbolic boxes and predicates");
-
-    RealVariableInterval x_range(Real(0),x,Real(1));
-    RealVariableInterval y_range(Real(-1),y,Real(1));
-
-    RealVariablesBox domain({x_range,y_range});
-
-    RealExpressionConstraintSet constraints({
-        x+y <= Real(Rational(3,2)),
-        sqr(x)+sqr(y) <= Real(2)
-    });
-
-    show("symbolic box", domain);
-    show("symbolic constraints", constraints);
-
-    section("Combining bounds and constraints");
-
-    RealExpressionBoundedConstraintSet feasible_region =
-        intersection(domain,constraints);
-
-    show("bounded symbolic set", feasible_region);
-
-    RealSpace xy({x,y});
-    BoundedConstraintSet euclidean_region =
-        feasible_region.euclidean_set(xy);
-
-    show("Euclidean bounded constraint set", euclidean_region);
-
-    // approximate_euclidean_set builds a validated computational
-    // representation from the symbolic description.  This is the bridge
-    // from readable model specification to the geometry/solving modules.
-    ValidatedConstrainedImageSet validated_region =
-        approximate_euclidean_set(feasible_region,xy);
-
-    show("validated approximation", validated_region);
-    show("validated bounding box", validated_region.bounding_box());
-
     section("Choosing a symbolic abstraction");
     cout
         << "Variable / RealSpace: give names to quantities and define coordinate order.\n"
         << "Expression: build and manipulate formulas before numerical evaluation.\n"
         << "Valuation: evaluate named expressions at concrete values.\n"
         << "let / prime / dot assignments: describe algebraic, discrete and differential rules.\n"
-        << "make_function: compile named expressions into coordinate-based functions.\n"
-        << "RealVariablesBox and expression constraint sets: define labelled feasible regions.\n"
-        << "approximate_euclidean_set: turn symbolic regions into validated computational sets.\n";
+        << "make_function: compile named expressions into coordinate-based functions.\n";
 
     return 0;
 }
