@@ -401,8 +401,6 @@ Void export_expressions(pybind11::module& module)
     continuous_predicate_class.def(pybind11::init<ContinuousPredicate>());
     continuous_predicate_class.def(pybind11::init<Kleenean>());
     continuous_predicate_class.def(pybind11::init<KleeneanVariable>());
-    continuous_predicate_class.def(pybind11::init<RealVariableLowerInterval>());
-    continuous_predicate_class.def(pybind11::init<RealVariableUpperInterval>());
     continuous_predicate_class.def("__and__", &__and__<ContinuousPredicate,ContinuousPredicate>);
     continuous_predicate_class.def("__or__", &__or__<ContinuousPredicate,ContinuousPredicate>);
     continuous_predicate_class.def("__invert__", &__not__<ContinuousPredicate>);
@@ -419,8 +417,6 @@ Void export_expressions(pybind11::module& module)
     pybind11::implicitly_convertible<BooleanVariable,DiscretePredicate>();
     pybind11::implicitly_convertible<KleeneanVariable,ContinuousPredicate>();
 
-    pybind11::implicitly_convertible<RealVariableLowerInterval,ContinuousPredicate>();
-    pybind11::implicitly_convertible<RealVariableUpperInterval,ContinuousPredicate>();
 
     module.def("sgn", &_sgn_<RealExpression>);
 
