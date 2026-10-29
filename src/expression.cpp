@@ -50,7 +50,14 @@ template<> Expression<String>::Expression(const String& c)
     : _root(new ExpressionNode<String>(Constant<String>(c))) { }
 
 String evaluate(const Expression<String>& e, const Map<Identifier,Integer>& x) {
-    return e.node_ref().accept([&x](auto en){return evaluate_as<String>(en,x);});
+    return e.node_ref().accept([&x](auto en) -> String {
+        if constexpr (IncompatibleEvaluationVariable<decltype(en),Integer>::value) {
+            ARIADNE_THROW(std::runtime_error,"evaluate_as(Variable,Map)",
+                          "Variable "<<en<<" cannot be evaluated with a valuation of a different value type.");
+        } else {
+            return evaluate_as<String>(en,x);
+        }
+    });
 }
 
 template<class T> Expression<T>::operator ElementaryAlgebra<Real>() const requires Same<T,Real> {
@@ -348,11 +355,23 @@ Expression<Real> indicator(BinaryExpressionNode<Kleenean> e, Sign sign) {
 Expression<Real> indicator(UnaryExpressionNode<Kleenean,Real> e, Sign sign) {
     return e.op().accept([&](auto op){return _indicator(op,e.arg(),sign);}); }
 Expression<Real> indicator(BinaryExpressionNode<Kleenean,Real,Real> e, Sign sign) {
-    return e.op().accept([&](auto op){return _indicator(op,e.arg1(),e.arg2(),sign);}); }
+    return e.op().accept([&](auto op) -> Expression<Real> {
+        if constexpr (Same<decltype(op),Equal> || Same<decltype(op),Unequal>) {
+            ARIADNE_FAIL_MSG("Cannot compute indicator function of expression " << op(e.arg1(),e.arg2()));
+        } else {
+            return _indicator(op,e.arg1(),e.arg2(),sign);
+        }
+    }); }
 }
 
 Expression<Real> indicator(Expression<Kleenean> e, Sign sign) {
-    return e.node_ref().accept([&](auto en){return indicator(en,sign);});
+    return e.node_ref().accept([&](auto en) -> Expression<Real> {
+        if constexpr (Same<decltype(en),Variable<Kleenean>>) {
+            ARIADNE_FAIL_MSG("Cannot compute indicator function of expression " << en);
+        } else {
+            return indicator(en,sign);
+        }
+    });
 }
 
 

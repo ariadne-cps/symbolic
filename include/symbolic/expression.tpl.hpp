@@ -273,13 +273,35 @@ Expression<R> make_expression(OP op, const Expression<A1>& e1, Expression<A2> e2
 
 template<class A> A evaluate(const Expression<A>& e, const Map<Identifier,A>& x);
 
+// A variable can be evaluated only when its value type agrees with that of
+// the valuation. Handle the incompatible case directly in each visitor:
+// forwarding it through a return statement to an always-throwing function
+// makes MSVC ARM64 warn about unreachable code (C4702).
+template<class EN, class V> struct IncompatibleEvaluationVariable : std::false_type {};
+template<class T, class V> struct IncompatibleEvaluationVariable<Variable<T>,V>
+    : std::bool_constant<not Same<T,V>> {};
+
 inline Integer evaluate(const Expression<Integer>& e, const Map<Identifier,String>& x) {
-    return e.node_ref().accept([&x](auto en){return evaluate_as<Integer>(en,x);});
+    return e.node_ref().accept([&x](auto en) -> Integer {
+        if constexpr (IncompatibleEvaluationVariable<decltype(en),String>::value) {
+            ARIADNE_THROW(std::runtime_error,"evaluate_as(Variable,Map)",
+                          "Variable "<<en<<" cannot be evaluated with a valuation of a different value type.");
+        } else {
+            return evaluate_as<Integer>(en,x);
+        }
+    });
 }
 
 template<class A> typename Logic<A>::Type evaluate(const Expression<typename Logic<A>::Type>& e, const Map<Identifier,A>& x) {
     typedef typename Logic<A>::Type R;
-    return e.node_ref().accept([&x](auto en){return evaluate_as<R>(en,x);});
+    return e.node_ref().accept([&x](auto en) -> R {
+        if constexpr (IncompatibleEvaluationVariable<decltype(en),A>::value) {
+            ARIADNE_THROW(std::runtime_error,"evaluate_as(Variable,Map)",
+                          "Variable "<<en<<" cannot be evaluated with a valuation of a different value type.");
+        } else {
+            return evaluate_as<R>(en,x);
+        }
+    });
 }
 
 template<class T> T evaluate(const Expression<T>& e, const Map<Identifier,T>& x) {
@@ -288,7 +310,14 @@ template<class T> T evaluate(const Expression<T>& e, const Map<Identifier,T>& x)
 
 
 template<class T, class X> Vector<X> evaluate(Expression<Vector<T>> const& ve, Map<Identifier,X> const& x) {
-    return ve.node_ref().accept([&x](auto en){return evaluate_as<Vector<X>>(en,x);});
+    return ve.node_ref().accept([&x](auto en) -> Vector<X> {
+        if constexpr (IncompatibleEvaluationVariable<decltype(en),X>::value) {
+            ARIADNE_THROW(std::runtime_error,"evaluate_as(Variable,Map)",
+                          "Variable "<<en<<" cannot be evaluated with a valuation of a different value type.");
+        } else {
+            return evaluate_as<Vector<X>>(en,x);
+        }
+    });
 }
 
 template<class T> T evaluate(const Expression<T>& e, const Valuation<T>& x) {
