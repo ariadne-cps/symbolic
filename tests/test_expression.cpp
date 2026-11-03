@@ -57,6 +57,16 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         : ContextFixture(context), o("1.0",1.0_q), x("x"), y("y"), z("z") {
     }
 
+    // Exact Real vectors are checked by component, not by semidecidable
+    // mathematical equality. Vector<Real> does not model std::ranges::input_range.
+    Void expect_same_real_vector(RealVector const& actual, RealVector const& expected) {
+        ARIADNE_TESTING_EXPECT_EQUAL(actual.size(), expected.size());
+        if (actual.size()!=expected.size()) { return; }
+        for (SizeType i=0u; i!=actual.size(); ++i) {
+            ARIADNE_TESTING_EXPECT_SAME(actual[i], expected[i]);
+        }
+    }
+
     Void test_variables() {
         Identifier empty_identifier;
         ARIADNE_TESTING_PROVE(empty_identifier.empty());
@@ -460,10 +470,12 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         integer_operator_stream << OperatorExpressionWriter()(integer_negative);
         ARIADNE_TESTING_PROVE(not integer_operator_stream.str().empty());
 
+        // Mathematical equality of Real values is only semidecidable.
+        // These values are exact, so require identical concrete bounds.
         RealExpression real_constant(Real(2));
-        ARIADNE_TESTING_EXPECT_EQUAL(real_constant.val(),Real(2));
+        ARIADNE_TESTING_EXPECT_SAME(real_constant.val(),Real(2));
         RealExpression real_named_constant=RealExpression::constant(RealConstant("two",Real(2)));
-        ARIADNE_TESTING_EXPECT_EQUAL(real_named_constant.val(),Real(2));
+        ARIADNE_TESTING_EXPECT_SAME(real_named_constant.val(),Real(2));
         RealExpression real_from_identifier=RealExpression::variable(Identifier("real_identifier"));
         ARIADNE_TESTING_EXPECT_EQUAL(real_from_identifier.var(),Identifier("real_identifier"));
         RealExpression real_power=pow(x,3);
@@ -667,15 +679,16 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         Vector<RealExpression> univariate_outputs({x,x+1});
         ARIADNE_TESTING_NOTE("Executing: make_formula(univariate_outputs,x)"); make_formula(univariate_outputs,x);
 
+        // Compare the actual floating-point representations exactly.
         FloatDPApproximation univariate_argument=2.0_approx;
         EffectiveScalarUnivariateFunction scalar_univariate_function=
             make_function(x,RealExpression(x)+1);
-        ARIADNE_TESTING_EXPECT_EQUAL(scalar_univariate_function(univariate_argument),3.0_approx);
+        ARIADNE_TESTING_EXPECT_SAME(scalar_univariate_function(univariate_argument),3.0_approx);
 
         EffectiveVectorUnivariateFunction vector_univariate_function=
             make_function(x,univariate_outputs);
-        ARIADNE_TESTING_EXPECT_EQUAL(vector_univariate_function(univariate_argument)[0],2.0_approx);
-        ARIADNE_TESTING_EXPECT_EQUAL(vector_univariate_function(univariate_argument)[1],3.0_approx);
+        ARIADNE_TESTING_EXPECT_SAME(vector_univariate_function(univariate_argument)[0],2.0_approx);
+        ARIADNE_TESTING_EXPECT_SAME(vector_univariate_function(univariate_argument)[1],3.0_approx);
 
         List<RealVariable> xy_variables({x,y});
         ARIADNE_TESTING_NOTE("Executing: make_formula(RealExpression(x)+RealExpression(y),xy_variables)"); make_formula(RealExpression(x)+RealExpression(y),xy_variables);
@@ -684,15 +697,15 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
             make_formula(pow(RealExpression(x),3),RealSpace({x}));
         EffectiveProcedure cubic_procedure(1u,cubic_formula);
         Vector<FloatDPBounds> cubic_argument({FloatDPBounds(2,dp)});
-        ARIADNE_TESTING_EXPECT_EQUAL(
+        ARIADNE_TESTING_EXPECT_SAME(
             evaluate(cubic_procedure,cubic_argument),FloatDPBounds(8,dp));
 
         Vector<RealExpression> multivariate_outputs({x+y,x-y});
         EffectiveVectorMultivariateFunction vector_multivariate_function=
             make_function(RealSpace({x,y}),multivariate_outputs);
         Vector<FloatDPApproximation> multivariate_argument({2.0_approx,1.0_approx});
-        ARIADNE_TESTING_EXPECT_EQUAL(vector_multivariate_function(multivariate_argument)[0],3.0_approx);
-        ARIADNE_TESTING_EXPECT_EQUAL(vector_multivariate_function(multivariate_argument)[1],1.0_approx);
+        ARIADNE_TESTING_EXPECT_SAME(vector_multivariate_function(multivariate_argument)[0],3.0_approx);
+        ARIADNE_TESTING_EXPECT_SAME(vector_multivariate_function(multivariate_argument)[1],1.0_approx);
 
         List<RealAssignment> auxiliary_assignments({let(z)=RealExpression(x)+RealExpression(y)});
         ARIADNE_TESTING_NOTE("Executing: make_formula(RealExpression(z)+1,auxiliary_assignments,RealSpace({x,y}))"); make_formula(RealExpression(z)+1,auxiliary_assignments,RealSpace({x,y}));
@@ -710,7 +723,7 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         RealExpression function_expression=
             make_expression(source_function,RealSpace({x}));
         RealValuation source_valuation({x=Real(2)});
-        ARIADNE_TESTING_EXPECT_EQUAL(
+        ARIADNE_TESTING_EXPECT_SAME(
             evaluate(function_expression,source_valuation),Real(3));
 
         RealExpression shared=x+y;
@@ -723,7 +736,7 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         Vector<FloatDPBounds> dag_arguments({
             FloatDPBounds(1,dp),FloatDPBounds(2,dp)
         });
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(dag_procedure,dag_arguments),FloatDPBounds(12,dp));
+        ARIADNE_TESTING_EXPECT_SAME(evaluate(dag_procedure,dag_arguments),FloatDPBounds(12,dp));
 
         IntegerValuation integer_only_valuation;
         StringVariable cross_type_string("cross_type_string");
@@ -847,17 +860,18 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
     Void test_parameters() {
         RealExpression expr = x;//+u;
 
+        // Assignment and lookup must preserve the exact Real value.
         Map<Identifier,Real> valuation;
         Real value = Real(ExactDouble(-0.0626));
         valuation[x.name()] = value;
 
         ARIADNE_TESTING_EXPECT_EQUAL(expr.kind(),OperatorKind::VARIABLE);
         ARIADNE_TESTING_EXPECT_EQUAL(expr.var(),"x");
-        ARIADNE_TESTING_EXPECT_EQUAL(valuation[x.name()],value);
+        ARIADNE_TESTING_EXPECT_SAME(valuation[x.name()],value);
 
         Real result1 = evaluate(expr,valuation);
 
-        ARIADNE_TESTING_EXPECT_EQUAL(result1,value);
+        ARIADNE_TESTING_EXPECT_SAME(result1,value);
     }
 
     Void test_identical() {
@@ -1365,6 +1379,7 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
     {
         ARIADNE_TESTING_COMPILE_SAME_TYPE(RealVariables,Variables<Real>);
         ARIADNE_TESTING_COMPILE_SAME_TYPE(RealVectorExpression,Expression<RealVector>);
+        // Validate each vector component using the exact same() relation.
         RealVector cs={-2,3,-5};
         RealVariables xs("x",3);
         RealVectorVariable vv("v",3);
@@ -1386,11 +1401,11 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         RealVector vec({val[xs[0]], val[xs[1]], val[xs[2]]});
         RealValuation valv({vv[0]=7, vv[1]=11, vv[2]=13});
         RealVector vecv({valv[vv[0]], valv[vv[1]], valv[vv[2]]});
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(vce,val),cs);
+        expect_same_real_vector(evaluate(vce,val),cs);
         ARIADNE_TESTING_NOTE("evaluate(vex,val) = " << (evaluate(vex,val)));
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(vex,val),vec);
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(vex+vce,val)[0],val[xs[0]]+cs[0]);
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(vex+vce,val),evaluate(vex,val)+cs);
+        expect_same_real_vector(evaluate(vex,val),vec);
+        ARIADNE_TESTING_EXPECT_SAME(evaluate(vex+vce,val)[0],val[xs[0]]+cs[0]);
+        expect_same_real_vector(evaluate(vex+vce,val),evaluate(vex,val)+cs);
         ARIADNE_TESTING_NOTE("(vex+vce)/vex[1] = " << ((vex+vce)/vex[1]));
         ARIADNE_TESTING_NOTE("evaluate((vex+vce)/vex[1],val) = " << (evaluate((vex+vce)/vex[1],val)));
         ARIADNE_TESTING_NOTE("simplify(((vex+vce)/vex[1])[2]) = " << (simplify(((vex+vce)/vex[1])[2])));
@@ -1476,6 +1491,7 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
     Void test_function()
     {
         // Test to ensure that constants are handled correctly.
+        // Inputs and polynomial results are exact dyadics; check same().
         Real tc=Dyadic(5.0);
         Real tx=Dyadic(1.125);
         Real ty=Dyadic(2.375);
@@ -1489,17 +1505,17 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         RealExpression e1=c;
         EffectiveScalarMultivariateFunction f1=make_function(RealSpace(List<RealVariable>({x,y,z})),e1);
         ARIADNE_TESTING_NOTE("f1 = " << (f1));
-        ARIADNE_TESTING_EXPECT_EQUAL(f1.evaluate(tv), tc);
+        ARIADNE_TESTING_EXPECT_SAME(f1.evaluate(tv), tc);
 
         RealExpression e2=c+x;
         EffectiveScalarMultivariateFunction f2=make_function(RealSpace(List<RealVariable>({x,y,z})),e2);
         ARIADNE_TESTING_NOTE("f2 = " << (f2));
-        ARIADNE_TESTING_EXPECT_EQUAL(f2.evaluate(tv), tc+tx);
+        ARIADNE_TESTING_EXPECT_SAME(f2.evaluate(tv), tc+tx);
 
         RealExpression e3=c+x+c*y;
         EffectiveScalarMultivariateFunction f3=make_function({x,y,z},e3);
         ARIADNE_TESTING_NOTE("f3 = " << (f3));
-        ARIADNE_TESTING_EXPECT_EQUAL(f3.evaluate(tv), tc+tx+tc*ty);
+        ARIADNE_TESTING_EXPECT_SAME(f3.evaluate(tv), tc+tx+tc*ty);
 
         RealExpression e4=exp(c+x);
         EffectiveScalarMultivariateFunction f4=make_function({x,y,z},e4);
@@ -1519,7 +1535,7 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         ARIADNE_TESTING_NOTE("f3 = " << (f3));
         ARIADNE_TESTING_NOTE("g3 = " << (g3));
         ARIADNE_TESTING_NOTE("5+va[0]+5*va[1] = " << (5+va[0]+5*va[1]));
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(g3,tw),evaluate(e3,tw));
+        ARIADNE_TESTING_EXPECT_SAME(evaluate(g3,tw),evaluate(e3,tw));
     }
 
 

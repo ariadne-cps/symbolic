@@ -49,9 +49,10 @@ class TestSymbolicTemplates : public Ariadne::Testing::ContextFixture {
         RealExpression null_node=make_expression<Real>(Nul(),sqr(ex));
         ARIADNE_TESTING_PROVE(is_affine_in(null_node,{x}));
         ARIADNE_TESTING_PROVE(is_polynomial_in(null_node,{x}));
+        // These integer-valued Real results have exact representations.
         RealValuation values;
         values.set(x,Real(3));
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(null_node,values),Real(0));
+        ARIADNE_TESTING_EXPECT_SAME(evaluate(null_node,values),Real(0));
 
         std::ostringstream product_stream, quotient_stream;
         product_stream << OperatorExpressionWriter()(ex*(ey-RealExpression(z)));
@@ -78,8 +79,8 @@ class TestSymbolicTemplates : public Ariadne::Testing::ContextFixture {
         ARIADNE_TESTING_PROVE(not identical(left_scaled,right_scaled));
         ARIADNE_TESTING_PROVE(not identical(right_scaled,left_scaled));
         values.set(y,Real(4));
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(left_scaled,values)[0],Real(6));
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(right_scaled,values)[1],Real(8));
+        ARIADNE_TESTING_EXPECT_SAME(evaluate(left_scaled,values)[0],Real(6));
+        ARIADNE_TESTING_EXPECT_SAME(evaluate(right_scaled,values)[1],Real(8));
         ARIADNE_TESTING_PROVE(not identical(vector,constants));
         ARIADNE_TESTING_PROVE(not identical(constants,vector));
         ARIADNE_TESTING_PROVE(is_constant_in(neg(vector),{z}));
