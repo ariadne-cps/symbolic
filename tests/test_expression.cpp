@@ -1265,21 +1265,21 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         ARIADNE_TESTING_PROVE(is_affine_in(3*y,{x,y}));
         ARIADNE_TESTING_PROVE(is_affine_in(x*y,{x}));
         ARIADNE_TESTING_PROVE(is_affine_in(3*x/y,{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(atan(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_affine_in(acos(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_affine_in(asin(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_affine_in(cos(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_affine_in(sin(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_affine_in(tan(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_affine_in(abs(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_affine_in(log(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_affine_in(sqrt(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_affine_in(exp(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_affine_in(rec(x),{x}))
-        ARIADNE_TESTING_PROVE(is_affine_in(hlf(x),{x}))
-        ARIADNE_TESTING_PROVE(is_affine_in(nul(exp(x)),{x}))
-        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(x),{x}))
-        ARIADNE_TESTING_PROVE(is_affine_in(neg(x),{x}))
+        ARIADNE_TESTING_PROVE(not is_affine_in(atan(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(acos(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(asin(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(cos(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(sin(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(tan(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(abs(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(log(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(sqrt(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(exp(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(rec(x),{x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(hlf(x),{x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(nul(exp(x)),{x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(x),{x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(neg(x),{x}));
         ARIADNE_TESTING_PROVE(not is_affine_in(pow(x,3),{x}));
         ARIADNE_TESTING_PROVE(not is_affine_in(sqr(x),{x}));
         ARIADNE_TESTING_PROVE(not is_affine_in(x*y,{x,y}));
@@ -1307,58 +1307,58 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
     }
 
     Void test_is_polynomial_in() {
-        ARIADNE_TESTING_PROVE(is_polynomial_in(1,{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(x,{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(x*x,{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(atan(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(acos(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(asin(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(cos(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(tan(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(abs(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(log(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(sqrt(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(exp(x),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(rec(x),{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(hlf(x),{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(nul(exp(x)),{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(sqr(x),{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(neg(x),{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x,2),{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x,3),{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x+sqr(x),3),{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(x/y,{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(x/y,{y}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(x/y,{x,y}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in({x,sqr(y)},{x,y}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in({x/y,sqr(y)},{x,y}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(pos(x),{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(x+y,{x,y}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(x-y,{x,y}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(x*y,{x,y}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(max(RealExpression(1),RealExpression(2)),{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(min(RealExpression(1),RealExpression(2)),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(max(x,RealExpression(2)),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(min(RealExpression(2),x),{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x,0),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(pow(x,-1),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(tanh(x),{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in(tanh(RealExpression(2)),{x}))
-        ARIADNE_TESTING_PROVE(is_polynomial_in((x+y)*(x-y),{x,y}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(x/(x+y),{x,y}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(RealExpression(y)+sin(RealExpression(x)),{x,y}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x))+RealExpression(y),{x,y}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(RealExpression(y)-sin(RealExpression(x)),{x,y}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x))-RealExpression(y),{x,y}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(RealExpression(y)*sin(RealExpression(x)),{x,y}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x))*RealExpression(y),{x,y}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x))/RealExpression(2),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(max(RealExpression(2),RealExpression(x)),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(min(RealExpression(x),RealExpression(2)),{x}))
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(pow(sin(RealExpression(x)),2),{x}))
+        ARIADNE_TESTING_PROVE(is_polynomial_in(1,{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(x,{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(x*x,{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(atan(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(acos(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(asin(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(cos(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(tan(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(abs(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(log(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sqrt(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(exp(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(rec(x),{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(hlf(x),{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(nul(exp(x)),{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(sqr(x),{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(neg(x),{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x,2),{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x,3),{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x+sqr(x),3),{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(x/y,{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(x/y,{y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(x/y,{x,y}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in({x,sqr(y)},{x,y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in({x/y,sqr(y)},{x,y}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(pos(x),{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(x+y,{x,y}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(x-y,{x,y}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(x*y,{x,y}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(max(RealExpression(1),RealExpression(2)),{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(min(RealExpression(1),RealExpression(2)),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(max(x,RealExpression(2)),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(min(RealExpression(2),x),{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x,0),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(pow(x,-1),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(tanh(x),{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(tanh(RealExpression(2)),{x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in((x+y)*(x-y),{x,y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(x/(x+y),{x,y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(RealExpression(y)+sin(RealExpression(x)),{x,y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x))+RealExpression(y),{x,y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(RealExpression(y)-sin(RealExpression(x)),{x,y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x))-RealExpression(y),{x,y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(RealExpression(y)*sin(RealExpression(x)),{x,y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x))*RealExpression(y),{x,y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x))/RealExpression(2),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(max(RealExpression(2),RealExpression(x)),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(min(RealExpression(x),RealExpression(2)),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(pow(sin(RealExpression(x)),2),{x}));
         RealVectorExpression polynomial_vector({x,sqr(y)});
-        ARIADNE_TESTING_PROVE(is_polynomial_in(polynomial_vector[0],{x,y}))
+        ARIADNE_TESTING_PROVE(is_polynomial_in(polynomial_vector[0],{x,y}));
     }
 
     Void test_vector_expression()
@@ -1396,13 +1396,13 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         ARIADNE_TESTING_NOTE("simplify(((vex+vce)/vex[1])[2]) = " << (simplify(((vex+vce)/vex[1])[2])));
         ARIADNE_TESTING_EXPECT_SAME(simplify(((vex+vce)/vex[1])[2]),(xs[2]+cs[2])/xs[1]);
 
-        ARIADNE_TESTING_EXPECT_SAME(simplify((vex+vce)[0]),xs[0]+cs[0])
-        ARIADNE_TESTING_EXPECT_SAME(simplify((vex+vce)[1]),xs[1]+cs[1])
-        ARIADNE_TESTING_EXPECT_SAME(simplify((vex-vce)[0]),xs[0]-cs[0])
-        ARIADNE_TESTING_EXPECT_SAME(simplify((vex*y)[1]),xs[1]*y)
-        ARIADNE_TESTING_EXPECT_SAME(simplify((y*(vex-vce))[0]),y*(xs[0]-cs[0]))
-        ARIADNE_TESTING_EXPECT_SAME(simplify(((vex-vce)*y)[0]),(xs[0]-cs[0])*y)
-        ARIADNE_TESTING_EXPECT_SAME(simplify(((vex-vce)/y)[0]),(xs[0]-cs[0])/y)
+        ARIADNE_TESTING_EXPECT_SAME(simplify((vex+vce)[0]),xs[0]+cs[0]);
+        ARIADNE_TESTING_EXPECT_SAME(simplify((vex+vce)[1]),xs[1]+cs[1]);
+        ARIADNE_TESTING_EXPECT_SAME(simplify((vex-vce)[0]),xs[0]-cs[0]);
+        ARIADNE_TESTING_EXPECT_SAME(simplify((vex*y)[1]),xs[1]*y);
+        ARIADNE_TESTING_EXPECT_SAME(simplify((y*(vex-vce))[0]),y*(xs[0]-cs[0]));
+        ARIADNE_TESTING_EXPECT_SAME(simplify(((vex-vce)*y)[0]),(xs[0]-cs[0])*y);
+        ARIADNE_TESTING_EXPECT_SAME(simplify(((vex-vce)/y)[0]),(xs[0]-cs[0])/y);
 
         ARIADNE_TESTING_NOTE("Executing: vexs.op()"); vexs.op();
         RealVectorExpression unary_vector=neg(vex);
