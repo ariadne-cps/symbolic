@@ -33,7 +33,7 @@
 #include <iosfwd>
 #include <iostream>
 
-#include "macro/general.hpp"
+#include "utility/macros.hpp"
 #include "numeric/declarations.hpp"
 #include "algebra/declarations.hpp"
 #include "function/declarations.hpp"
