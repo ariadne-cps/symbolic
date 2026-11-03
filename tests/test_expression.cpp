@@ -687,8 +687,11 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
 
         EffectiveVectorUnivariateFunction vector_univariate_function=
             make_function(x,univariate_outputs);
-        ARIADNE_TESTING_EXPECT_SAME(vector_univariate_function(univariate_argument)[0],2.0_approx);
-        ARIADNE_TESTING_EXPECT_SAME(vector_univariate_function(univariate_argument)[1],3.0_approx);
+        // Materialize the result: indexing a temporary Vector yields a dangling
+        // reference when the fixture's same() check evaluates the operand later.
+        auto const univariate_result=vector_univariate_function(univariate_argument);
+        ARIADNE_TESTING_EXPECT_SAME(univariate_result[0],2.0_approx);
+        ARIADNE_TESTING_EXPECT_SAME(univariate_result[1],3.0_approx);
 
         List<RealVariable> xy_variables({x,y});
         ARIADNE_TESTING_NOTE("Executing: make_formula(RealExpression(x)+RealExpression(y),xy_variables)"); make_formula(RealExpression(x)+RealExpression(y),xy_variables);
@@ -704,8 +707,9 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         EffectiveVectorMultivariateFunction vector_multivariate_function=
             make_function(RealSpace({x,y}),multivariate_outputs);
         Vector<FloatDPApproximation> multivariate_argument({2.0_approx,1.0_approx});
-        ARIADNE_TESTING_EXPECT_SAME(vector_multivariate_function(multivariate_argument)[0],3.0_approx);
-        ARIADNE_TESTING_EXPECT_SAME(vector_multivariate_function(multivariate_argument)[1],1.0_approx);
+        auto const multivariate_result=vector_multivariate_function(multivariate_argument);
+        ARIADNE_TESTING_EXPECT_SAME(multivariate_result[0],3.0_approx);
+        ARIADNE_TESTING_EXPECT_SAME(multivariate_result[1],1.0_approx);
 
         List<RealAssignment> auxiliary_assignments({let(z)=RealExpression(x)+RealExpression(y)});
         ARIADNE_TESTING_NOTE("Executing: make_formula(RealExpression(z)+1,auxiliary_assignments,RealSpace({x,y}))"); make_formula(RealExpression(z)+1,auxiliary_assignments,RealSpace({x,y}));
@@ -1404,7 +1408,8 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         expect_same_real_vector(evaluate(vce,val),cs);
         ARIADNE_TESTING_NOTE("evaluate(vex,val) = " << (evaluate(vex,val)));
         expect_same_real_vector(evaluate(vex,val),vec);
-        ARIADNE_TESTING_EXPECT_SAME(evaluate(vex+vce,val)[0],val[xs[0]]+cs[0]);
+        RealVector evaluated_sum=evaluate(vex+vce,val);
+        ARIADNE_TESTING_EXPECT_SAME(evaluated_sum[0],val[xs[0]]+cs[0]);
         expect_same_real_vector(evaluate(vex+vce,val),evaluate(vex,val)+cs);
         ARIADNE_TESTING_NOTE("(vex+vce)/vex[1] = " << ((vex+vce)/vex[1]));
         ARIADNE_TESTING_NOTE("evaluate((vex+vce)/vex[1],val) = " << (evaluate((vex+vce)/vex[1],val)));

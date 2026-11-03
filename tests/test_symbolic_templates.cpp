@@ -79,8 +79,12 @@ class TestSymbolicTemplates : public Ariadne::Testing::ContextFixture {
         ARIADNE_TESTING_PROVE(not identical(left_scaled,right_scaled));
         ARIADNE_TESTING_PROVE(not identical(right_scaled,left_scaled));
         values.set(y,Real(4));
-        ARIADNE_TESTING_EXPECT_SAME(evaluate(left_scaled,values)[0],Real(6));
-        ARIADNE_TESTING_EXPECT_SAME(evaluate(right_scaled,values)[1],Real(8));
+        // Preserve the evaluated vectors while same() checks their components.
+        // Otherwise operator[] exposes references to already-destroyed temporaries.
+        RealVector const left_scaled_values=evaluate(left_scaled,values);
+        RealVector const right_scaled_values=evaluate(right_scaled,values);
+        ARIADNE_TESTING_EXPECT_SAME(left_scaled_values[0],Real(6));
+        ARIADNE_TESTING_EXPECT_SAME(right_scaled_values[1],Real(8));
         ARIADNE_TESTING_PROVE(not identical(vector,constants));
         ARIADNE_TESTING_PROVE(not identical(constants,vector));
         ARIADNE_TESTING_PROVE(is_constant_in(neg(vector),{z}));
