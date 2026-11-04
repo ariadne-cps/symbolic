@@ -157,6 +157,14 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         RealSpace from_names(names);
         RealSpace from_initializer({x,y});
 
+        // Check both dimensions and the ordered, index-based variable accessors.
+        ARIADNE_TESTING_EXPECT_EQUAL(empty_space.dimension(),0u);
+        ARIADNE_TESTING_EXPECT_EQUAL(from_variables.dimension(),2u);
+        ARIADNE_TESTING_PROVE(from_variables[SizeType(0)]==x);
+        ARIADNE_TESTING_PROVE(from_variables[SizeType(1)]==y);
+        ARIADNE_TESTING_PROVE(from_variables.variable(0u)==x);
+        ARIADNE_TESTING_PROVE(from_variables.variable(1u)==y);
+
         ARIADNE_TESTING_PROVE(from_variables==from_names);
         ARIADNE_TESTING_PROVE(not (from_variables!=from_names));
         ARIADNE_TESTING_PROVE(from_variables==from_initializer);
