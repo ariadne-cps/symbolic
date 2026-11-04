@@ -953,10 +953,17 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
             simplify(softplus(x)),simplify(log(1+exp(x)))));
         Map<Identifier,Real> at_zero;
         at_zero[x.name()]=Real(0);
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(sigmoid(x),at_zero),
-                                      Real(1)/Real(2));
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(softplus(x),at_zero),
-                                      log(Real(2)));
+        // Real equality is structural, not numerical: evaluate() may
+        // retain an expression tree, e.g. rec(1+exp(-0)).
+        // Check the resulting rigorous binary64 enclosures instead.
+        auto sigmoid_at_zero=evaluate(sigmoid(x),at_zero).get(DoublePrecision());
+        ARIADNE_TESTING_PROVE(sigmoid_at_zero.lower_raw().get_d()<=0.5);
+        ARIADNE_TESTING_PROVE(sigmoid_at_zero.upper_raw().get_d()>=0.5);
+        ARIADNE_TESTING_PROVE(sigmoid_at_zero.lower_raw().get_d()>0.49);
+        ARIADNE_TESTING_PROVE(sigmoid_at_zero.upper_raw().get_d()<0.51);
+        auto softplus_at_zero=evaluate(softplus(x),at_zero).get(DoublePrecision());
+        ARIADNE_TESTING_PROVE(softplus_at_zero.lower_raw().get_d()>0.69);
+        ARIADNE_TESTING_PROVE(softplus_at_zero.upper_raw().get_d()<0.70);
         RealExpression expr2 = pow(x,3);
         ARIADNE_TESTING_NOTE("derivative(expr2,x) = " << (derivative(expr2,x)));
         ARIADNE_TESTING_NOTE("simplify(derivative(expr2,x)) = " << (simplify(derivative(expr2,x))));
