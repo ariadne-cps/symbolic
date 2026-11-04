@@ -339,6 +339,8 @@ Void export_expressions(pybind11::module& module)
     real_expression_class.def(pybind11::init<Real>());
     real_expression_class.def(pybind11::init<RealVariable>());
     module.def("simplify", (RealExpression(*)(const RealExpression&)) &simplify);
+    module.def("sigmoid", [](RealExpression const& e) { return sigmoid(e); });
+    module.def("softplus", [](RealExpression const& e) { return softplus(e); });
     module.def("count_nodes", (SizeType(*)(const RealExpression&)) &count_nodes);
     module.def("count_distinct_nodes", (SizeType(*)(const RealExpression&)) &count_distinct_nodes);
     module.def("count_distinct_node_pointers", (SizeType(*)(const RealExpression&)) &count_distinct_node_pointers);

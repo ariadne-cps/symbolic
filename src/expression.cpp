@@ -214,6 +214,13 @@ Expression<Real> tan(Expression<Real> const& e) {
     return make_expression<Real>(Tan(),e); }
 Expression<Real> tanh(Expression<Real> const& e) {
     return make_expression<Real>(Tanh(),e); }
+// The elementary numerical activations are defined in Numeric. These are
+// symbolic compositions of existing Expression<Real> elementary operators,
+// not reimplementations of numeric sigmoid or softplus.
+Expression<Real> sigmoid(Expression<Real> const& e) {
+    return rec(Expression<Real>(1)+exp(-e)); }
+Expression<Real> softplus(Expression<Real> const& e) {
+    return log(Expression<Real>(1)+exp(e)); }
 Expression<Real> asin(Expression<Real> const& e) {
     return make_expression<Real>(Asin(),e); }
 Expression<Real> acos(Expression<Real> const& e) {

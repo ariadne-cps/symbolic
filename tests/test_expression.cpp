@@ -812,6 +812,8 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         ARIADNE_TESTING_EXPECT_EQUAL(to_string(min(x,sub(y,z))),"min(x,y-z)");
         ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(x,max(y,z))),"x-max(y,z)");
         ARIADNE_TESTING_EXPECT_EQUAL(to_string(tanh(x)),"tanh(x)");
+        ARIADNE_TESTING_PROVE(identical(sigmoid(x),rec(1+exp(-x))));
+        ARIADNE_TESTING_PROVE(identical(softplus(x),log(1+exp(x))));
         ARIADNE_TESTING_NOTE("Executing: to_string(neg(RealExpression(2)))"); to_string(neg(RealExpression(2)));
         ARIADNE_TESTING_NOTE("Executing: to_string(mul(div(x,y),z))"); to_string(mul(div(x,y),z));
         ARIADNE_TESTING_NOTE("Executing: to_string(div(add(x,y),mul(y,z)))"); to_string(div(add(x,y),mul(y,z)));
@@ -939,6 +941,22 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         ARIADNE_TESTING_PROVE(identical(
             simplify(derivative(tanh_expr,x)),
             1-sqr(tanh(x))));
+        ARIADNE_TESTING_PROVE(identical(
+            simplify(derivative(sigmoid(x),x)),
+            simplify(derivative(rec(1+exp(-x)),x))));
+        ARIADNE_TESTING_PROVE(identical(
+            simplify(derivative(softplus(x),x)),
+            simplify(derivative(log(1+exp(x)),x))));
+        ARIADNE_TESTING_PROVE(identical(
+            simplify(sigmoid(x)),simplify(rec(1+exp(-x)))));
+        ARIADNE_TESTING_PROVE(identical(
+            simplify(softplus(x)),simplify(log(1+exp(x)))));
+        Map<Identifier,Real> at_zero;
+        at_zero[x.name()]=Real(0);
+        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(sigmoid(x),at_zero),
+                                      Real(1)/Real(2));
+        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(softplus(x),at_zero),
+                                      log(Real(2)));
         RealExpression expr2 = pow(x,3);
         ARIADNE_TESTING_NOTE("derivative(expr2,x) = " << (derivative(expr2,x)));
         ARIADNE_TESTING_NOTE("simplify(derivative(expr2,x)) = " << (simplify(derivative(expr2,x))));
@@ -1305,6 +1323,8 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         ARIADNE_TESTING_PROVE(not is_affine_in(0*x*x,{x}));
         ARIADNE_TESTING_PROVE(not is_affine_in(x/y,{y}));
         ARIADNE_TESTING_PROVE(not is_affine_in(tanh(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(sigmoid(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(softplus(x),{x}));
         ARIADNE_TESTING_PROVE(is_affine_in(tanh(RealExpression(2)),{x}));
         ARIADNE_TESTING_PROVE(is_affine_in(max(RealExpression(1),RealExpression(2)),{x}));
         ARIADNE_TESTING_PROVE(not is_affine_in(max(RealExpression(x),RealExpression(2)),{x}));
@@ -1362,6 +1382,8 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x,0),{x}));
         ARIADNE_TESTING_PROVE(not is_polynomial_in(pow(x,-1),{x}));
         ARIADNE_TESTING_PROVE(not is_polynomial_in(tanh(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sigmoid(x),{x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(softplus(x),{x}));
         ARIADNE_TESTING_PROVE(is_polynomial_in(tanh(RealExpression(2)),{x}));
         ARIADNE_TESTING_PROVE(is_polynomial_in((x+y)*(x-y),{x,y}));
         ARIADNE_TESTING_PROVE(not is_polynomial_in(x/(x+y),{x,y}));

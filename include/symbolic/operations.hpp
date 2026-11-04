@@ -264,6 +264,10 @@ template<> struct DeclareExpressionOperations<Real> {
     friend Expression<Real> tan(Expression<Real> const& e);
     //! \related Expression \brief %Real hyperbolic tangent expression.
     friend Expression<Real> tanh(Expression<Real> const& e);
+    //! \related Expression \brief Logistic sigmoid, defined by real expressions.
+    friend Expression<Real> sigmoid(Expression<Real> const& e);
+    //! \related Expression \brief Softplus, defined by real expressions.
+    friend Expression<Real> softplus(Expression<Real> const& e);
     //! \related Expression \brief %Real arc-sine expression.
     friend Expression<Real> asin(Expression<Real> const& e);
     //! \related Expression \brief %Real arc-cosine expression.
