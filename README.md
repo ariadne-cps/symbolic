@@ -8,6 +8,7 @@
 [![codecov](https://codecov.io/gh/ariadne-cps/symbolic/branch/main/graph/badge.svg)](https://codecov.io/gh/ariadne-cps/symbolic)
 
 Ariadne Symbolic is the standalone C++20 symbolic-expression layer used by Ariadne. It provides named variables and spaces, expressions, valuations, assignments, conversions from symbolic descriptions to callable functions on top of Ariadne Function.
+Although independently maintained and usable, this repository is also part of the [Ariadne repository structure](https://github.com/ariadne-cps/ariadne/blob/main/doc/structure.md).
 
 ## Layout
 
@@ -20,7 +21,7 @@ The umbrella header is `include/ariadne-symbolic.hpp`.
 Symbolic depends directly on:
 
 - [ariadne-cps/function](https://github.com/ariadne-cps/function), included as a Git submodule.
-- [ariadne-cps/configuration](https://github.com/ariadne-cps/configuration), used for shared build configuration.
+- [ariadne-cps/build](https://github.com/ariadne-cps/build), used for shared build configuration.
 
 Function supplies the lower Ariadne layers and their external dependencies.
 
