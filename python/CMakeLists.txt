@@ -12,7 +12,7 @@ if(Python3_FOUND)
     endif()
     add_subdirectory(bindings)
     if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-        ariadne_finalize_python_module(NAME symbolic)
+        ariadne_finalize_python_module(NAME symbolic MODULE_IMPORT_NAME pyariadne_symbolic)
 
         # The pyariadne-symbolic target contributes objects to the single
         # pyariadne extension; install that extension, not an INTERFACE target.

@@ -1,4 +1,4 @@
-from pyariadne import *
+from pyariadne_symbolic import *
 
 
 def test_symbolic():

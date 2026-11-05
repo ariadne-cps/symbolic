@@ -18,4 +18,5 @@ target_include_directories(pyariadne-symbolic INTERFACE
 )
 target_link_libraries(pyariadne-symbolic INTERFACE pyariadne-function)
 
-ariadne_add_python_module(NAME symbolic MODULE_SOURCE symbolic_module.cpp)
+ariadne_add_python_module(NAME symbolic
+    MODULE_IMPORT_NAME pyariadne_symbolic MODULE_SOURCE symbolic_module.cpp)
