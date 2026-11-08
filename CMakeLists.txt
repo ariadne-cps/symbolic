@@ -20,9 +20,9 @@ if(NOT TARGET ariadne-build)
 endif()
 
 if(EXISTS "${PROJECT_SOURCE_DIR}/.git")
-    # Pinned child commits guarantee their internal consistency.
+    # Testing is a development-only dependency, excluded from commit consistency checks.
     require_same_dependency_commit(Build CHAINS
-        "build" "function|build" "testing|build")
+        "build" "function|build")
 endif()
 
 setup_project()
@@ -51,7 +51,7 @@ setup_project_library(
     LINK_LIBRARIES symbolic
 )
 
-setup_standalone_project_tests(
+setup_standalone_project(
     TARGET ariadne-symbolic
     TEST_DIRECTORY tests
     TEST_TARGET tests
