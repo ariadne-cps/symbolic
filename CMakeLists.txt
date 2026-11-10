@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(Symbolic VERSION 1.0)
+project(Symbolic VERSION 3.0)
 
 option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
@@ -19,54 +19,8 @@ if(NOT TARGET ariadne-build)
     include("${CMAKE_CURRENT_SOURCE_DIR}/ss/bui/cmake/ProjectOptions.cmake")
 endif()
 
-if(EXISTS "${PROJECT_SOURCE_DIR}/.git")
-    # Testing is a development-only dependency, excluded from commit consistency checks.
-    require_same_dependency_commit(Build CHAINS
-        "build" "function|build")
-endif()
 
-setup_project()
-include_directories(${PROJECT_SOURCE_DIR}/include)
-add_subdirectory(ss)
+require_same_dependency_commit(Build CHAINS
+    "build" "function|build")
 
-add_library(symbolic INTERFACE)
-target_include_directories(symbolic INTERFACE
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include/ariadne-symbolic>
-)
-target_link_libraries(symbolic INTERFACE function)
-
-add_subdirectory(src)
-target_link_libraries(SYMBOLIC_SRC PRIVATE symbolic)
-
-ariadne_register_public_headers(
-    TARGET symbolic
-    DIRECTORIES "${PROJECT_SOURCE_DIR}/include/symbolic"
-    FILES "${PROJECT_SOURCE_DIR}/include/ariadne-symbolic.hpp"
-)
-
-setup_project_library(
-    TARGET ariadne-symbolic
-    OBJECTS SYMBOLIC_SRC
-    LINK_LIBRARIES symbolic
-)
-
-setup_standalone_project(
-    TARGET ariadne-symbolic
-    TEST_DIRECTORY tests
-    TEST_TARGET tests
-    SOURCES
-        "${PROJECT_SOURCE_DIR}/include"
-        "${PROJECT_SOURCE_DIR}/src"
-)
-
-if(BUILD_PYTHON_BINDINGS)
-    add_subdirectory(python)
-endif()
-
-if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-    ariadne_install_dependency_bundle(
-        TARGET symbolic
-        DESTINATION include/ariadne-symbolic
-    )
-endif()
+ariadne_setup_module(symbolic)
