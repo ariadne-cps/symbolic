@@ -28,22 +28,22 @@
 
 #include <iostream>
 #include <sstream>
-#include "utility/container.hpp"
-#include "utility/stlio.hpp"
-#include "numeric/numeric.hpp"
-#include "symbolic/expression.hpp"
-#include "symbolic/templates.hpp"
-#include "symbolic/assignment.hpp"
-#include "symbolic/valuation.hpp"
-#include "symbolic/space.hpp"
-#include "function/formula.hpp"
+
 #include "algebra/algebra.hpp"
+#include "algebra/matrix.tpl.hpp"
+#include "function/formula.hpp"
 #include "function/function.hpp"
 #include "function/procedure.hpp"
 #include "function/procedure.tpl.hpp"
 #include "function/taylor_model.hpp"
-
-#include "algebra/matrix.tpl.hpp"
+#include "numeric/numeric.hpp"
+#include "symbolic/assignment.hpp"
+#include "symbolic/expression.hpp"
+#include "symbolic/space.hpp"
+#include "symbolic/templates.hpp"
+#include "symbolic/valuation.hpp"
+#include "utility/container.hpp"
+#include "utility/stlio.hpp"
 
 #include "ariadne-testing.hpp"
 
@@ -55,18 +55,21 @@ typedef SymbolicAlgebra<EffectiveNumber> EffectiveSymbolicAlgebra;
 
 class TestExpression : public Ariadne::Testing::ContextFixture {
     RealConstant o;
-    RealVariable x,y,z;
+    RealVariable x, y, z;
+
   public:
-    explicit TestExpression(Ariadne::Testing::Context& context)
-        : ContextFixture(context), o("1.0",1.0_q), x("x"), y("y"), z("z") {
+    explicit TestExpression(Ariadne::Testing::Context &context)
+        : ContextFixture(context), o("1.0", 1.0_q), x("x"), y("y"), z("z") {
     }
 
     // Exact Real vectors are checked by component, not by semidecidable
     // mathematical equality. Vector<Real> does not model std::ranges::input_range.
-    Void expect_same_real_vector(RealVector const& actual, RealVector const& expected) {
+    Void expect_same_real_vector(const RealVector &actual, const RealVector &expected) {
         ARIADNE_TESTING_EXPECT_EQUAL(actual.size(), expected.size());
-        if (actual.size()!=expected.size()) { return; }
-        for (SizeType i=0u; i!=actual.size(); ++i) {
+        if (actual.size() != expected.size()) {
+            return;
+        }
+        for (SizeType i = 0u; i != actual.size(); ++i) {
             ARIADNE_TESTING_EXPECT_SAME(actual[i], expected[i]);
         }
     }
@@ -75,159 +78,160 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         Identifier empty_identifier;
         ARIADNE_TESTING_PROVE(empty_identifier.empty());
 
-        RealVariable a("a"); ARIADNE_TESTING_NOTE("Constructed RealVariable a = " << a);
-        ARIADNE_TESTING_PROVE(a==RealVariable("a"));
-        ARIADNE_TESTING_PROVE(a==RealVariable(a));
-        ARIADNE_TESTING_PROVE(a!=RealVariable("b"));
+        RealVariable a("a");
+        ARIADNE_TESTING_NOTE("Constructed RealVariable a = " << a);
+        ARIADNE_TESTING_PROVE(a == RealVariable("a"));
+        ARIADNE_TESTING_PROVE(a == RealVariable(a));
+        ARIADNE_TESTING_PROVE(a != RealVariable("b"));
 
         Variable<Boolean> boolean_variable("flag");
         Variable<Kleenean> kleenean_variable("predicate");
-        ARIADNE_TESTING_PROVE(variable_type<Boolean>()==VariableType::BOOLEAN);
-        ARIADNE_TESTING_PROVE(variable_type<Kleenean>()==VariableType::KLEENEAN);
-        ARIADNE_TESTING_PROVE(variable_type<String>()==VariableType::STRING);
-        ARIADNE_TESTING_PROVE(variable_type<Integer>()==VariableType::INTEGER);
-        ARIADNE_TESTING_PROVE(variable_type<Real>()==VariableType::REAL);
-        ARIADNE_TESTING_PROVE(variable_type<RealVector>()==VariableType::REAL_VECTOR);
-        ARIADNE_TESTING_PROVE(variable_type<RealMatrix>()==VariableType::REAL_MATRIX);
+        ARIADNE_TESTING_PROVE(variable_type<Boolean>() == VariableType::BOOLEAN);
+        ARIADNE_TESTING_PROVE(variable_type<Kleenean>() == VariableType::KLEENEAN);
+        ARIADNE_TESTING_PROVE(variable_type<String>() == VariableType::STRING);
+        ARIADNE_TESTING_PROVE(variable_type<Integer>() == VariableType::INTEGER);
+        ARIADNE_TESTING_PROVE(variable_type<Real>() == VariableType::REAL);
+        ARIADNE_TESTING_PROVE(variable_type<RealVector>() == VariableType::REAL_VECTOR);
+        ARIADNE_TESTING_PROVE(variable_type<RealMatrix>() == VariableType::REAL_MATRIX);
 
-        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::BOOLEAN),String("Boolean"));
-        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::KLEENEAN),String("Kleenean"));
-        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::ENUMERATED),String("Enumerated"));
-        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::STRING),String("String"));
-        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::INTEGER),String("Integer"));
-        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::REAL),String("Real"));
-        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::REAL_VECTOR),String("RealVector"));
-        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::REAL_MATRIX),String("RealMatrix"));
+        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::BOOLEAN), String("Boolean"));
+        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::KLEENEAN), String("Kleenean"));
+        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::ENUMERATED), String("Enumerated"));
+        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::STRING), String("String"));
+        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::INTEGER), String("Integer"));
+        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::REAL), String("Real"));
+        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::REAL_VECTOR), String("RealVector"));
+        ARIADNE_TESTING_EXPECT_EQUAL(class_name(VariableType::REAL_MATRIX), String("RealMatrix"));
         ARIADNE_TESTING_EXPECT_EXCEPTION((void)class_name(static_cast<VariableType>(127)));
 
         RealVariable real_same_name("same");
         Variable<Boolean> boolean_same_name("same");
         RealVariable real_a("a");
         RealVariable real_b("b");
-        UntypedVariable const& untyped_real=real_same_name;
-        UntypedVariable const& untyped_boolean=boolean_same_name;
-        ARIADNE_TESTING_PROVE(untyped_real!=untyped_boolean);
-        ARIADNE_TESTING_PROVE(static_cast<UntypedVariable const&>(real_a)<static_cast<UntypedVariable const&>(real_b));
-        ARIADNE_TESTING_PROVE(untyped_boolean<untyped_real);
+        const UntypedVariable &untyped_real = real_same_name;
+        const UntypedVariable &untyped_boolean = boolean_same_name;
+        ARIADNE_TESTING_PROVE(untyped_real != untyped_boolean);
+        ARIADNE_TESTING_PROVE(static_cast<const UntypedVariable &>(real_a) < static_cast<const UntypedVariable &>(real_b));
+        ARIADNE_TESTING_PROVE(untyped_boolean < untyped_real);
 
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(VariableCategory::SIMPLE),String("SIMPLE"));
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(VariableCategory::PRIMED),String("PRIMED"));
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(VariableCategory::DOTTED),String("DOTTED"));
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(VariableCategory::SIMPLE), String("SIMPLE"));
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(VariableCategory::PRIMED), String("PRIMED"));
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(VariableCategory::DOTTED), String("DOTTED"));
         ARIADNE_TESTING_EXPECT_EXCEPTION((void)to_string(static_cast<VariableCategory>(127)));
 
         class InvalidExtendedVariable : public ExtendedUntypedVariable {
           public:
             InvalidExtendedVariable()
-                : ExtendedUntypedVariable("invalid",VariableType::REAL,static_cast<VariableCategory>(127)) { }
+                : ExtendedUntypedVariable("invalid", VariableType::REAL, static_cast<VariableCategory>(127)) {}
         };
         ARIADNE_TESTING_EXPECT_EXCEPTION((void)to_string(InvalidExtendedVariable()));
 
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(let(x)),String("x"));
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(prime(x)),String("prime(x)"));
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(dot(x)),String("dot(x)"));
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(let(x)), String("x"));
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(prime(x)), String("prime(x)"));
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(dot(x)), String("dot(x)"));
 
-        List<RealVariable> variables={x,y,z};
-        auto set_variables=set(variables);
-        auto next_variables=next(variables);
-        auto dotted_variables=dot(variables);
-        ARIADNE_TESTING_EXPECT_EQUAL(set_variables._lhs.size(),3u);
-        ARIADNE_TESTING_EXPECT_EQUAL(next_variables._lhs.size(),3u);
-        ARIADNE_TESTING_EXPECT_EQUAL(dotted_variables._lhs.size(),3u);
+        List<RealVariable> variables = {x, y, z};
+        auto set_variables = set(variables);
+        auto next_variables = next(variables);
+        auto dotted_variables = dot(variables);
+        ARIADNE_TESTING_EXPECT_EQUAL(set_variables._lhs.size(), 3u);
+        ARIADNE_TESTING_EXPECT_EQUAL(next_variables._lhs.size(), 3u);
+        ARIADNE_TESTING_EXPECT_EQUAL(dotted_variables._lhs.size(), 3u);
 
-        auto set_initializer=set(InitializerList<RealVariable>{x,y});
-        auto next_initializer=next(InitializerList<RealVariable>{x,y});
-        ARIADNE_TESTING_EXPECT_EQUAL(set_initializer._lhs.size(),2u);
-        ARIADNE_TESTING_EXPECT_EQUAL(next_initializer._lhs.size(),2u);
+        auto set_initializer = set(InitializerList<RealVariable>{x, y});
+        auto next_initializer = next(InitializerList<RealVariable>{x, y});
+        ARIADNE_TESTING_EXPECT_EQUAL(set_initializer._lhs.size(), 2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(next_initializer._lhs.size(), 2u);
 
-        ARIADNE_TESTING_PROVE(boolean_variable.name()==Identifier("flag"));
-        ARIADNE_TESTING_PROVE(kleenean_variable.name()==Identifier("predicate"));
+        ARIADNE_TESTING_PROVE(boolean_variable.name() == Identifier("flag"));
+        ARIADNE_TESTING_PROVE(kleenean_variable.name() == Identifier("predicate"));
 
         TimeVariable time_variable;
-        ARIADNE_TESTING_EXPECT_EQUAL(time_variable.name(),Identifier("t"));
+        ARIADNE_TESTING_EXPECT_EQUAL(time_variable.name(), Identifier("t"));
 
-        Variable<RealVector> vector_variable("vector_variable",2u);
-        ARIADNE_TESTING_EXPECT_EQUAL(vector_variable.size(),2u);
-        ARIADNE_TESTING_EXPECT_EQUAL(vector_variable[1u].name(),Identifier("vector_variable[1]"));
+        Variable<RealVector> vector_variable("vector_variable", 2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(vector_variable.size(), 2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(vector_variable[1u].name(), Identifier("vector_variable[1]"));
         ARIADNE_TESTING_EXPECT_EXCEPTION((void)vector_variable[2u]);
     }
 
     Void test_space() {
         RealSpace empty_space;
-        ARIADNE_TESTING_EXPECT_EQUAL(empty_space.size(),0u);
+        ARIADNE_TESTING_EXPECT_EQUAL(empty_space.size(), 0u);
 
-        List<RealVariable> variables_list={x,y};
-        List<Identifier> names={Identifier("x"),Identifier("y")};
+        List<RealVariable> variables_list = {x, y};
+        List<Identifier> names = {Identifier("x"), Identifier("y")};
         RealSpace from_variables(variables_list);
         RealSpace from_names(names);
-        RealSpace from_initializer({x,y});
+        RealSpace from_initializer({x, y});
 
         // Check both dimensions and the ordered, index-based variable accessors.
-        ARIADNE_TESTING_EXPECT_EQUAL(empty_space.dimension(),0u);
-        ARIADNE_TESTING_EXPECT_EQUAL(from_variables.dimension(),2u);
-        ARIADNE_TESTING_PROVE(from_variables[SizeType(0)]==x);
-        ARIADNE_TESTING_PROVE(from_variables[SizeType(1)]==y);
-        ARIADNE_TESTING_PROVE(from_variables.variable(0u)==x);
-        ARIADNE_TESTING_PROVE(from_variables.variable(1u)==y);
+        ARIADNE_TESTING_EXPECT_EQUAL(empty_space.dimension(), 0u);
+        ARIADNE_TESTING_EXPECT_EQUAL(from_variables.dimension(), 2u);
+        ARIADNE_TESTING_PROVE(from_variables[SizeType(0)] == x);
+        ARIADNE_TESTING_PROVE(from_variables[SizeType(1)] == y);
+        ARIADNE_TESTING_PROVE(from_variables.variable(0u) == x);
+        ARIADNE_TESTING_PROVE(from_variables.variable(1u) == y);
 
-        ARIADNE_TESTING_PROVE(from_variables==from_names);
-        ARIADNE_TESTING_PROVE(not (from_variables!=from_names));
-        ARIADNE_TESTING_PROVE(from_variables==from_initializer);
-        RealSpace different({x,z});
-        ARIADNE_TESTING_PROVE(from_variables!=different);
-        ARIADNE_TESTING_PROVE(not (from_variables==different));
+        ARIADNE_TESTING_PROVE(from_variables == from_names);
+        ARIADNE_TESTING_PROVE(not(from_variables != from_names));
+        ARIADNE_TESTING_PROVE(from_variables == from_initializer);
+        RealSpace different({x, z});
+        ARIADNE_TESTING_PROVE(from_variables != different);
+        ARIADNE_TESTING_PROVE(not(from_variables == different));
 
-        auto name_indices=from_variables.indices_from_names();
-        auto variable_indices=from_variables.indices();
-        ARIADNE_TESTING_EXPECT_EQUAL(name_indices[Identifier("x")],0u);
-        ARIADNE_TESTING_EXPECT_EQUAL(name_indices[Identifier("y")],1u);
-        ARIADNE_TESTING_EXPECT_EQUAL(variable_indices[x],0u);
-        ARIADNE_TESTING_EXPECT_EQUAL(variable_indices[y],1u);
+        auto name_indices = from_variables.indices_from_names();
+        auto variable_indices = from_variables.indices();
+        ARIADNE_TESTING_EXPECT_EQUAL(name_indices[Identifier("x")], 0u);
+        ARIADNE_TESTING_EXPECT_EQUAL(name_indices[Identifier("y")], 1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(variable_indices[x], 0u);
+        ARIADNE_TESTING_EXPECT_EQUAL(variable_indices[y], 1u);
 
         ARIADNE_TESTING_PROVE(from_variables.contains(x));
         ARIADNE_TESTING_PROVE(not from_variables.contains(z));
         Set<RealVariable> present;
         present.insert(x);
         present.insert(y);
-        Set<RealVariable> missing=present;
+        Set<RealVariable> missing = present;
         missing.insert(z);
         ARIADNE_TESTING_PROVE(from_variables.contains(present));
         ARIADNE_TESTING_PROVE(not from_variables.contains(missing));
 
-        ARIADNE_TESTING_EXPECT_EQUAL(from_variables[x],0u);
-        ARIADNE_TESTING_EXPECT_EQUAL(from_variables[Identifier("y")],1u);
-        ARIADNE_TESTING_EXPECT_EQUAL(from_variables.index(x),0u);
-        ARIADNE_TESTING_EXPECT_EQUAL(from_variables.index(Identifier("y")),1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(from_variables[x], 0u);
+        ARIADNE_TESTING_EXPECT_EQUAL(from_variables[Identifier("y")], 1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(from_variables.index(x), 0u);
+        ARIADNE_TESTING_EXPECT_EQUAL(from_variables.index(Identifier("y")), 1u);
         ARIADNE_TESTING_EXPECT_EXCEPTION((void)from_variables.index(z));
         ARIADNE_TESTING_EXPECT_EXCEPTION((void)from_variables.index(Identifier("z")));
 
         RealSpace inserted({x});
         inserted.insert(x);
-        ARIADNE_TESTING_EXPECT_EQUAL(inserted.size(),1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(inserted.size(), 1u);
         inserted.insert(y);
-        ARIADNE_TESTING_EXPECT_EQUAL(inserted.size(),2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(inserted.size(), 2u);
 
         RealSpace adjoined({x});
-        adjoined.adjoin(RealSpace({x,y,z}));
-        ARIADNE_TESTING_EXPECT_EQUAL(adjoined.size(),3u);
+        adjoined.adjoin(RealSpace({x, y, z}));
+        ARIADNE_TESTING_EXPECT_EQUAL(adjoined.size(), 3u);
         ARIADNE_TESTING_PROVE(adjoined.contains(z));
 
         RealSpace append_space({x});
         append_space.append(y);
-        ARIADNE_TESTING_EXPECT_EQUAL(append_space.size(),2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(append_space.size(), 2u);
         ARIADNE_TESTING_EXPECT_EXCEPTION((void)append_space.append(y));
-        ARIADNE_TESTING_EXPECT_EXCEPTION((void)RealSpace({x,x}));
+        ARIADNE_TESTING_EXPECT_EXCEPTION((void)RealSpace({x, x}));
 
-        ARIADNE_TESTING_EXPECT_EQUAL(dimension(from_variables),2u);
-        ARIADNE_TESTING_PROVE(real_space(names)==from_variables);
-        ARIADNE_TESTING_PROVE(variable_names(variables_list)==names);
-        ARIADNE_TESTING_PROVE(variable_names(from_variables)==names);
+        ARIADNE_TESTING_EXPECT_EQUAL(dimension(from_variables), 2u);
+        ARIADNE_TESTING_PROVE(real_space(names) == from_variables);
+        ARIADNE_TESTING_PROVE(variable_names(variables_list) == names);
+        ARIADNE_TESTING_PROVE(variable_names(from_variables) == names);
     }
 
     Void test_constants() {
         StringConstant state(String("active"));
-        ARIADNE_TESTING_EXPECT_EQUAL(state.name(),Identifier("active"));
-        ARIADNE_TESTING_EXPECT_EQUAL(state.value(),String("active"));
-        ARIADNE_TESTING_EXPECT_EQUAL(state.val(),String("active"));
+        ARIADNE_TESTING_EXPECT_EQUAL(state.name(), Identifier("active"));
+        ARIADNE_TESTING_EXPECT_EQUAL(state.value(), String("active"));
+        ARIADNE_TESTING_EXPECT_EQUAL(state.val(), String("active"));
     }
 
     Void test_valuations() {
@@ -236,23 +240,23 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         Variable<Integer> count("count");
         Variable<Integer> level("level");
 
-        Map<Identifier,String> string_values;
-        string_values.insert(mode.name(),String("idle"));
-        string_values.insert(state.name(),String("ready"));
+        Map<Identifier, String> string_values;
+        string_values.insert(mode.name(), String("idle"));
+        string_values.insert(state.name(), String("ready"));
 
-        Map<Identifier,Integer> integer_values;
-        integer_values.insert(count.name(),Integer(1));
-        integer_values.insert(level.name(),Integer(2));
+        Map<Identifier, Integer> integer_values;
+        integer_values.insert(count.name(), Integer(1));
+        integer_values.insert(level.name(), Integer(2));
 
         DiscreteValuation empty_valuation;
         DiscreteValuation string_valuation(string_values);
         DiscreteValuation integer_valuation(integer_values);
-        DiscreteValuation valuation(string_values,integer_values);
+        DiscreteValuation valuation(string_values, integer_values);
 
-        ARIADNE_TESTING_EXPECT_EQUAL(valuation[mode],String("idle"));
-        ARIADNE_TESTING_EXPECT_EQUAL(valuation[count],Integer(1));
-        ARIADNE_TESTING_EXPECT_EQUAL(valuation.string_values().size(),2u);
-        ARIADNE_TESTING_EXPECT_EQUAL(valuation.integer_values().size(),2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(valuation[mode], String("idle"));
+        ARIADNE_TESTING_EXPECT_EQUAL(valuation[count], Integer(1));
+        ARIADNE_TESTING_EXPECT_EQUAL(valuation.string_values().size(), 2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(valuation.integer_values().size(), 2u);
 
         StringValuation direct_string_valuation(string_values);
         IntegerValuation direct_integer_valuation(integer_values);
@@ -269,29 +273,29 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         discrete_stream << valuation;
         ARIADNE_TESTING_PROVE(not discrete_stream.str().empty());
 
-        ARIADNE_TESTING_PROVE(direct_string_valuation==StringValuation(string_values));
+        ARIADNE_TESTING_PROVE(direct_string_valuation == StringValuation(string_values));
 
-        Map<Identifier,String> different_string_values=string_values;
-        different_string_values[mode.name()]=String("busy");
-        ARIADNE_TESTING_PROVE(not (direct_string_valuation==StringValuation(different_string_values)));
+        Map<Identifier, String> different_string_values = string_values;
+        different_string_values[mode.name()] = String("busy");
+        ARIADNE_TESTING_PROVE(not(direct_string_valuation == StringValuation(different_string_values)));
 
-        Map<Identifier,String> lower_key_string_values;
-        lower_key_string_values.insert(Identifier("a"),String("same"));
-        Map<Identifier,String> upper_key_string_values;
-        upper_key_string_values.insert(Identifier("b"),String("same"));
-        ARIADNE_TESTING_EXPECT_EXCEPTION((void)(StringValuation(lower_key_string_values)==StringValuation(upper_key_string_values)));
-        ARIADNE_TESTING_EXPECT_EXCEPTION((void)(StringValuation(upper_key_string_values)==StringValuation(lower_key_string_values)));
+        Map<Identifier, String> lower_key_string_values;
+        lower_key_string_values.insert(Identifier("a"), String("same"));
+        Map<Identifier, String> upper_key_string_values;
+        upper_key_string_values.insert(Identifier("b"), String("same"));
+        ARIADNE_TESTING_EXPECT_EXCEPTION((void)(StringValuation(lower_key_string_values) == StringValuation(upper_key_string_values)));
+        ARIADNE_TESTING_EXPECT_EXCEPTION((void)(StringValuation(upper_key_string_values) == StringValuation(lower_key_string_values)));
 
-        DiscreteValuation equal_valuation(string_values,integer_values);
-        ARIADNE_TESTING_PROVE(valuation==equal_valuation);
+        DiscreteValuation equal_valuation(string_values, integer_values);
+        ARIADNE_TESTING_PROVE(valuation == equal_valuation);
 
-        DiscreteValuation different_string_valuation(different_string_values,integer_values);
-        ARIADNE_TESTING_PROVE(not (valuation==different_string_valuation));
+        DiscreteValuation different_string_valuation(different_string_values, integer_values);
+        ARIADNE_TESTING_PROVE(not(valuation == different_string_valuation));
 
-        Map<Identifier,Integer> different_integer_values=integer_values;
-        different_integer_values[count.name()]=Integer(3);
-        DiscreteValuation different_integer_valuation(string_values,different_integer_values);
-        ARIADNE_TESTING_PROVE(not (valuation==different_integer_valuation));
+        Map<Identifier, Integer> different_integer_values = integer_values;
+        different_integer_values[count.name()] = Integer(3);
+        DiscreteValuation different_integer_valuation(string_values, different_integer_values);
+        ARIADNE_TESTING_PROVE(not(valuation == different_integer_valuation));
 
         ARIADNE_TESTING_PROVE(empty_valuation.string_values().empty());
         ARIADNE_TESTING_PROVE(empty_valuation.integer_values().empty());
@@ -301,53 +305,52 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
 
     Void test_templates() {
         Get get;
-        ARIADNE_TESTING_EXPECT_EQUAL(get.kind(),OperatorKind::COORDINATE);
+        ARIADNE_TESTING_EXPECT_EQUAL(get.kind(), OperatorKind::COORDINATE);
 
-        Vector<Int> values={3,5};
-        ARIADNE_TESTING_EXPECT_EQUAL(get(values,1u),Int(5));
+        Vector<Int> values = {3, 5};
+        ARIADNE_TESTING_EXPECT_EQUAL(get(values, 1u), Int(5));
 
         Vec vec;
-        ARIADNE_TESTING_EXPECT_EQUAL(vec.code(),OperatorCode::VEC);
-        ARIADNE_TESTING_EXPECT_EQUAL(vec.kind(),OperatorKind::NULLARY);
+        ARIADNE_TESTING_EXPECT_EQUAL(vec.code(), OperatorCode::VEC);
+        ARIADNE_TESTING_EXPECT_EQUAL(vec.kind(), OperatorKind::NULLARY);
         ARIADNE_TESTING_PROVE(not to_string(vec).empty());
 
-        Symbolic<Add,Int,Int> binary(Add(),Int(1),Int(2));
+        Symbolic<Add, Int, Int> binary(Add(), Int(1), Int(2));
         std::ostringstream binary_stream;
         binary_stream << binary;
         ARIADNE_TESTING_PROVE(not binary_stream.str().empty());
 
-        Symbolic<Get,Vector<Int>,SizeType> getter(Get(),values,1u);
-        ARIADNE_TESTING_EXPECT_EQUAL(getter.op().code(),OperatorCode::GET);
-        ARIADNE_TESTING_EXPECT_EQUAL(getter.arg().size(),2u);
-        ARIADNE_TESTING_EXPECT_EQUAL(getter.arg1().size(),2u);
-        ARIADNE_TESTING_EXPECT_EQUAL(getter.arg2(),1u);
-        ARIADNE_TESTING_EXPECT_EQUAL(getter.vec().size(),2u);
-        ARIADNE_TESTING_EXPECT_EQUAL(getter.ind(),1u);
+        Symbolic<Get, Vector<Int>, SizeType> getter(Get(), values, 1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(getter.op().code(), OperatorCode::GET);
+        ARIADNE_TESTING_EXPECT_EQUAL(getter.arg().size(), 2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(getter.arg1().size(), 2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(getter.arg2(), 1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(getter.vec().size(), 2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(getter.ind(), 1u);
 
-        RealVariables template_variables("template",2u);
-        RealVectorExpression vector_expression=template_variables;
-        RealExpression direct_component=get(vector_expression,1u);
+        RealVariables template_variables("template", 2u);
+        RealVectorExpression vector_expression = template_variables;
+        RealExpression direct_component = get(vector_expression, 1u);
 
-        using GetMethod=RealExpression (Get::*)(RealVectorExpression const&,SizeType);
-        GetMethod get_method=&Get::operator()<RealVectorExpression,SizeType>;
-        RealExpression functor_component=(get.*get_method)(vector_expression,SizeType(1));
-        ARIADNE_TESTING_PROVE(identical(functor_component,direct_component));
+        using GetMethod = RealExpression (Get::*)(const RealVectorExpression &, SizeType);
+        GetMethod get_method = &Get::operator()<RealVectorExpression, SizeType>;
+        RealExpression functor_component = (get.*get_method)(vector_expression, SizeType(1));
+        ARIADNE_TESTING_PROVE(identical(functor_component, direct_component));
 
-        using GetterOperator=OperatorVariant<Get>;
-        using GetterNode=Symbolic<GetterOperator,RealVectorExpression,SizeType>;
-        GetterNode concrete_getter(GetterOperator(Get()),vector_expression,SizeType(1));
+        using GetterOperator = OperatorVariant<Get>;
+        using GetterNode = Symbolic<GetterOperator, RealVectorExpression, SizeType>;
+        GetterNode concrete_getter(GetterOperator(Get()), vector_expression, SizeType(1));
 
-        using GetterOpMethod=GetterOperator (GetterNode::*)() const;
-        using GetterVecMethod=RealVectorExpression (GetterNode::*)() const;
-        using GetterIndMethod=SizeType (GetterNode::*)() const;
-        GetterOpMethod getter_op_method=&GetterNode::op;
-        GetterVecMethod getter_vec_method=&GetterNode::vec;
-        GetterIndMethod getter_ind_method=&GetterNode::ind;
+        using GetterOpMethod = GetterOperator (GetterNode::*)() const;
+        using GetterVecMethod = RealVectorExpression (GetterNode::*)() const;
+        using GetterIndMethod = SizeType (GetterNode::*)() const;
+        GetterOpMethod getter_op_method = &GetterNode::op;
+        GetterVecMethod getter_vec_method = &GetterNode::vec;
+        GetterIndMethod getter_ind_method = &GetterNode::ind;
 
-        ARIADNE_TESTING_EXPECT_EQUAL((concrete_getter.*getter_op_method)().code(),OperatorCode::GET);
-        ARIADNE_TESTING_EXPECT_EQUAL((concrete_getter.*getter_vec_method)().size(),2u);
-        ARIADNE_TESTING_EXPECT_EQUAL((concrete_getter.*getter_ind_method)(),SizeType(1));
-
+        ARIADNE_TESTING_EXPECT_EQUAL((concrete_getter.*getter_op_method)().code(), OperatorCode::GET);
+        ARIADNE_TESTING_EXPECT_EQUAL((concrete_getter.*getter_vec_method)().size(), 2u);
+        ARIADNE_TESTING_EXPECT_EQUAL((concrete_getter.*getter_ind_method)(), SizeType(1));
     }
 
     Void test_scalar_expression_templates() {
@@ -356,28 +359,37 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         BooleanExpression boolean_default;
         BooleanExpression boolean_copy(boolean_default);
         BooleanExpression boolean_constant{Constant<Boolean>(Boolean())};
-        ARIADNE_TESTING_NOTE("Executing: boolean_copy.code()"); boolean_copy.code();
-        ARIADNE_TESTING_NOTE("Executing: boolean_constant.val()"); boolean_constant.val();
+        ARIADNE_TESTING_NOTE("Executing: boolean_copy.code()");
+        boolean_copy.code();
+        ARIADNE_TESTING_NOTE("Executing: boolean_constant.val()");
+        boolean_constant.val();
         BooleanExpression boolean_from_variable(boolean_variable);
-        ARIADNE_TESTING_NOTE("Executing: boolean_default.val()"); boolean_default.val();
-        ARIADNE_TESTING_EXPECT_EQUAL(boolean_from_variable.var(),Identifier("boolean"));
-        ARIADNE_TESTING_NOTE("Executing: boolean_from_variable.op()"); boolean_from_variable.op();
-        ARIADNE_TESTING_NOTE("Executing: boolean_from_variable.code()"); boolean_from_variable.code();
-        ARIADNE_TESTING_NOTE("Executing: boolean_from_variable.kind()"); boolean_from_variable.kind();
-        ARIADNE_TESTING_EXPECT_EQUAL(boolean_from_variable.arguments().size(),1u);
-        ARIADNE_TESTING_EXPECT_EQUAL(arguments(boolean_from_variable).size(),1u);
-        ARIADNE_TESTING_NOTE("Executing: BooleanExpression::constant(Boolean())"); BooleanExpression::constant(Boolean());
-        ARIADNE_TESTING_NOTE("Executing: BooleanExpression::constant(Constant<Boolean>(Boolean()))"); BooleanExpression::constant(Constant<Boolean>(Boolean()));
-        ARIADNE_TESTING_NOTE("Executing: BooleanExpression::variable(Identifier(\"boolean\"))"); BooleanExpression::variable(Identifier("boolean"));
-        BooleanExpression boolean_not=!boolean_from_variable;
-        BooleanExpression boolean_binary=boolean_from_variable&&BooleanExpression(boolean_other);
-        ARIADNE_TESTING_EXPECT_EQUAL(boolean_not.arg().var(),Identifier("boolean"));
-        ARIADNE_TESTING_EXPECT_EQUAL(boolean_binary.arg1().var(),Identifier("boolean"));
-        ARIADNE_TESTING_EXPECT_EQUAL(boolean_binary.arg2().var(),Identifier("boolean_other"));
+        ARIADNE_TESTING_NOTE("Executing: boolean_default.val()");
+        boolean_default.val();
+        ARIADNE_TESTING_EXPECT_EQUAL(boolean_from_variable.var(), Identifier("boolean"));
+        ARIADNE_TESTING_NOTE("Executing: boolean_from_variable.op()");
+        boolean_from_variable.op();
+        ARIADNE_TESTING_NOTE("Executing: boolean_from_variable.code()");
+        boolean_from_variable.code();
+        ARIADNE_TESTING_NOTE("Executing: boolean_from_variable.kind()");
+        boolean_from_variable.kind();
+        ARIADNE_TESTING_EXPECT_EQUAL(boolean_from_variable.arguments().size(), 1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(arguments(boolean_from_variable).size(), 1u);
+        ARIADNE_TESTING_NOTE("Executing: BooleanExpression::constant(Boolean())");
+        BooleanExpression::constant(Boolean());
+        ARIADNE_TESTING_NOTE("Executing: BooleanExpression::constant(Constant<Boolean>(Boolean()))");
+        BooleanExpression::constant(Constant<Boolean>(Boolean()));
+        ARIADNE_TESTING_NOTE("Executing: BooleanExpression::variable(Identifier(\"boolean\"))");
+        BooleanExpression::variable(Identifier("boolean"));
+        BooleanExpression boolean_not = !boolean_from_variable;
+        BooleanExpression boolean_binary = boolean_from_variable && BooleanExpression(boolean_other);
+        ARIADNE_TESTING_EXPECT_EQUAL(boolean_not.arg().var(), Identifier("boolean"));
+        ARIADNE_TESTING_EXPECT_EQUAL(boolean_binary.arg1().var(), Identifier("boolean"));
+        ARIADNE_TESTING_EXPECT_EQUAL(boolean_binary.arg2().var(), Identifier("boolean_other"));
         ARIADNE_TESTING_PROVE(not to_string(boolean_binary).empty());
-        ARIADNE_TESTING_EXPECT_EQUAL(boolean_constant.arguments().size(),0u);
-        ARIADNE_TESTING_EXPECT_EQUAL(boolean_not.arguments().size(),1u);
-        ARIADNE_TESTING_EXPECT_EQUAL(boolean_binary.arguments().size(),2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(boolean_constant.arguments().size(), 0u);
+        ARIADNE_TESTING_EXPECT_EQUAL(boolean_not.arguments().size(), 1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(boolean_binary.arguments().size(), 2u);
 
         std::ostringstream boolean_operation_stream;
         boolean_operation_stream << OperationExpressionWriter()(boolean_binary);
@@ -388,35 +400,44 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         KleeneanExpression kleenean_default;
         KleeneanExpression kleenean_copy(kleenean_default);
         KleeneanExpression kleenean_constant{Constant<Kleenean>(Kleenean())};
-        ARIADNE_TESTING_NOTE("Executing: kleenean_copy.code()"); kleenean_copy.code();
-        ARIADNE_TESTING_NOTE("Executing: kleenean_constant.val()"); kleenean_constant.val();
+        ARIADNE_TESTING_NOTE("Executing: kleenean_copy.code()");
+        kleenean_copy.code();
+        ARIADNE_TESTING_NOTE("Executing: kleenean_constant.val()");
+        kleenean_constant.val();
         KleeneanExpression kleenean_from_variable(kleenean_variable);
-        ARIADNE_TESTING_NOTE("Executing: kleenean_default.val()"); kleenean_default.val();
-        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_from_variable.var(),Identifier("kleenean"));
-        ARIADNE_TESTING_NOTE("Executing: kleenean_from_variable.op()"); kleenean_from_variable.op();
-        ARIADNE_TESTING_NOTE("Executing: kleenean_from_variable.code()"); kleenean_from_variable.code();
-        ARIADNE_TESTING_NOTE("Executing: kleenean_from_variable.kind()"); kleenean_from_variable.kind();
-        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_from_variable.arguments().size(),1u);
-        ARIADNE_TESTING_NOTE("Executing: KleeneanExpression::constant(Kleenean())"); KleeneanExpression::constant(Kleenean());
-        ARIADNE_TESTING_NOTE("Executing: KleeneanExpression::constant(Constant<Kleenean>(Kleenean()))"); KleeneanExpression::constant(Constant<Kleenean>(Kleenean()));
-        ARIADNE_TESTING_NOTE("Executing: KleeneanExpression::variable(Identifier(\"kleenean\"))"); KleeneanExpression::variable(Identifier("kleenean"));
-        KleeneanExpression kleenean_not=!kleenean_from_variable;
-        KleeneanExpression kleenean_binary=kleenean_from_variable&&KleeneanExpression(kleenean_other);
-        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_not.arg().var(),Identifier("kleenean"));
-        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_binary.arg1().var(),Identifier("kleenean"));
-        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_binary.arg2().var(),Identifier("kleenean_other"));
+        ARIADNE_TESTING_NOTE("Executing: kleenean_default.val()");
+        kleenean_default.val();
+        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_from_variable.var(), Identifier("kleenean"));
+        ARIADNE_TESTING_NOTE("Executing: kleenean_from_variable.op()");
+        kleenean_from_variable.op();
+        ARIADNE_TESTING_NOTE("Executing: kleenean_from_variable.code()");
+        kleenean_from_variable.code();
+        ARIADNE_TESTING_NOTE("Executing: kleenean_from_variable.kind()");
+        kleenean_from_variable.kind();
+        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_from_variable.arguments().size(), 1u);
+        ARIADNE_TESTING_NOTE("Executing: KleeneanExpression::constant(Kleenean())");
+        KleeneanExpression::constant(Kleenean());
+        ARIADNE_TESTING_NOTE("Executing: KleeneanExpression::constant(Constant<Kleenean>(Kleenean()))");
+        KleeneanExpression::constant(Constant<Kleenean>(Kleenean()));
+        ARIADNE_TESTING_NOTE("Executing: KleeneanExpression::variable(Identifier(\"kleenean\"))");
+        KleeneanExpression::variable(Identifier("kleenean"));
+        KleeneanExpression kleenean_not = !kleenean_from_variable;
+        KleeneanExpression kleenean_binary = kleenean_from_variable && KleeneanExpression(kleenean_other);
+        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_not.arg().var(), Identifier("kleenean"));
+        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_binary.arg1().var(), Identifier("kleenean"));
+        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_binary.arg2().var(), Identifier("kleenean_other"));
         ARIADNE_TESTING_PROVE(not to_string(kleenean_binary).empty());
-        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_constant.arguments().size(),0u);
-        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_not.arguments().size(),1u);
-        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_binary.arguments().size(),2u);
-        ARIADNE_TESTING_EXPECT_EQUAL(sgn(RealExpression(x)).arguments().size(),1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_constant.arguments().size(), 0u);
+        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_not.arguments().size(), 1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(kleenean_binary.arguments().size(), 2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(sgn(RealExpression(x)).arguments().size(), 1u);
         ARIADNE_TESTING_PROVE(identical(
             KleeneanExpression::constant(Kleenean()),
             KleeneanExpression::constant(Kleenean())));
-        ARIADNE_TESTING_PROVE(is_constant(kleenean_constant,Kleenean()));
-        ContinuousPredicate same_op_predicate1=x>=0;
-        ContinuousPredicate same_op_predicate2=y>=0;
-        ARIADNE_TESTING_PROVE(not identical(same_op_predicate1,same_op_predicate2));
+        ARIADNE_TESTING_PROVE(is_constant(kleenean_constant, Kleenean()));
+        ContinuousPredicate same_op_predicate1 = x >= 0;
+        ContinuousPredicate same_op_predicate2 = y >= 0;
+        ARIADNE_TESTING_PROVE(not identical(same_op_predicate1, same_op_predicate2));
 
         std::ostringstream kleenean_operation_stream;
         kleenean_operation_stream << OperationExpressionWriter()(kleenean_binary);
@@ -426,22 +447,29 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         StringExpression string_default;
         StringExpression string_value(String("value"));
         StringExpression string_copy(string_value);
-        ARIADNE_TESTING_EXPECT_EQUAL(string_default.val(),String());
-        ARIADNE_TESTING_NOTE("Executing: string_copy.code()"); string_copy.code();
+        ARIADNE_TESTING_EXPECT_EQUAL(string_default.val(), String());
+        ARIADNE_TESTING_NOTE("Executing: string_copy.code()");
+        string_copy.code();
         StringExpression string_constant(StringConstant(String("named")));
         StringExpression string_from_variable(string_variable);
-        ARIADNE_TESTING_EXPECT_EQUAL(string_value.val(),String("value"));
-        ARIADNE_TESTING_EXPECT_EQUAL(string_from_variable.var(),Identifier("string"));
-        ARIADNE_TESTING_NOTE("Executing: string_from_variable.op()"); string_from_variable.op();
-        ARIADNE_TESTING_NOTE("Executing: string_from_variable.code()"); string_from_variable.code();
-        ARIADNE_TESTING_NOTE("Executing: string_from_variable.kind()"); string_from_variable.kind();
-        ARIADNE_TESTING_EXPECT_EQUAL(string_from_variable.arguments().size(),1u);
-        ARIADNE_TESTING_NOTE("Executing: StringExpression::constant(String(\"value\"))"); StringExpression::constant(String("value"));
-        ARIADNE_TESTING_NOTE("Executing: StringExpression::constant(StringConstant(String(\"named\")))"); StringExpression::constant(StringConstant(String("named")));
-        ARIADNE_TESTING_NOTE("Executing: StringExpression::variable(Identifier(\"string\"))"); StringExpression::variable(Identifier("string"));
+        ARIADNE_TESTING_EXPECT_EQUAL(string_value.val(), String("value"));
+        ARIADNE_TESTING_EXPECT_EQUAL(string_from_variable.var(), Identifier("string"));
+        ARIADNE_TESTING_NOTE("Executing: string_from_variable.op()");
+        string_from_variable.op();
+        ARIADNE_TESTING_NOTE("Executing: string_from_variable.code()");
+        string_from_variable.code();
+        ARIADNE_TESTING_NOTE("Executing: string_from_variable.kind()");
+        string_from_variable.kind();
+        ARIADNE_TESTING_EXPECT_EQUAL(string_from_variable.arguments().size(), 1u);
+        ARIADNE_TESTING_NOTE("Executing: StringExpression::constant(String(\"value\"))");
+        StringExpression::constant(String("value"));
+        ARIADNE_TESTING_NOTE("Executing: StringExpression::constant(StringConstant(String(\"named\")))");
+        StringExpression::constant(StringConstant(String("named")));
+        ARIADNE_TESTING_NOTE("Executing: StringExpression::variable(Identifier(\"string\"))");
+        StringExpression::variable(Identifier("string"));
         ARIADNE_TESTING_PROVE(not to_string(string_from_variable).empty());
-        ARIADNE_TESTING_EXPECT_EQUAL(string_constant.arguments().size(),0u);
-        ARIADNE_TESTING_EXPECT_EQUAL((string_variable==String("mapped")).arguments().size(),1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(string_constant.arguments().size(), 0u);
+        ARIADNE_TESTING_EXPECT_EQUAL((string_variable == String("mapped")).arguments().size(), 1u);
 
         std::ostringstream string_operation_stream;
         string_operation_stream << OperationExpressionWriter()(string_from_variable);
@@ -451,28 +479,35 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         IntegerVariable integer_other("integer_other");
         IntegerExpression integer_default;
         IntegerExpression integer_copy(integer_default);
-        ARIADNE_TESTING_NOTE("Executing: integer_copy.code()"); integer_copy.code();
+        ARIADNE_TESTING_NOTE("Executing: integer_copy.code()");
+        integer_copy.code();
         IntegerExpression integer_constant(IntegerConstant(Integer(7)));
         IntegerExpression integer_from_variable(integer_variable);
-        ARIADNE_TESTING_EXPECT_EQUAL(integer_constant.val(),Integer(7));
-        ARIADNE_TESTING_EXPECT_EQUAL(integer_from_variable.var(),Identifier("integer"));
-        ARIADNE_TESTING_NOTE("Executing: integer_from_variable.op()"); integer_from_variable.op();
-        ARIADNE_TESTING_NOTE("Executing: integer_from_variable.code()"); integer_from_variable.code();
-        ARIADNE_TESTING_NOTE("Executing: integer_from_variable.kind()"); integer_from_variable.kind();
-        ARIADNE_TESTING_EXPECT_EQUAL(integer_from_variable.arguments().size(),1u);
-        ARIADNE_TESTING_NOTE("Executing: IntegerExpression::constant(Integer(7))"); IntegerExpression::constant(Integer(7));
-        ARIADNE_TESTING_NOTE("Executing: IntegerExpression::constant(IntegerConstant(Integer(7)))"); IntegerExpression::constant(IntegerConstant(Integer(7)));
-        ARIADNE_TESTING_NOTE("Executing: IntegerExpression::variable(Identifier(\"integer\"))"); IntegerExpression::variable(Identifier("integer"));
-        IntegerExpression integer_negative=-integer_from_variable;
-        IntegerExpression integer_binary=integer_from_variable+IntegerExpression(integer_other);
-        ARIADNE_TESTING_EXPECT_EQUAL(integer_negative.arg().var(),Identifier("integer"));
-        ARIADNE_TESTING_EXPECT_EQUAL(integer_binary.arg1().var(),Identifier("integer"));
-        ARIADNE_TESTING_EXPECT_EQUAL(integer_binary.arg2().var(),Identifier("integer_other"));
+        ARIADNE_TESTING_EXPECT_EQUAL(integer_constant.val(), Integer(7));
+        ARIADNE_TESTING_EXPECT_EQUAL(integer_from_variable.var(), Identifier("integer"));
+        ARIADNE_TESTING_NOTE("Executing: integer_from_variable.op()");
+        integer_from_variable.op();
+        ARIADNE_TESTING_NOTE("Executing: integer_from_variable.code()");
+        integer_from_variable.code();
+        ARIADNE_TESTING_NOTE("Executing: integer_from_variable.kind()");
+        integer_from_variable.kind();
+        ARIADNE_TESTING_EXPECT_EQUAL(integer_from_variable.arguments().size(), 1u);
+        ARIADNE_TESTING_NOTE("Executing: IntegerExpression::constant(Integer(7))");
+        IntegerExpression::constant(Integer(7));
+        ARIADNE_TESTING_NOTE("Executing: IntegerExpression::constant(IntegerConstant(Integer(7)))");
+        IntegerExpression::constant(IntegerConstant(Integer(7)));
+        ARIADNE_TESTING_NOTE("Executing: IntegerExpression::variable(Identifier(\"integer\"))");
+        IntegerExpression::variable(Identifier("integer"));
+        IntegerExpression integer_negative = -integer_from_variable;
+        IntegerExpression integer_binary = integer_from_variable + IntegerExpression(integer_other);
+        ARIADNE_TESTING_EXPECT_EQUAL(integer_negative.arg().var(), Identifier("integer"));
+        ARIADNE_TESTING_EXPECT_EQUAL(integer_binary.arg1().var(), Identifier("integer"));
+        ARIADNE_TESTING_EXPECT_EQUAL(integer_binary.arg2().var(), Identifier("integer_other"));
         ARIADNE_TESTING_PROVE(not to_string(integer_binary).empty());
-        ARIADNE_TESTING_EXPECT_EQUAL((integer_from_variable<IntegerExpression(integer_other)).arguments().size(),2u);
-        ARIADNE_TESTING_EXPECT_EQUAL(integer_constant.arguments().size(),0u);
-        ARIADNE_TESTING_EXPECT_EQUAL(integer_negative.arguments().size(),1u);
-        ARIADNE_TESTING_EXPECT_EQUAL(integer_binary.arguments().size(),2u);
+        ARIADNE_TESTING_EXPECT_EQUAL((integer_from_variable < IntegerExpression(integer_other)).arguments().size(), 2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(integer_constant.arguments().size(), 0u);
+        ARIADNE_TESTING_EXPECT_EQUAL(integer_negative.arguments().size(), 1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(integer_binary.arguments().size(), 2u);
 
         std::ostringstream integer_operation_stream;
         integer_operation_stream << OperationExpressionWriter()(integer_binary);
@@ -485,1110 +520,1237 @@ class TestExpression : public Ariadne::Testing::ContextFixture {
         // Mathematical equality of Real values is only semidecidable.
         // These values are exact, so require identical concrete bounds.
         RealExpression real_constant(Real(2));
-        ARIADNE_TESTING_EXPECT_SAME(real_constant.val(),Real(2));
-        RealExpression real_named_constant=RealExpression::constant(RealConstant("two",Real(2)));
-        ARIADNE_TESTING_EXPECT_SAME(real_named_constant.val(),Real(2));
-        RealExpression real_from_identifier=RealExpression::variable(Identifier("real_identifier"));
-        ARIADNE_TESTING_EXPECT_EQUAL(real_from_identifier.var(),Identifier("real_identifier"));
-        RealExpression real_power=pow(x,3);
-        ARIADNE_TESTING_EXPECT_EQUAL(real_power.num(),3);
-        ARIADNE_TESTING_EXPECT_EQUAL(arguments(x+y).size(),2u);
-        ARIADNE_TESTING_PROVE(is_variable(RealExpression(x),x));
-        ARIADNE_TESTING_PROVE(not is_variable(RealExpression(y),x));
-        ARIADNE_TESTING_PROVE(not is_variable(RealExpression(2),x));
-        ARIADNE_TESTING_PROVE(is_constant(RealExpression(2),Real(2)));
-        ARIADNE_TESTING_PROVE(not is_constant(RealExpression(3),Real(2)));
-        ARIADNE_TESTING_PROVE(not is_constant(RealExpression(x),Real(2)));
-        ARIADNE_TESTING_EXPECT_EQUAL(real_power.arguments().size(),1u);
+        ARIADNE_TESTING_EXPECT_SAME(real_constant.val(), Real(2));
+        RealExpression real_named_constant = RealExpression::constant(RealConstant("two", Real(2)));
+        ARIADNE_TESTING_EXPECT_SAME(real_named_constant.val(), Real(2));
+        RealExpression real_from_identifier = RealExpression::variable(Identifier("real_identifier"));
+        ARIADNE_TESTING_EXPECT_EQUAL(real_from_identifier.var(), Identifier("real_identifier"));
+        RealExpression real_power = pow(x, 3);
+        ARIADNE_TESTING_EXPECT_EQUAL(real_power.num(), 3);
+        ARIADNE_TESTING_EXPECT_EQUAL(arguments(x + y).size(), 2u);
+        ARIADNE_TESTING_PROVE(is_variable(RealExpression(x), x));
+        ARIADNE_TESTING_PROVE(not is_variable(RealExpression(y), x));
+        ARIADNE_TESTING_PROVE(not is_variable(RealExpression(2), x));
+        ARIADNE_TESTING_PROVE(is_constant(RealExpression(2), Real(2)));
+        ARIADNE_TESTING_PROVE(not is_constant(RealExpression(3), Real(2)));
+        ARIADNE_TESTING_PROVE(not is_constant(RealExpression(x), Real(2)));
+        ARIADNE_TESTING_EXPECT_EQUAL(real_power.arguments().size(), 1u);
 
-        RealVectorExpression real_vector_arguments({x,y});
-        ARIADNE_TESTING_EXPECT_EQUAL(real_vector_arguments.arguments().size(),2u);
-        ARIADNE_TESTING_EXPECT_EQUAL(real_vector_arguments[0].arguments().size(),2u);
+        RealVectorExpression real_vector_arguments({x, y});
+        ARIADNE_TESTING_EXPECT_EQUAL(real_vector_arguments.arguments().size(), 2u);
+        ARIADNE_TESTING_EXPECT_EQUAL(real_vector_arguments[0].arguments().size(), 2u);
 
         StringValuation string_valuation;
-        string_valuation.set(string_variable,String("mapped"));
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(string_from_variable,string_valuation),String("mapped"));
-        ARIADNE_TESTING_NOTE("Executing: evaluate(string_variable==String(\"mapped\"),string_valuation)"); evaluate(string_variable==String("mapped"),string_valuation);
+        string_valuation.set(string_variable, String("mapped"));
+        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(string_from_variable, string_valuation), String("mapped"));
+        ARIADNE_TESTING_NOTE("Executing: evaluate(string_variable==String(\"mapped\"),string_valuation)");
+        evaluate(string_variable == String("mapped"), string_valuation);
 
         IntegerValuation integer_valuation;
-        integer_valuation.set(integer_variable,Integer(9));
-        integer_valuation.set(integer_other,Integer(10));
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(integer_from_variable,integer_valuation),Integer(9));
-        ARIADNE_TESTING_NOTE("Executing: evaluate(integer_from_variable<IntegerExpression(integer_other),integer_valuation)"); evaluate(integer_from_variable<IntegerExpression(integer_other),integer_valuation);
-        ARIADNE_TESTING_NOTE("Executing: evaluate(integer_negative,integer_valuation)"); evaluate(integer_negative,integer_valuation);
-        ARIADNE_TESTING_NOTE("Executing: evaluate(IntegerExpression(1)<IntegerExpression(2),string_valuation)"); evaluate(IntegerExpression(1)<IntegerExpression(2),string_valuation);
+        integer_valuation.set(integer_variable, Integer(9));
+        integer_valuation.set(integer_other, Integer(10));
+        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(integer_from_variable, integer_valuation), Integer(9));
+        ARIADNE_TESTING_NOTE("Executing: evaluate(integer_from_variable<IntegerExpression(integer_other),integer_valuation)");
+        evaluate(integer_from_variable < IntegerExpression(integer_other), integer_valuation);
+        ARIADNE_TESTING_NOTE("Executing: evaluate(integer_negative,integer_valuation)");
+        evaluate(integer_negative, integer_valuation);
+        ARIADNE_TESTING_NOTE("Executing: evaluate(IntegerExpression(1)<IntegerExpression(2),string_valuation)");
+        evaluate(IntegerExpression(1) < IntegerExpression(2), string_valuation);
 
         RealValuation real_valuation;
-        real_valuation.set(x,Real(2));
-        ARIADNE_TESTING_NOTE("Executing: evaluate(x>=0,real_valuation)"); evaluate(x>=0,real_valuation);
-        ARIADNE_TESTING_NOTE("Executing: evaluate(sin(RealExpression(x)),real_valuation)"); evaluate(sin(RealExpression(x)),real_valuation);
-        ARIADNE_TESTING_NOTE("Executing: evaluate(pow(RealExpression(x),3),real_valuation)"); evaluate(pow(RealExpression(x),3),real_valuation);
-        ARIADNE_TESTING_NOTE("Executing: evaluate(sgn(RealExpression(x)),real_valuation)"); evaluate(sgn(RealExpression(x)),real_valuation);
+        real_valuation.set(x, Real(2));
+        ARIADNE_TESTING_NOTE("Executing: evaluate(x>=0,real_valuation)");
+        evaluate(x >= 0, real_valuation);
+        ARIADNE_TESTING_NOTE("Executing: evaluate(sin(RealExpression(x)),real_valuation)");
+        evaluate(sin(RealExpression(x)), real_valuation);
+        ARIADNE_TESTING_NOTE("Executing: evaluate(pow(RealExpression(x),3),real_valuation)");
+        evaluate(pow(RealExpression(x), 3), real_valuation);
+        ARIADNE_TESTING_NOTE("Executing: evaluate(sgn(RealExpression(x)),real_valuation)");
+        evaluate(sgn(RealExpression(x)), real_valuation);
 
         std::ostringstream real_operator_stream;
         real_operator_stream << OperatorExpressionWriter()(sin(RealExpression(x)));
-        real_operator_stream << OperatorExpressionWriter()(pow(RealExpression(x),3));
-        RealVectorExpression operator_writer_vector({x,y});
+        real_operator_stream << OperatorExpressionWriter()(pow(RealExpression(x), 3));
+        RealVectorExpression operator_writer_vector({x, y});
         real_operator_stream << OperatorExpressionWriter()(operator_writer_vector[0]);
         real_operator_stream << OperatorExpressionWriter()(sgn(RealExpression(x)));
         ARIADNE_TESTING_PROVE(not real_operator_stream.str().empty());
 
-        Map<Identifier,String> string_map;
-        string_map[string_variable.name()]=String("mapped");
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(string_from_variable,string_map),String("mapped"));
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(StringExpression(String("fixed")),string_map),String("fixed"));
+        Map<Identifier, String> string_map;
+        string_map[string_variable.name()] = String("mapped");
+        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(string_from_variable, string_map), String("mapped"));
+        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(StringExpression(String("fixed")), string_map), String("fixed"));
 
-        Map<Identifier,Integer> integer_map;
-        integer_map[integer_variable.name()]=Integer(9);
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(integer_from_variable,integer_map),Integer(9));
-        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(IntegerExpression(Integer(5)),integer_map),Integer(5));
+        Map<Identifier, Integer> integer_map;
+        integer_map[integer_variable.name()] = Integer(9);
+        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(integer_from_variable, integer_map), Integer(9));
+        ARIADNE_TESTING_EXPECT_EQUAL(evaluate(IntegerExpression(Integer(5)), integer_map), Integer(5));
     }
 
     Void test_expression_cpp_coverage() {
         BooleanVariable boolean_a("boolean_a"), boolean_b("boolean_b");
         BooleanExpression boolean_ea(boolean_a), boolean_eb(boolean_b);
-        ARIADNE_TESTING_NOTE("Executing: boolean_ea||boolean_eb"); boolean_ea||boolean_eb;
+        ARIADNE_TESTING_NOTE("Executing: boolean_ea||boolean_eb");
+        boolean_ea || boolean_eb;
 
         StringVariable string_variable("source_string");
-        ARIADNE_TESTING_NOTE("Executing: (void)(string_variable!=String(\"value\"))"); (void)(string_variable!=String("value"));
+        ARIADNE_TESTING_NOTE("Executing: (void)(string_variable!=String(\"value\"))");
+        (void)(string_variable != String("value"));
 
-        ContinuousPredicate comparison=RealExpression(x)<=RealExpression(y);
+        ContinuousPredicate comparison = RealExpression(x) <= RealExpression(y);
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,comparison.cmp1<Real>(),RealExpression(x));
+            identical, comparison.cmp1<Real>(), RealExpression(x));
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,comparison.cmp2<Real>(),RealExpression(y));
+            identical, comparison.cmp2<Real>(), RealExpression(y));
 
-        RealExpression graded_expression=pow(RealExpression(x),3);
+        RealExpression graded_expression = pow(RealExpression(x), 3);
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,graded_expression.arg(),RealExpression(x));
-        RealExpression unary_expression=sin(RealExpression(x));
+            identical, graded_expression.arg(), RealExpression(x));
+        RealExpression unary_expression = sin(RealExpression(x));
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,unary_expression.arg(),RealExpression(x));
+            identical, unary_expression.arg(), RealExpression(x));
 
         IntegerVariable integer_a("integer_a"), integer_b("integer_b");
         IntegerExpression integer_ea(integer_a), integer_eb(integer_b);
-        ARIADNE_TESTING_NOTE("Executing: +integer_ea"); +integer_ea;
-        ARIADNE_TESTING_NOTE("Executing: -integer_ea"); -integer_ea;
-        ARIADNE_TESTING_NOTE("Executing: integer_ea+integer_eb"); integer_ea+integer_eb;
-        ARIADNE_TESTING_NOTE("Executing: integer_ea-integer_eb"); integer_ea-integer_eb;
-        ARIADNE_TESTING_NOTE("Executing: integer_ea*integer_eb"); integer_ea*integer_eb;
-        ARIADNE_TESTING_NOTE("Executing: (void)(integer_ea==integer_eb)"); (void)(integer_ea==integer_eb);
-        ARIADNE_TESTING_NOTE("Executing: (void)(integer_ea!=integer_eb)"); (void)(integer_ea!=integer_eb);
-        ARIADNE_TESTING_NOTE("Executing: (void)(integer_ea>=integer_eb)"); (void)(integer_ea>=integer_eb);
-        ARIADNE_TESTING_NOTE("Executing: (void)(integer_ea<=integer_eb)"); (void)(integer_ea<=integer_eb);
-        ARIADNE_TESTING_NOTE("Executing: (void)(integer_ea>integer_eb)"); (void)(integer_ea>integer_eb);
-        ARIADNE_TESTING_NOTE("Executing: (void)(integer_ea<integer_eb)"); (void)(integer_ea<integer_eb);
+        ARIADNE_TESTING_NOTE("Executing: +integer_ea");
+        +integer_ea;
+        ARIADNE_TESTING_NOTE("Executing: -integer_ea");
+        -integer_ea;
+        ARIADNE_TESTING_NOTE("Executing: integer_ea+integer_eb");
+        integer_ea + integer_eb;
+        ARIADNE_TESTING_NOTE("Executing: integer_ea-integer_eb");
+        integer_ea - integer_eb;
+        ARIADNE_TESTING_NOTE("Executing: integer_ea*integer_eb");
+        integer_ea *integer_eb;
+        ARIADNE_TESTING_NOTE("Executing: (void)(integer_ea==integer_eb)");
+        (void)(integer_ea == integer_eb);
+        ARIADNE_TESTING_NOTE("Executing: (void)(integer_ea!=integer_eb)");
+        (void)(integer_ea != integer_eb);
+        ARIADNE_TESTING_NOTE("Executing: (void)(integer_ea>=integer_eb)");
+        (void)(integer_ea >= integer_eb);
+        ARIADNE_TESTING_NOTE("Executing: (void)(integer_ea<=integer_eb)");
+        (void)(integer_ea <= integer_eb);
+        ARIADNE_TESTING_NOTE("Executing: (void)(integer_ea>integer_eb)");
+        (void)(integer_ea > integer_eb);
+        ARIADNE_TESTING_NOTE("Executing: (void)(integer_ea<integer_eb)");
+        (void)(integer_ea < integer_eb);
 
         IntegerExpression integer_accumulator(integer_a);
-        integer_accumulator+=integer_eb;
-        integer_accumulator-=integer_eb;
-        integer_accumulator*=integer_eb;
+        integer_accumulator += integer_eb;
+        integer_accumulator -= integer_eb;
+        integer_accumulator *= integer_eb;
 
         RealExpression real_accumulator(x);
-        real_accumulator+=RealExpression(y);
-        real_accumulator-=RealExpression(y);
-        real_accumulator*=RealExpression(y);
-        real_accumulator/=RealExpression(y);
+        real_accumulator += RealExpression(y);
+        real_accumulator -= RealExpression(y);
+        real_accumulator *= RealExpression(y);
+        real_accumulator /= RealExpression(y);
 
-        ContinuousPredicate ge=RealExpression(x)>=RealExpression(y);
-        ContinuousPredicate reverse_ge=RealExpression(y)>=RealExpression(x);
-        ContinuousPredicate le=RealExpression(x)<=RealExpression(y);
-        ContinuousPredicate unrelated=RealExpression(x)>=RealExpression(z);
-        ARIADNE_TESTING_PROVE(opposite(ge,reverse_ge));
-        ARIADNE_TESTING_PROVE(opposite(ge,le));
-        ARIADNE_TESTING_PROVE(opposite(le,ge));
-        ContinuousPredicate gt=RealExpression(x)>RealExpression(y);
-        ContinuousPredicate lt=RealExpression(x)<RealExpression(y);
-        ARIADNE_TESTING_PROVE(opposite(gt,lt));
-        ARIADNE_TESTING_PROVE(opposite(lt,gt));
-        ARIADNE_TESTING_PROVE(not opposite(ge,gt));
-        ARIADNE_TESTING_PROVE(not opposite(le,lt));
-        ARIADNE_TESTING_PROVE(not opposite(gt,ge));
-        ARIADNE_TESTING_PROVE(not opposite(lt,le));
-        ARIADNE_TESTING_PROVE(not opposite(ge,unrelated));
+        ContinuousPredicate ge = RealExpression(x) >= RealExpression(y);
+        ContinuousPredicate reverse_ge = RealExpression(y) >= RealExpression(x);
+        ContinuousPredicate le = RealExpression(x) <= RealExpression(y);
+        ContinuousPredicate unrelated = RealExpression(x) >= RealExpression(z);
+        ARIADNE_TESTING_PROVE(opposite(ge, reverse_ge));
+        ARIADNE_TESTING_PROVE(opposite(ge, le));
+        ARIADNE_TESTING_PROVE(opposite(le, ge));
+        ContinuousPredicate gt = RealExpression(x) > RealExpression(y);
+        ContinuousPredicate lt = RealExpression(x) < RealExpression(y);
+        ARIADNE_TESTING_PROVE(opposite(gt, lt));
+        ARIADNE_TESTING_PROVE(opposite(lt, gt));
+        ARIADNE_TESTING_PROVE(not opposite(ge, gt));
+        ARIADNE_TESTING_PROVE(not opposite(le, lt));
+        ARIADNE_TESTING_PROVE(not opposite(gt, ge));
+        ARIADNE_TESTING_PROVE(not opposite(lt, le));
+        ARIADNE_TESTING_PROVE(not opposite(ge, unrelated));
         ARIADNE_TESTING_PROVE(not opposite(
-            RealExpression(x)==RealExpression(y),
-            RealExpression(x)!=RealExpression(y)));
-        ARIADNE_TESTING_PROVE(not opposite(sgn(RealExpression(x)),ge));
-        ARIADNE_TESTING_PROVE(not opposite(ge,sgn(RealExpression(x))));
+            RealExpression(x) == RealExpression(y),
+            RealExpression(x) != RealExpression(y)));
+        ARIADNE_TESTING_PROVE(not opposite(sgn(RealExpression(x)), ge));
+        ARIADNE_TESTING_PROVE(not opposite(ge, sgn(RealExpression(x))));
 
-        ContinuousPredicate same_op_first_match=
-            RealExpression(z)>=RealExpression(x);
-        ARIADNE_TESTING_PROVE(not opposite(ge,same_op_first_match));
+        ContinuousPredicate same_op_first_match =
+            RealExpression(z) >= RealExpression(x);
+        ARIADNE_TESTING_PROVE(not opposite(ge, same_op_first_match));
 
-        ContinuousPredicate opposite_first_mismatch=
-            RealExpression(z)<=RealExpression(y);
-        ARIADNE_TESTING_PROVE(not opposite(ge,opposite_first_mismatch));
+        ContinuousPredicate opposite_first_mismatch =
+            RealExpression(z) <= RealExpression(y);
+        ARIADNE_TESTING_PROVE(not opposite(ge, opposite_first_mismatch));
 
-        ContinuousPredicate opposite_second_mismatch=
-            RealExpression(x)<=RealExpression(z);
-        ARIADNE_TESTING_PROVE(not opposite(ge,opposite_second_mismatch));
+        ContinuousPredicate opposite_second_mismatch =
+            RealExpression(x) <= RealExpression(z);
+        ARIADNE_TESTING_PROVE(not opposite(ge, opposite_second_mismatch));
 
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,indicator(ge,Sign::POSITIVE),RealExpression(x)-RealExpression(y));
+            identical, indicator(ge, Sign::POSITIVE), RealExpression(x) - RealExpression(y));
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,indicator(ge,Sign::NEGATIVE),RealExpression(y)-RealExpression(x));
-        ARIADNE_TESTING_NOTE("Executing: indicator(RealExpression(x)>RealExpression(y),Sign::POSITIVE)"); indicator(RealExpression(x)>RealExpression(y),Sign::POSITIVE);
-        ARIADNE_TESTING_NOTE("Executing: indicator(RealExpression(x)<=RealExpression(y),Sign::POSITIVE)"); indicator(RealExpression(x)<=RealExpression(y),Sign::POSITIVE);
-        ARIADNE_TESTING_NOTE("Executing: indicator(RealExpression(x)<RealExpression(y),Sign::POSITIVE)"); indicator(RealExpression(x)<RealExpression(y),Sign::POSITIVE);
-        ARIADNE_TESTING_NOTE("Executing: indicator(ge&&(RealExpression(y)>=RealExpression(z)),Sign::POSITIVE)"); indicator(ge&&(RealExpression(y)>=RealExpression(z)),Sign::POSITIVE);
-        ARIADNE_TESTING_NOTE("Executing: indicator(ge||(RealExpression(y)>=RealExpression(z)),Sign::POSITIVE)"); indicator(ge||(RealExpression(y)>=RealExpression(z)),Sign::POSITIVE);
-        ARIADNE_TESTING_NOTE("Executing: indicator(!ge,Sign::POSITIVE)"); indicator(!ge,Sign::POSITIVE);
-        ARIADNE_TESTING_NOTE("Executing: indicator(sgn(RealExpression(x)),Sign::NEGATIVE)"); indicator(sgn(RealExpression(x)),Sign::NEGATIVE);
+            identical, indicator(ge, Sign::NEGATIVE), RealExpression(y) - RealExpression(x));
+        ARIADNE_TESTING_NOTE("Executing: indicator(RealExpression(x)>RealExpression(y),Sign::POSITIVE)");
+        indicator(RealExpression(x) > RealExpression(y), Sign::POSITIVE);
+        ARIADNE_TESTING_NOTE("Executing: indicator(RealExpression(x)<=RealExpression(y),Sign::POSITIVE)");
+        indicator(RealExpression(x) <= RealExpression(y), Sign::POSITIVE);
+        ARIADNE_TESTING_NOTE("Executing: indicator(RealExpression(x)<RealExpression(y),Sign::POSITIVE)");
+        indicator(RealExpression(x) < RealExpression(y), Sign::POSITIVE);
+        ARIADNE_TESTING_NOTE("Executing: indicator(ge&&(RealExpression(y)>=RealExpression(z)),Sign::POSITIVE)");
+        indicator(ge && (RealExpression(y) >= RealExpression(z)), Sign::POSITIVE);
+        ARIADNE_TESTING_NOTE("Executing: indicator(ge||(RealExpression(y)>=RealExpression(z)),Sign::POSITIVE)");
+        indicator(ge || (RealExpression(y) >= RealExpression(z)), Sign::POSITIVE);
+        ARIADNE_TESTING_NOTE("Executing: indicator(!ge,Sign::POSITIVE)");
+        indicator(!ge, Sign::POSITIVE);
+        ARIADNE_TESTING_NOTE("Executing: indicator(sgn(RealExpression(x)),Sign::NEGATIVE)");
+        indicator(sgn(RealExpression(x)), Sign::NEGATIVE);
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,indicator(sgn(RealExpression(x)),Sign::POSITIVE),RealExpression(x));
+            identical, indicator(sgn(RealExpression(x)), Sign::POSITIVE), RealExpression(x));
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,indicator(ContinuousPredicate(true),Sign::POSITIVE),RealExpression(1));
+            identical, indicator(ContinuousPredicate(true), Sign::POSITIVE), RealExpression(1));
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,indicator(ContinuousPredicate(false),Sign::POSITIVE),RealExpression(-1));
+            identical, indicator(ContinuousPredicate(false), Sign::POSITIVE), RealExpression(-1));
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,indicator(ContinuousPredicate(true),Sign::NEGATIVE),RealExpression(-1));
+            identical, indicator(ContinuousPredicate(true), Sign::NEGATIVE), RealExpression(-1));
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,indicator(ContinuousPredicate(Kleenean(indeterminate)),Sign::POSITIVE),RealExpression(0));
+            identical, indicator(ContinuousPredicate(Kleenean(indeterminate)), Sign::POSITIVE), RealExpression(0));
         KleeneanVariable indicator_variable("indicator_variable");
-        ARIADNE_TESTING_EXPECT_EXCEPTION((void)indicator(ContinuousPredicate(indicator_variable),Sign::POSITIVE));
-        ARIADNE_TESTING_EXPECT_EXCEPTION((void)indicator(RealExpression(x)==RealExpression(y),Sign::POSITIVE));
-        ARIADNE_TESTING_EXPECT_EXCEPTION((void)indicator(RealExpression(x)!=RealExpression(y),Sign::POSITIVE));
+        ARIADNE_TESTING_EXPECT_EXCEPTION((void)indicator(ContinuousPredicate(indicator_variable), Sign::POSITIVE));
+        ARIADNE_TESTING_EXPECT_EXCEPTION((void)indicator(RealExpression(x) == RealExpression(y), Sign::POSITIVE));
+        ARIADNE_TESTING_EXPECT_EXCEPTION((void)indicator(RealExpression(x) != RealExpression(y), Sign::POSITIVE));
 
-        Vector<RealExpression> affine_vector({x,y});
-        Vector<RealExpression> nonaffine_vector({sqr(x),y});
-        ARIADNE_TESTING_PROVE(is_affine_in(affine_vector,{x,y}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(nonaffine_vector,{x,y}));
+        Vector<RealExpression> affine_vector({x, y});
+        Vector<RealExpression> nonaffine_vector({sqr(x), y});
+        ARIADNE_TESTING_PROVE(is_affine_in(affine_vector, {x, y}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(nonaffine_vector, {x, y}));
 
-        RealVector constant_values({1,2});
+        RealVector constant_values({1, 2});
         RealVectorExpression constant_vector(constant_values);
-        RealVariables vector_variables("affine",2u);
+        RealVariables vector_variables("affine", 2u);
         RealVectorExpression variable_list(vector_variables);
-        RealVectorVariable vector_variable("affine_vector",2u);
+        RealVectorVariable vector_variable("affine_vector", 2u);
         RealVectorExpression vector_variable_expression(vector_variable);
-        RealVectorExpression literal_vector({x,y});
-        RealVectorExpression unary_vector=neg(literal_vector);
-        RealVectorExpression binary_vector=literal_vector+constant_vector;
-        RealVectorExpression scaled_vector=RealExpression(2)*literal_vector;
-        RealVectorExpression divided_vector=literal_vector/RealExpression(2);
-        ARIADNE_TESTING_NOTE("Executing: is_affine_in(constant_vector,{x,y})"); is_affine_in(constant_vector,{x,y});
-        ARIADNE_TESTING_NOTE("Executing: is_affine_in(variable_list,{vector_variables[0]})"); is_affine_in(variable_list,{vector_variables[0]});
-        ARIADNE_TESTING_NOTE("Executing: is_affine_in(vector_variable_expression,{vector_variable[0]})"); is_affine_in(vector_variable_expression,{vector_variable[0]});
-        ARIADNE_TESTING_NOTE("Executing: is_affine_in(literal_vector,{x,y})"); is_affine_in(literal_vector,{x,y});
-        ARIADNE_TESTING_NOTE("Executing: is_affine_in(unary_vector,{x,y})"); is_affine_in(unary_vector,{x,y});
-        ARIADNE_TESTING_NOTE("Executing: is_affine_in(binary_vector,{x,y})"); is_affine_in(binary_vector,{x,y});
-        RealVectorExpression nonlinear_vector({sqr(RealExpression(x)),sqr(RealExpression(y))});
-        ARIADNE_TESTING_PROVE(not is_affine_in(nonlinear_vector+constant_vector,{x,y}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(constant_vector+nonlinear_vector,{x,y}));
-        ARIADNE_TESTING_NOTE("Executing: is_affine_in(scaled_vector,{x,y})"); is_affine_in(scaled_vector,{x,y});
-        ARIADNE_TESTING_NOTE("Executing: is_affine_in(divided_vector,{x,y})"); is_affine_in(divided_vector,{x,y});
+        RealVectorExpression literal_vector({x, y});
+        RealVectorExpression unary_vector = neg(literal_vector);
+        RealVectorExpression binary_vector = literal_vector + constant_vector;
+        RealVectorExpression scaled_vector = RealExpression(2) * literal_vector;
+        RealVectorExpression divided_vector = literal_vector / RealExpression(2);
+        ARIADNE_TESTING_NOTE("Executing: is_affine_in(constant_vector,{x,y})");
+        is_affine_in(constant_vector, {x, y});
+        ARIADNE_TESTING_NOTE("Executing: is_affine_in(variable_list,{vector_variables[0]})");
+        is_affine_in(variable_list, {vector_variables[0]});
+        ARIADNE_TESTING_NOTE("Executing: is_affine_in(vector_variable_expression,{vector_variable[0]})");
+        is_affine_in(vector_variable_expression, {vector_variable[0]});
+        ARIADNE_TESTING_NOTE("Executing: is_affine_in(literal_vector,{x,y})");
+        is_affine_in(literal_vector, {x, y});
+        ARIADNE_TESTING_NOTE("Executing: is_affine_in(unary_vector,{x,y})");
+        is_affine_in(unary_vector, {x, y});
+        ARIADNE_TESTING_NOTE("Executing: is_affine_in(binary_vector,{x,y})");
+        is_affine_in(binary_vector, {x, y});
+        RealVectorExpression nonlinear_vector({sqr(RealExpression(x)), sqr(RealExpression(y))});
+        ARIADNE_TESTING_PROVE(not is_affine_in(nonlinear_vector + constant_vector, {x, y}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(constant_vector + nonlinear_vector, {x, y}));
+        ARIADNE_TESTING_NOTE("Executing: is_affine_in(scaled_vector,{x,y})");
+        is_affine_in(scaled_vector, {x, y});
+        ARIADNE_TESTING_NOTE("Executing: is_affine_in(divided_vector,{x,y})");
+        is_affine_in(divided_vector, {x, y});
 
-        ARIADNE_TESTING_PROVE(is_additive_in(RealExpression(2),x));
-        ARIADNE_TESTING_PROVE(is_additive_in(RealExpression(x)-RealExpression(y),x));
-        ARIADNE_TESTING_PROVE(not is_additive_in(pow(RealExpression(x),2),x));
-        ARIADNE_TESTING_PROVE(is_additive_in(literal_vector[0],x));
+        ARIADNE_TESTING_PROVE(is_additive_in(RealExpression(2), x));
+        ARIADNE_TESTING_PROVE(is_additive_in(RealExpression(x) - RealExpression(y), x));
+        ARIADNE_TESTING_PROVE(not is_additive_in(pow(RealExpression(x), 2), x));
+        ARIADNE_TESTING_PROVE(is_additive_in(literal_vector[0], x));
 
-        ARIADNE_TESTING_EXPECT_EQUAL(class_name<RealVariables>(),String("RealVariables"));
+        ARIADNE_TESTING_EXPECT_EQUAL(class_name<RealVariables>(), String("RealVariables"));
         ARIADNE_TESTING_EXPECT_EQUAL(
-            class_name<RealVectorExpression>(),String("Expression<Vector<Real>>"));
+            class_name<RealVectorExpression>(), String("Expression<Vector<Real>>"));
 
-        ARIADNE_TESTING_NOTE("Executing: make_formula(RealExpression(x)+1,x)"); make_formula(RealExpression(x)+1,x);
-        Vector<RealExpression> univariate_outputs({x,x+1});
-        ARIADNE_TESTING_NOTE("Executing: make_formula(univariate_outputs,x)"); make_formula(univariate_outputs,x);
+        ARIADNE_TESTING_NOTE("Executing: make_formula(RealExpression(x)+1,x)");
+        make_formula(RealExpression(x) + 1, x);
+        Vector<RealExpression> univariate_outputs({x, x + 1});
+        ARIADNE_TESTING_NOTE("Executing: make_formula(univariate_outputs,x)");
+        make_formula(univariate_outputs, x);
 
         // Compare the actual floating-point representations exactly.
-        FloatDPApproximation univariate_argument=2.0_approx;
-        EffectiveScalarUnivariateFunction scalar_univariate_function=
-            make_function(x,RealExpression(x)+1);
-        ARIADNE_TESTING_EXPECT_SAME(scalar_univariate_function(univariate_argument),3.0_approx);
+        FloatDPApproximation univariate_argument = 2.0_approx;
+        EffectiveScalarUnivariateFunction scalar_univariate_function =
+            make_function(x, RealExpression(x) + 1);
+        ARIADNE_TESTING_EXPECT_SAME(scalar_univariate_function(univariate_argument), 3.0_approx);
 
-        EffectiveVectorUnivariateFunction vector_univariate_function=
-            make_function(x,univariate_outputs);
+        EffectiveVectorUnivariateFunction vector_univariate_function =
+            make_function(x, univariate_outputs);
         // Materialize the result: indexing a temporary Vector yields a dangling
         // reference when the fixture's same() check evaluates the operand later.
-        auto const univariate_result=vector_univariate_function(univariate_argument);
-        ARIADNE_TESTING_EXPECT_SAME(univariate_result[0],2.0_approx);
-        ARIADNE_TESTING_EXPECT_SAME(univariate_result[1],3.0_approx);
+        const auto univariate_result = vector_univariate_function(univariate_argument);
+        ARIADNE_TESTING_EXPECT_SAME(univariate_result[0], 2.0_approx);
+        ARIADNE_TESTING_EXPECT_SAME(univariate_result[1], 3.0_approx);
 
-        List<RealVariable> xy_variables({x,y});
-        ARIADNE_TESTING_NOTE("Executing: make_formula(RealExpression(x)+RealExpression(y),xy_variables)"); make_formula(RealExpression(x)+RealExpression(y),xy_variables);
+        List<RealVariable> xy_variables({x, y});
+        ARIADNE_TESTING_NOTE("Executing: make_formula(RealExpression(x)+RealExpression(y),xy_variables)");
+        make_formula(RealExpression(x) + RealExpression(y), xy_variables);
 
-        Formula<EffectiveNumber> cubic_formula=
-            make_formula(pow(RealExpression(x),3),RealSpace({x}));
-        EffectiveProcedure cubic_procedure(1u,cubic_formula);
-        Vector<FloatDPBounds> cubic_argument({FloatDPBounds(2,dp)});
+        Formula<EffectiveNumber> cubic_formula =
+            make_formula(pow(RealExpression(x), 3), RealSpace({x}));
+        EffectiveProcedure cubic_procedure(1u, cubic_formula);
+        Vector<FloatDPBounds> cubic_argument({FloatDPBounds(2, dp)});
         ARIADNE_TESTING_EXPECT_SAME(
-            evaluate(cubic_procedure,cubic_argument),FloatDPBounds(8,dp));
+            evaluate(cubic_procedure, cubic_argument), FloatDPBounds(8, dp));
 
-        Vector<RealExpression> multivariate_outputs({x+y,x-y});
-        EffectiveVectorMultivariateFunction vector_multivariate_function=
-            make_function(RealSpace({x,y}),multivariate_outputs);
-        Vector<FloatDPApproximation> multivariate_argument({2.0_approx,1.0_approx});
-        auto const multivariate_result=vector_multivariate_function(multivariate_argument);
-        ARIADNE_TESTING_EXPECT_SAME(multivariate_result[0],3.0_approx);
-        ARIADNE_TESTING_EXPECT_SAME(multivariate_result[1],1.0_approx);
+        Vector<RealExpression> multivariate_outputs({x + y, x - y});
+        EffectiveVectorMultivariateFunction vector_multivariate_function =
+            make_function(RealSpace({x, y}), multivariate_outputs);
+        Vector<FloatDPApproximation> multivariate_argument({2.0_approx, 1.0_approx});
+        const auto multivariate_result = vector_multivariate_function(multivariate_argument);
+        ARIADNE_TESTING_EXPECT_SAME(multivariate_result[0], 3.0_approx);
+        ARIADNE_TESTING_EXPECT_SAME(multivariate_result[1], 1.0_approx);
 
-        List<RealAssignment> auxiliary_assignments({let(z)=RealExpression(x)+RealExpression(y)});
-        ARIADNE_TESTING_NOTE("Executing: make_formula(RealExpression(z)+1,auxiliary_assignments,RealSpace({x,y}))"); make_formula(RealExpression(z)+1,auxiliary_assignments,RealSpace({x,y}));
-        Vector<RealExpression> auxiliary_outputs({z,z+1});
-        ARIADNE_TESTING_NOTE("Executing: make_formula(auxiliary_outputs,auxiliary_assignments,RealSpace({x,y}))"); make_formula(auxiliary_outputs,auxiliary_assignments,RealSpace({x,y}));
+        List<RealAssignment> auxiliary_assignments({let(z) = RealExpression(x) + RealExpression(y)});
+        ARIADNE_TESTING_NOTE("Executing: make_formula(RealExpression(z)+1,auxiliary_assignments,RealSpace({x,y}))");
+        make_formula(RealExpression(z) + 1, auxiliary_assignments, RealSpace({x, y}));
+        Vector<RealExpression> auxiliary_outputs({z, z + 1});
+        ARIADNE_TESTING_NOTE("Executing: make_formula(auxiliary_outputs,auxiliary_assignments,RealSpace({x,y}))");
+        make_formula(auxiliary_outputs, auxiliary_assignments, RealSpace({x, y}));
 
-        Formula<Real> coordinate_formula=Formula<Real>::coordinate(0);
-        RealExpression formula_expression=
-            make_expression(coordinate_formula,RealSpace({x}));
+        Formula<Real> coordinate_formula = Formula<Real>::coordinate(0);
+        RealExpression formula_expression =
+            make_expression(coordinate_formula, RealSpace({x}));
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,formula_expression,RealExpression(x));
+            identical, formula_expression, RealExpression(x));
 
-        EffectiveScalarMultivariateFunction source_function=
-            make_function(RealSpace({x}),RealExpression(x)+1);
-        RealExpression function_expression=
-            make_expression(source_function,RealSpace({x}));
-        RealValuation source_valuation({x=Real(2)});
+        EffectiveScalarMultivariateFunction source_function =
+            make_function(RealSpace({x}), RealExpression(x) + 1);
+        RealExpression function_expression =
+            make_expression(source_function, RealSpace({x}));
+        RealValuation source_valuation({x = Real(2)});
         ARIADNE_TESTING_EXPECT_SAME(
-            evaluate(function_expression,source_valuation),Real(3));
+            evaluate(function_expression, source_valuation), Real(3));
 
-        RealExpression shared=x+y;
-        RealExpression dag_expression=shared*shared+shared;
-        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(dag_expression),11u);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(dag_expression),5u);
-        Formula<EffectiveNumber> dag_formula=make_formula(dag_expression,RealSpace({x,y}));
-        EffectiveProcedure dag_procedure(2u,dag_formula);
-        ARIADNE_TESTING_EXPECT_EQUAL(dag_procedure._instructions.size(),5u);
-        Vector<FloatDPBounds> dag_arguments({
-            FloatDPBounds(1,dp),FloatDPBounds(2,dp)
-        });
-        ARIADNE_TESTING_EXPECT_SAME(evaluate(dag_procedure,dag_arguments),FloatDPBounds(12,dp));
+        RealExpression shared = x + y;
+        RealExpression dag_expression = shared * shared + shared;
+        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(dag_expression), 11u);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(dag_expression), 5u);
+        Formula<EffectiveNumber> dag_formula = make_formula(dag_expression, RealSpace({x, y}));
+        EffectiveProcedure dag_procedure(2u, dag_formula);
+        ARIADNE_TESTING_EXPECT_EQUAL(dag_procedure._instructions.size(), 5u);
+        Vector<FloatDPBounds> dag_arguments({FloatDPBounds(1, dp), FloatDPBounds(2, dp)});
+        ARIADNE_TESTING_EXPECT_SAME(evaluate(dag_procedure, dag_arguments), FloatDPBounds(12, dp));
 
         IntegerValuation integer_only_valuation;
         StringVariable cross_type_string("cross_type_string");
         ARIADNE_TESTING_EXPECT_EXCEPTION((void)evaluate(
-            cross_type_string==String("left"),
+            cross_type_string == String("left"),
             integer_only_valuation));
 
-        RealVectorExpression helper_vector({x,y});
-        RealVectorExpression helper_other({y,z});
-        ARIADNE_TESTING_NOTE("Executing: nul(helper_vector)"); nul(helper_vector);
-        ARIADNE_TESTING_NOTE("Executing: add(helper_vector,helper_other)"); add(helper_vector,helper_other);
-        ARIADNE_TESTING_NOTE("Executing: sub(helper_vector,helper_other)"); sub(helper_vector,helper_other);
-        ARIADNE_TESTING_NOTE("Executing: mul(RealExpression(2),helper_vector)"); mul(RealExpression(2),helper_vector);
-        ARIADNE_TESTING_NOTE("Executing: mul(helper_vector,RealExpression(2))"); mul(helper_vector,RealExpression(2));
-        ARIADNE_TESTING_NOTE("Executing: div(helper_vector,RealExpression(2))"); div(helper_vector,RealExpression(2));
+        RealVectorExpression helper_vector({x, y});
+        RealVectorExpression helper_other({y, z});
+        ARIADNE_TESTING_NOTE("Executing: nul(helper_vector)");
+        nul(helper_vector);
+        ARIADNE_TESTING_NOTE("Executing: add(helper_vector,helper_other)");
+        add(helper_vector, helper_other);
+        ARIADNE_TESTING_NOTE("Executing: sub(helper_vector,helper_other)");
+        sub(helper_vector, helper_other);
+        ARIADNE_TESTING_NOTE("Executing: mul(RealExpression(2),helper_vector)");
+        mul(RealExpression(2), helper_vector);
+        ARIADNE_TESTING_NOTE("Executing: mul(helper_vector,RealExpression(2))");
+        mul(helper_vector, RealExpression(2));
+        ARIADNE_TESTING_NOTE("Executing: div(helper_vector,RealExpression(2))");
+        div(helper_vector, RealExpression(2));
 
-        ARIADNE_TESTING_PROVE(is_additive_in(helper_vector[0],x));
-        ARIADNE_TESTING_NOTE("Executing: derivative(helper_vector[0],x)"); derivative(helper_vector[0],x);
-        ARIADNE_TESTING_NOTE("Executing: make_formula(helper_vector[0],RealSpace({x,y}))"); make_formula(helper_vector[0],RealSpace({x,y}));
+        ARIADNE_TESTING_PROVE(is_additive_in(helper_vector[0], x));
+        ARIADNE_TESTING_NOTE("Executing: derivative(helper_vector[0],x)");
+        derivative(helper_vector[0], x);
+        ARIADNE_TESTING_NOTE("Executing: make_formula(helper_vector[0],RealSpace({x,y}))");
+        make_formula(helper_vector[0], RealSpace({x, y}));
 
-        ARIADNE_TESTING_PROVE(not is_additive_in(RealExpression(x)+RealExpression(x),x));
-        ARIADNE_TESTING_PROVE(is_additive_in(RealExpression(y)+RealExpression(x),x));
-        ARIADNE_TESTING_PROVE(not is_additive_in(pow(RealExpression(x),2)+RealExpression(y),x));
-        ARIADNE_TESTING_PROVE(not is_additive_in(RealExpression(x)-RealExpression(x),x));
-        ARIADNE_TESTING_PROVE(not is_additive_in(pow(RealExpression(x),2)-RealExpression(y),x));
+        ARIADNE_TESTING_PROVE(not is_additive_in(RealExpression(x) + RealExpression(x), x));
+        ARIADNE_TESTING_PROVE(is_additive_in(RealExpression(y) + RealExpression(x), x));
+        ARIADNE_TESTING_PROVE(not is_additive_in(pow(RealExpression(x), 2) + RealExpression(y), x));
+        ARIADNE_TESTING_PROVE(not is_additive_in(RealExpression(x) - RealExpression(x), x));
+        ARIADNE_TESTING_PROVE(not is_additive_in(pow(RealExpression(x), 2) - RealExpression(y), x));
     }
 
     Void test_expression() {
-        auto writer=RealExpression::default_writer();
+        auto writer = RealExpression::default_writer();
         RealExpression::set_default_writer(writer);
 
         // Regression test for constructing Expression from 0 without being an ambiguous nullptr;
-        IntegerExpression ze(0); ARIADNE_TESTING_NOTE("Constructed IntegerExpression ze = " << ze);
-        RealExpression re(0); ARIADNE_TESTING_NOTE("Constructed RealExpression re = " << re);
+        IntegerExpression ze(0);
+        ARIADNE_TESTING_NOTE("Constructed IntegerExpression ze = " << ze);
+        RealExpression re(0);
+        ARIADNE_TESTING_NOTE("Constructed RealExpression re = " << re);
         RealExpression(0);
         RealExpression(nullptr);
     }
 
     Void test_write() {
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(+x),"+x");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(-x),"-x");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(x+y),"x+y");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(x-y),"x-y");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(x*y),"x*y");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(x/y),"x/y");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(pos(x)),"+x");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(neg(x)),"-x");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(add(x,y)),"x+y");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(x,y)),"x-y");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(mul(x,y)),"x*y");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(div(x,y)),"x/y");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(neg(sub(x,y))),"-(x-y)");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(neg(x),y)),"-x-y");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(add(x,sub(y,z))),"x+y-z");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(x,add(y,z))),"x-(y+z)");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(x,sub(y,z))),"x-(y-z)");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(add(sub(x,y),z)),"x-y+z");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(add(x,y),z)),"x+y-z");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(sub(x,y),z)),"x-y-z");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(add(mul(x,y),z)),"x*y+z");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(mul(add(x,y),z)),"(x+y)*z");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(mul(sub(x,y),z)),"(x-y)*z");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(div(x,div(y,z))),"x/(y/z)");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(div(x,sub(y,z))),"x/(y-z)");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(div(div(x,y),z)),"x/y/z");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(x,div(y,z))),"x-y/z");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(div(x,y),z)),"x/y-z");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(max(x,sub(y,z))),"max(x,y-z)");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(min(x,sub(y,z))),"min(x,y-z)");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(x,max(y,z))),"x-max(y,z)");
-        ARIADNE_TESTING_EXPECT_EQUAL(to_string(tanh(x)),"tanh(x)");
-        ARIADNE_TESTING_PROVE(identical(sigmoid(x),rec(1+exp(-x))));
-        ARIADNE_TESTING_PROVE(identical(softplus(x),log(1+exp(x))));
-        ARIADNE_TESTING_NOTE("Executing: to_string(neg(RealExpression(2)))"); to_string(neg(RealExpression(2)));
-        ARIADNE_TESTING_NOTE("Executing: to_string(mul(div(x,y),z))"); to_string(mul(div(x,y),z));
-        ARIADNE_TESTING_NOTE("Executing: to_string(div(add(x,y),mul(y,z)))"); to_string(div(add(x,y),mul(y,z)));
-        ARIADNE_TESTING_NOTE("Executing: to_string(div(sub(x,y),div(y,z)))"); to_string(div(sub(x,y),div(y,z)));
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(+x), "+x");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(-x), "-x");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(x + y), "x+y");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(x - y), "x-y");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(x * y), "x*y");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(x / y), "x/y");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(pos(x)), "+x");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(neg(x)), "-x");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(add(x, y)), "x+y");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(x, y)), "x-y");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(mul(x, y)), "x*y");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(div(x, y)), "x/y");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(neg(sub(x, y))), "-(x-y)");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(neg(x), y)), "-x-y");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(add(x, sub(y, z))), "x+y-z");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(x, add(y, z))), "x-(y+z)");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(x, sub(y, z))), "x-(y-z)");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(add(sub(x, y), z)), "x-y+z");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(add(x, y), z)), "x+y-z");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(sub(x, y), z)), "x-y-z");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(add(mul(x, y), z)), "x*y+z");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(mul(add(x, y), z)), "(x+y)*z");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(mul(sub(x, y), z)), "(x-y)*z");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(div(x, div(y, z))), "x/(y/z)");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(div(x, sub(y, z))), "x/(y-z)");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(div(div(x, y), z)), "x/y/z");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(x, div(y, z))), "x-y/z");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(div(x, y), z)), "x/y-z");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(max(x, sub(y, z))), "max(x,y-z)");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(min(x, sub(y, z))), "min(x,y-z)");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(sub(x, max(y, z))), "x-max(y,z)");
+        ARIADNE_TESTING_EXPECT_EQUAL(to_string(tanh(x)), "tanh(x)");
+        ARIADNE_TESTING_PROVE(identical(sigmoid(x), rec(1 + exp(-x))));
+        ARIADNE_TESTING_PROVE(identical(softplus(x), log(1 + exp(x))));
+        ARIADNE_TESTING_NOTE("Executing: to_string(neg(RealExpression(2)))");
+        to_string(neg(RealExpression(2)));
+        ARIADNE_TESTING_NOTE("Executing: to_string(mul(div(x,y),z))");
+        to_string(mul(div(x, y), z));
+        ARIADNE_TESTING_NOTE("Executing: to_string(div(add(x,y),mul(y,z)))");
+        to_string(div(add(x, y), mul(y, z)));
+        ARIADNE_TESTING_NOTE("Executing: to_string(div(sub(x,y),div(y,z)))");
+        to_string(div(sub(x, y), div(y, z)));
 
         std::ostringstream operation_writer_stream;
         operation_writer_stream << OperationExpressionWriter()(sin(RealExpression(x)));
-        operation_writer_stream << OperationExpressionWriter()(pow(RealExpression(x),3));
-        RealVectorExpression writer_vector({x,y});
+        operation_writer_stream << OperationExpressionWriter()(pow(RealExpression(x), 3));
+        RealVectorExpression writer_vector({x, y});
         operation_writer_stream << OperationExpressionWriter()(writer_vector[0]);
         ARIADNE_TESTING_PROVE(not operation_writer_stream.str().empty());
     }
 
     Void test_assignment() {
         Real zero(0), one(1);
-        RealExpression e(x*y+o);
+        RealExpression e(x * y + o);
 
-        ARIADNE_TESTING_PROVE((not Assignable<Variable<Real>,Expression<Real>>));
-        ARIADNE_TESTING_PROVE((not Constructible<Assignment<Variable<Real>,Expression<Real>>,Assignment<Variable<Real>,Real>>));
+        ARIADNE_TESTING_PROVE((not Assignable<Variable<Real>, Expression<Real>>));
+        ARIADNE_TESTING_PROVE((not Constructible<Assignment<Variable<Real>, Expression<Real>>, Assignment<Variable<Real>, Real>>));
 
-        typedef Assignment<Variable<Real>,Real> ConstantRealAssignment;
-        ConstantRealAssignment ac(x=one); ARIADNE_TESTING_NOTE("Constructed ConstantRealAssignment ac = " << ac);
-        List<ConstantRealAssignment> lac({x=zero,y=one}); ARIADNE_TESTING_NOTE("Constructed List<ConstantRealAssignment> lac = " << lac);
-        Valuation<Real> va(lac); ARIADNE_TESTING_NOTE("Constructed Valuation<Real> va = " << va);
+        typedef Assignment<Variable<Real>, Real> ConstantRealAssignment;
+        ConstantRealAssignment ac(x = one);
+        ARIADNE_TESTING_NOTE("Constructed ConstantRealAssignment ac = " << ac);
+        List<ConstantRealAssignment> lac({x = zero, y = one});
+        ARIADNE_TESTING_NOTE("Constructed List<ConstantRealAssignment> lac = " << lac);
+        Valuation<Real> va(lac);
+        ARIADNE_TESTING_NOTE("Constructed Valuation<Real> va = " << va);
         // Direct valuation construction from this initializer list is ambiguous.
 
-        RealAssignment a(let(x)=one); ARIADNE_TESTING_NOTE("Constructed RealAssignment a = " << a);
-        PrimedRealAssignment pa(prime(x)=one); ARIADNE_TESTING_NOTE("Constructed PrimedRealAssignment pa = " << pa);
-        DottedRealAssignment da(dot(x)=one); ARIADNE_TESTING_NOTE("Constructed DottedRealAssignment da = " << da);
+        RealAssignment a(let(x) = one);
+        ARIADNE_TESTING_NOTE("Constructed RealAssignment a = " << a);
+        PrimedRealAssignment pa(prime(x) = one);
+        ARIADNE_TESTING_NOTE("Constructed PrimedRealAssignment pa = " << pa);
+        DottedRealAssignment da(dot(x) = one);
+        ARIADNE_TESTING_NOTE("Constructed DottedRealAssignment da = " << da);
 
-        List<RealAssignment> la(let({x,y,z})={zero,x,e}); ARIADNE_TESTING_NOTE("Constructed List<RealAssignment> la = " << la);
-        List<PrimedRealAssignment> lpa(prime({x,y,z})={zero,x,e}); ARIADNE_TESTING_NOTE("Constructed List<PrimedRealAssignment> lpa = " << lpa);
-        List<DottedRealAssignment> lda(dot({x,y,z})={zero,x,e}); ARIADNE_TESTING_NOTE("Constructed List<DottedRealAssignment> lda = " << lda);
+        List<RealAssignment> la(let({x, y, z}) = {zero, x, e});
+        ARIADNE_TESTING_NOTE("Constructed List<RealAssignment> la = " << la);
+        List<PrimedRealAssignment> lpa(prime({x, y, z}) = {zero, x, e});
+        ARIADNE_TESTING_NOTE("Constructed List<PrimedRealAssignment> lpa = " << lpa);
+        List<DottedRealAssignment> lda(dot({x, y, z}) = {zero, x, e});
+        ARIADNE_TESTING_NOTE("Constructed List<DottedRealAssignment> lda = " << lda);
 
-        FloatDPApproximation approximate_value(1.0_x,dp);
-        Assignment<RealVariable,FloatDPApproximation> approximate_assignment(x,approximate_value);
-        ARIADNE_TESTING_PROVE(&approximate_assignment.right_hand_side()==&approximate_assignment.rhs);
+        FloatDPApproximation approximate_value(1.0_x, dp);
+        Assignment<RealVariable, FloatDPApproximation> approximate_assignment(x, approximate_value);
+        ARIADNE_TESTING_PROVE(&approximate_assignment.right_hand_side() == &approximate_assignment.rhs);
     }
 
     Void test_evaluate() {
-        RealExpression g(x+3*y*z*z); ARIADNE_TESTING_NOTE("Constructed RealExpression g = " << g);
+        RealExpression g(x + 3 * y * z * z);
+        ARIADNE_TESTING_NOTE("Constructed RealExpression g = " << g);
 
-        Map<RealVariable,Real> v;
-        v[x]=Real(2.0_x); v[y]=Real(3.0_x); v[z]=Real(5.0_x);
+        Map<RealVariable, Real> v;
+        v[x] = Real(2.0_x);
+        v[y] = Real(3.0_x);
+        v[z] = Real(5.0_x);
 
         ARIADNE_TESTING_NOTE("v = " << (v));
-        //ARIADNE_TESTING_EXPECT_EQUAL(evaluate(g,v),Real(227));
+        // ARIADNE_TESTING_EXPECT_EQUAL(evaluate(g,v),Real(227));
     }
 
     Void test_parameters() {
-        RealExpression expr = x;//+u;
+        RealExpression expr = x; //+u;
 
         // Assignment and lookup must preserve the exact Real value.
-        Map<Identifier,Real> valuation;
+        Map<Identifier, Real> valuation;
         Real value = Real(ExactDouble(-0.0626));
         valuation[x.name()] = value;
 
-        ARIADNE_TESTING_EXPECT_EQUAL(expr.kind(),OperatorKind::VARIABLE);
-        ARIADNE_TESTING_EXPECT_EQUAL(expr.var(),"x");
-        ARIADNE_TESTING_EXPECT_SAME(valuation[x.name()],value);
+        ARIADNE_TESTING_EXPECT_EQUAL(expr.kind(), OperatorKind::VARIABLE);
+        ARIADNE_TESTING_EXPECT_EQUAL(expr.var(), "x");
+        ARIADNE_TESTING_EXPECT_SAME(valuation[x.name()], value);
 
-        Real result1 = evaluate(expr,valuation);
+        Real result1 = evaluate(expr, valuation);
 
-        ARIADNE_TESTING_EXPECT_SAME(result1,value);
+        ARIADNE_TESTING_EXPECT_SAME(result1, value);
     }
 
     Void test_identical() {
-        ARIADNE_TESTING_PROVE(identical(RealExpression(x),RealExpression(x)));
-        ARIADNE_TESTING_PROVE(identical(RealExpression::constant(0),RealExpression::constant(0)));
-        ARIADNE_TESTING_PROVE(identical(RealExpression::constant(2),RealExpression::constant(2)));
-        ARIADNE_TESTING_PROVE(identical(sin(x),sin(x)));
-        ARIADNE_TESTING_PROVE(identical(pow(x,2),pow(x,2)));
-        ARIADNE_TESTING_PROVE(not identical(x*y,y*x));
-        ARIADNE_TESTING_PROVE(not identical(x+y,y+x));
-        ARIADNE_TESTING_PROVE(not identical(sin(RealExpression(x)),cos(RealExpression(x))));
-        ARIADNE_TESTING_PROVE(not identical(sin(RealExpression(x)),sin(RealExpression(y))));
-        ARIADNE_TESTING_PROVE(not identical(RealExpression(x)+RealExpression(y),RealExpression(x)-RealExpression(y)));
-        ARIADNE_TESTING_PROVE(not identical(RealExpression(x)+RealExpression(y),RealExpression(x)+RealExpression(x)));
-        ARIADNE_TESTING_PROVE(not identical(pow(RealExpression(x),2),pow(RealExpression(y),2)));
-        ARIADNE_TESTING_PROVE(not identical(pow(RealExpression(x),2),pow(RealExpression(x),3)));
-        RealVectorExpression identical_vector({x,y});
-        RealVectorExpression different_identical_vector({x,z});
-        ARIADNE_TESTING_PROVE(not identical(identical_vector[0],different_identical_vector[0]));
-        ARIADNE_TESTING_PROVE(not identical(identical_vector[0],identical_vector[1]));
+        ARIADNE_TESTING_PROVE(identical(RealExpression(x), RealExpression(x)));
+        ARIADNE_TESTING_PROVE(identical(RealExpression::constant(0), RealExpression::constant(0)));
+        ARIADNE_TESTING_PROVE(identical(RealExpression::constant(2), RealExpression::constant(2)));
+        ARIADNE_TESTING_PROVE(identical(sin(x), sin(x)));
+        ARIADNE_TESTING_PROVE(identical(pow(x, 2), pow(x, 2)));
+        ARIADNE_TESTING_PROVE(not identical(x * y, y * x));
+        ARIADNE_TESTING_PROVE(not identical(x + y, y + x));
+        ARIADNE_TESTING_PROVE(not identical(sin(RealExpression(x)), cos(RealExpression(x))));
+        ARIADNE_TESTING_PROVE(not identical(sin(RealExpression(x)), sin(RealExpression(y))));
+        ARIADNE_TESTING_PROVE(not identical(RealExpression(x) + RealExpression(y), RealExpression(x) - RealExpression(y)));
+        ARIADNE_TESTING_PROVE(not identical(RealExpression(x) + RealExpression(y), RealExpression(x) + RealExpression(x)));
+        ARIADNE_TESTING_PROVE(not identical(pow(RealExpression(x), 2), pow(RealExpression(y), 2)));
+        ARIADNE_TESTING_PROVE(not identical(pow(RealExpression(x), 2), pow(RealExpression(x), 3)));
+        RealVectorExpression identical_vector({x, y});
+        RealVectorExpression different_identical_vector({x, z});
+        ARIADNE_TESTING_PROVE(not identical(identical_vector[0], different_identical_vector[0]));
+        ARIADNE_TESTING_PROVE(not identical(identical_vector[0], identical_vector[1]));
 
-        RealExpression e1(sin(pow(x,2)+y)*(y/x+1)); ARIADNE_TESTING_NOTE("Constructed RealExpression e1 = " << e1);
-        RealExpression e2(sin(pow(x,2)+y)*(y/x+1)); ARIADNE_TESTING_NOTE("Constructed RealExpression e2 = " << e2);
-        ARIADNE_TESTING_PROVE(identical(e1,e1));
-        ARIADNE_TESTING_PROVE(identical(e1,e2));
+        RealExpression e1(sin(pow(x, 2) + y) * (y / x + 1));
+        ARIADNE_TESTING_NOTE("Constructed RealExpression e1 = " << e1);
+        RealExpression e2(sin(pow(x, 2) + y) * (y / x + 1));
+        ARIADNE_TESTING_NOTE("Constructed RealExpression e2 = " << e2);
+        ARIADNE_TESTING_PROVE(identical(e1, e1));
+        ARIADNE_TESTING_PROVE(identical(e1, e2));
 
-        Constant<RealVector> vector_constant_a(Identifier("vc"),RealVector({1,2}));
-        Constant<RealVector> vector_constant_b(Identifier("vc"),RealVector({1,2}));
-        Constant<RealVector> vector_constant_c(Identifier("vc"),RealVector({1,3}));
-        Constant<RealVector> vector_constant_d(Identifier("vd"),RealVector({1,2}));
-        Constant<RealVector> vector_constant_short(Identifier("vc"),RealVector{1});
+        Constant<RealVector> vector_constant_a(Identifier("vc"), RealVector({1, 2}));
+        Constant<RealVector> vector_constant_b(Identifier("vc"), RealVector({1, 2}));
+        Constant<RealVector> vector_constant_c(Identifier("vc"), RealVector({1, 3}));
+        Constant<RealVector> vector_constant_d(Identifier("vd"), RealVector({1, 2}));
+        Constant<RealVector> vector_constant_short(Identifier("vc"), RealVector{1});
         RealVectorExpression vector_expression_a(vector_constant_a);
         RealVectorExpression vector_expression_b(vector_constant_b);
         RealVectorExpression vector_expression_c(vector_constant_c);
         RealVectorExpression vector_expression_d(vector_constant_d);
         RealVectorExpression vector_expression_short(vector_constant_short);
-        ARIADNE_TESTING_PROVE(identical(vector_expression_a,vector_expression_b));
-        ARIADNE_TESTING_PROVE(not identical(vector_expression_a,vector_expression_c));
-        ARIADNE_TESTING_PROVE(not identical(vector_expression_a,vector_expression_d));
-        ARIADNE_TESTING_PROVE(not identical(vector_expression_a,vector_expression_short));
+        ARIADNE_TESTING_PROVE(identical(vector_expression_a, vector_expression_b));
+        ARIADNE_TESTING_PROVE(not identical(vector_expression_a, vector_expression_c));
+        ARIADNE_TESTING_PROVE(not identical(vector_expression_a, vector_expression_d));
+        ARIADNE_TESTING_PROVE(not identical(vector_expression_a, vector_expression_short));
 
-        RealExpression named_constant_a=RealExpression::constant(RealConstant("a",Real(2)));
-        RealExpression named_constant_same_name=RealExpression::constant(RealConstant("a",Real(3)));
-        RealExpression named_constant_other_name=RealExpression::constant(RealConstant("b",Real(2)));
-        ARIADNE_TESTING_PROVE(not identical(named_constant_a,named_constant_same_name));
-        ARIADNE_TESTING_PROVE(not identical(named_constant_a,named_constant_other_name));
+        RealExpression named_constant_a = RealExpression::constant(RealConstant("a", Real(2)));
+        RealExpression named_constant_same_name = RealExpression::constant(RealConstant("a", Real(3)));
+        RealExpression named_constant_other_name = RealExpression::constant(RealConstant("b", Real(2)));
+        ARIADNE_TESTING_PROVE(not identical(named_constant_a, named_constant_same_name));
+        ARIADNE_TESTING_PROVE(not identical(named_constant_a, named_constant_other_name));
 
-        KleeneanExpression kleenean_named_true_a(Constant<Kleenean>(Identifier("ka"),Kleenean(true)));
-        KleeneanExpression kleenean_named_false_a(Constant<Kleenean>(Identifier("ka"),Kleenean(false)));
-        KleeneanExpression kleenean_named_true_b(Constant<Kleenean>(Identifier("kb"),Kleenean(true)));
-        ARIADNE_TESTING_PROVE(not identical(kleenean_named_true_a,kleenean_named_false_a));
-        ARIADNE_TESTING_PROVE(not identical(kleenean_named_true_a,kleenean_named_true_b));
+        KleeneanExpression kleenean_named_true_a(Constant<Kleenean>(Identifier("ka"), Kleenean(true)));
+        KleeneanExpression kleenean_named_false_a(Constant<Kleenean>(Identifier("ka"), Kleenean(false)));
+        KleeneanExpression kleenean_named_true_b(Constant<Kleenean>(Identifier("kb"), Kleenean(true)));
+        ARIADNE_TESTING_PROVE(not identical(kleenean_named_true_a, kleenean_named_false_a));
+        ARIADNE_TESTING_PROVE(not identical(kleenean_named_true_a, kleenean_named_true_b));
     }
 
     Void test_derivative() {
-        RealExpression expr = 2*x+y;
-        ARIADNE_TESTING_NOTE("derivative(expr,x) = " << (derivative(expr,x)));
-        ARIADNE_TESTING_NOTE("simplify(derivative(expr,x)) = " << (simplify(derivative(expr,x))));
-        ARIADNE_TESTING_PROVE(identical(simplify(derivative(expr,x)),RealExpression::constant(2)));
-        RealExpression tanh_expr=tanh(x);
+        RealExpression expr = 2 * x + y;
+        ARIADNE_TESTING_NOTE("derivative(expr,x) = " << (derivative(expr, x)));
+        ARIADNE_TESTING_NOTE("simplify(derivative(expr,x)) = " << (simplify(derivative(expr, x))));
+        ARIADNE_TESTING_PROVE(identical(simplify(derivative(expr, x)), RealExpression::constant(2)));
+        RealExpression tanh_expr = tanh(x);
         ARIADNE_TESTING_PROVE(identical(
-            simplify(derivative(tanh_expr,x)),
-            1-sqr(tanh(x))));
+            simplify(derivative(tanh_expr, x)),
+            1 - sqr(tanh(x))));
         ARIADNE_TESTING_PROVE(identical(
-            simplify(derivative(sigmoid(x),x)),
-            simplify(derivative(rec(1+exp(-x)),x))));
+            simplify(derivative(sigmoid(x), x)),
+            simplify(derivative(rec(1 + exp(-x)), x))));
         ARIADNE_TESTING_PROVE(identical(
-            simplify(derivative(softplus(x),x)),
-            simplify(derivative(log(1+exp(x)),x))));
+            simplify(derivative(softplus(x), x)),
+            simplify(derivative(log(1 + exp(x)), x))));
         ARIADNE_TESTING_PROVE(identical(
-            simplify(sigmoid(x)),simplify(rec(1+exp(-x)))));
+            simplify(sigmoid(x)), simplify(rec(1 + exp(-x)))));
         ARIADNE_TESTING_PROVE(identical(
-            simplify(softplus(x)),simplify(log(1+exp(x)))));
-        Map<Identifier,Real> at_zero;
-        at_zero[x.name()]=Real(0);
+            simplify(softplus(x)), simplify(log(1 + exp(x)))));
+        Map<Identifier, Real> at_zero;
+        at_zero[x.name()] = Real(0);
         // Real equality is structural, not numerical: evaluate() may
         // retain an expression tree, e.g. rec(1+exp(-0)).
         // Check the resulting rigorous binary64 enclosures instead.
-        auto sigmoid_at_zero=evaluate(sigmoid(x),at_zero).get(DoublePrecision());
-        ARIADNE_TESTING_PROVE(sigmoid_at_zero.lower_raw().get_d()<=0.5);
-        ARIADNE_TESTING_PROVE(sigmoid_at_zero.upper_raw().get_d()>=0.5);
-        ARIADNE_TESTING_PROVE(sigmoid_at_zero.lower_raw().get_d()>0.49);
-        ARIADNE_TESTING_PROVE(sigmoid_at_zero.upper_raw().get_d()<0.51);
-        auto softplus_at_zero=evaluate(softplus(x),at_zero).get(DoublePrecision());
-        ARIADNE_TESTING_PROVE(softplus_at_zero.lower_raw().get_d()>0.69);
-        ARIADNE_TESTING_PROVE(softplus_at_zero.upper_raw().get_d()<0.70);
-        RealExpression expr2 = pow(x,3);
-        ARIADNE_TESTING_NOTE("derivative(expr2,x) = " << (derivative(expr2,x)));
-        ARIADNE_TESTING_NOTE("simplify(derivative(expr2,x)) = " << (simplify(derivative(expr2,x))));
-        ARIADNE_TESTING_PROVE(identical(simplify(derivative(expr2,x)),3*sqr(x)));
+        auto sigmoid_at_zero = evaluate(sigmoid(x), at_zero).get(DoublePrecision());
+        ARIADNE_TESTING_PROVE(sigmoid_at_zero.lower_raw().get_d() <= 0.5);
+        ARIADNE_TESTING_PROVE(sigmoid_at_zero.upper_raw().get_d() >= 0.5);
+        ARIADNE_TESTING_PROVE(sigmoid_at_zero.lower_raw().get_d() > 0.49);
+        ARIADNE_TESTING_PROVE(sigmoid_at_zero.upper_raw().get_d() < 0.51);
+        auto softplus_at_zero = evaluate(softplus(x), at_zero).get(DoublePrecision());
+        ARIADNE_TESTING_PROVE(softplus_at_zero.lower_raw().get_d() > 0.69);
+        ARIADNE_TESTING_PROVE(softplus_at_zero.upper_raw().get_d() < 0.70);
+        RealExpression expr2 = pow(x, 3);
+        ARIADNE_TESTING_NOTE("derivative(expr2,x) = " << (derivative(expr2, x)));
+        ARIADNE_TESTING_NOTE("simplify(derivative(expr2,x)) = " << (simplify(derivative(expr2, x))));
+        ARIADNE_TESTING_PROVE(identical(simplify(derivative(expr2, x)), 3 * sqr(x)));
 
-        ARIADNE_TESTING_NOTE("Executing: derivative(RealExpression(3),x)"); derivative(RealExpression(3),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(pos(RealExpression(x)),x)"); derivative(pos(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(neg(RealExpression(x)),x)"); derivative(neg(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(sqr(RealExpression(x)),x)"); derivative(sqr(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(hlf(RealExpression(x)),x)"); derivative(hlf(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(rec(RealExpression(x)),x)"); derivative(rec(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(sqrt(RealExpression(x)),x)"); derivative(sqrt(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(exp(RealExpression(x)),x)"); derivative(exp(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(log(RealExpression(x)),x)"); derivative(log(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(sin(RealExpression(x)),x)"); derivative(sin(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(cos(RealExpression(x)),x)"); derivative(cos(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(tan(RealExpression(x)),x)"); derivative(tan(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(asin(RealExpression(x)),x)"); derivative(asin(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(acos(RealExpression(x)),x)"); derivative(acos(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(atan(RealExpression(x)),x)"); derivative(atan(RealExpression(x)),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(RealExpression(x)+RealExpression(y),x)"); derivative(RealExpression(x)+RealExpression(y),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(RealExpression(x)-RealExpression(y),x)"); derivative(RealExpression(x)-RealExpression(y),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(RealExpression(x)*RealExpression(y),x)"); derivative(RealExpression(x)*RealExpression(y),x);
-        ARIADNE_TESTING_NOTE("Executing: derivative(RealExpression(x)/RealExpression(y),x)"); derivative(RealExpression(x)/RealExpression(y),x);
-        ARIADNE_TESTING_EXPECT_EXCEPTION((void)derivative(abs(RealExpression(x)),x));
-        ARIADNE_TESTING_EXPECT_EXCEPTION((void)derivative(max(RealExpression(x),RealExpression(y)),x));
-        ARIADNE_TESTING_EXPECT_EXCEPTION((void)derivative(min(RealExpression(x),RealExpression(y)),x));
+        ARIADNE_TESTING_NOTE("Executing: derivative(RealExpression(3),x)");
+        derivative(RealExpression(3), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(pos(RealExpression(x)),x)");
+        derivative(pos(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(neg(RealExpression(x)),x)");
+        derivative(neg(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(sqr(RealExpression(x)),x)");
+        derivative(sqr(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(hlf(RealExpression(x)),x)");
+        derivative(hlf(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(rec(RealExpression(x)),x)");
+        derivative(rec(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(sqrt(RealExpression(x)),x)");
+        derivative(sqrt(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(exp(RealExpression(x)),x)");
+        derivative(exp(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(log(RealExpression(x)),x)");
+        derivative(log(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(sin(RealExpression(x)),x)");
+        derivative(sin(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(cos(RealExpression(x)),x)");
+        derivative(cos(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(tan(RealExpression(x)),x)");
+        derivative(tan(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(asin(RealExpression(x)),x)");
+        derivative(asin(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(acos(RealExpression(x)),x)");
+        derivative(acos(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(atan(RealExpression(x)),x)");
+        derivative(atan(RealExpression(x)), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(RealExpression(x)+RealExpression(y),x)");
+        derivative(RealExpression(x) + RealExpression(y), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(RealExpression(x)-RealExpression(y),x)");
+        derivative(RealExpression(x) - RealExpression(y), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(RealExpression(x)*RealExpression(y),x)");
+        derivative(RealExpression(x) * RealExpression(y), x);
+        ARIADNE_TESTING_NOTE("Executing: derivative(RealExpression(x)/RealExpression(y),x)");
+        derivative(RealExpression(x) / RealExpression(y), x);
+        ARIADNE_TESTING_EXPECT_EXCEPTION((void)derivative(abs(RealExpression(x)), x));
+        ARIADNE_TESTING_EXPECT_EXCEPTION((void)derivative(max(RealExpression(x), RealExpression(y)), x));
+        ARIADNE_TESTING_EXPECT_EXCEPTION((void)derivative(min(RealExpression(x), RealExpression(y)), x));
     }
 
     Void test_simplify() {
         RealExpression zero(0);
         RealExpression one(1);
         RealVariable u("u");
-        RealExpression expr = -u*x*y+2*x;
-        RealExpression ex=x;
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(derivative(-u*x*y+2*x,x)),-u*y+2);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(pos(neg(ex))),neg(ex));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(neg(neg(ex))),ex);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(rec(rec(ex))),ex);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(log(exp(ex))),ex);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(exp(log(ex))),ex);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(sqr(sqrt(ex))),ex);
+        RealExpression expr = -u * x * y + 2 * x;
+        RealExpression ex = x;
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(derivative(-u * x * y + 2 * x, x)), -u * y + 2);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(pos(neg(ex))), neg(ex));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(neg(neg(ex))), ex);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(rec(rec(ex))), ex);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(log(exp(ex))), ex);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(exp(log(ex))), ex);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(sqr(sqrt(ex))), ex);
         // Regression tests
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(sub(neg(zero),zero)),zero);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(sub(x,x)),zero);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(div(x,x)),one);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(sub(neg(zero), zero)), zero);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(sub(x, x)), zero);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(div(x, x)), one);
 
-        RealExpression quotient=RealExpression(x)/RealExpression(y);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(quotient),quotient);
-        RealExpression maximum=max(RealExpression(x),RealExpression(y));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(maximum),maximum);
-        RealExpression minimum=min(RealExpression(x),RealExpression(y));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(minimum),minimum);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(x+zero),RealExpression(x));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(zero+x),RealExpression(x));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(x-zero),RealExpression(x));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(zero-x),-RealExpression(x));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(x*one),RealExpression(x));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(one*x),RealExpression(x));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(x*zero),zero);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(zero*x),zero);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(x/one),RealExpression(x));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(one/x),rec(RealExpression(x)));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(pow(x,-1)),rec(RealExpression(x)));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(pow(x,0)),one);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(pow(x,1)),RealExpression(x));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(pow(x,2)),sqr(RealExpression(x)));
-        ARIADNE_TESTING_NOTE("Executing: simplify(pow(x,4))"); simplify(pow(x,4));
+        RealExpression quotient = RealExpression(x) / RealExpression(y);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(quotient), quotient);
+        RealExpression maximum = max(RealExpression(x), RealExpression(y));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(maximum), maximum);
+        RealExpression minimum = min(RealExpression(x), RealExpression(y));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(minimum), minimum);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(x + zero), RealExpression(x));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(zero + x), RealExpression(x));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(x - zero), RealExpression(x));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(zero - x), -RealExpression(x));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(x * one), RealExpression(x));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(one * x), RealExpression(x));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(x * zero), zero);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(zero * x), zero);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(x / one), RealExpression(x));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(one / x), rec(RealExpression(x)));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(pow(x, -1)), rec(RealExpression(x)));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(pow(x, 0)), one);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(pow(x, 1)), RealExpression(x));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(pow(x, 2)), sqr(RealExpression(x)));
+        ARIADNE_TESTING_NOTE("Executing: simplify(pow(x,4))");
+        simplify(pow(x, 4));
 
         KleeneanVariable p("p"), q("q");
         KleeneanExpression pe(p), qe(q);
-        ARIADNE_TESTING_NOTE("Executing: simplify(KleeneanExpression(false)&&pe)"); simplify(KleeneanExpression(false)&&pe);
-        ARIADNE_TESTING_NOTE("Executing: simplify(KleeneanExpression(true)&&pe)"); simplify(KleeneanExpression(true)&&pe);
-        ARIADNE_TESTING_NOTE("Executing: simplify(KleeneanExpression(true)||pe)"); simplify(KleeneanExpression(true)||pe);
-        ARIADNE_TESTING_NOTE("Executing: simplify(KleeneanExpression(false)||pe)"); simplify(KleeneanExpression(false)||pe);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(pe&&KleeneanExpression(true)),pe);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(pe&&KleeneanExpression(false)),KleeneanExpression(false));
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(pe||KleeneanExpression(false)),pe);
-        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical,simplify(pe||KleeneanExpression(true)),KleeneanExpression(true));
-        ARIADNE_TESTING_NOTE("Executing: simplify(!( !pe ))"); simplify(!( !pe ));
-        ARIADNE_TESTING_NOTE("Executing: simplify(pe&&qe)"); simplify(pe&&qe);
-        ARIADNE_TESTING_NOTE("Executing: simplify(pe||qe)"); simplify(pe||qe);
+        ARIADNE_TESTING_NOTE("Executing: simplify(KleeneanExpression(false)&&pe)");
+        simplify(KleeneanExpression(false) && pe);
+        ARIADNE_TESTING_NOTE("Executing: simplify(KleeneanExpression(true)&&pe)");
+        simplify(KleeneanExpression(true) && pe);
+        ARIADNE_TESTING_NOTE("Executing: simplify(KleeneanExpression(true)||pe)");
+        simplify(KleeneanExpression(true) || pe);
+        ARIADNE_TESTING_NOTE("Executing: simplify(KleeneanExpression(false)||pe)");
+        simplify(KleeneanExpression(false) || pe);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(pe && KleeneanExpression(true)), pe);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(pe && KleeneanExpression(false)), KleeneanExpression(false));
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(pe || KleeneanExpression(false)), pe);
+        ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(identical, simplify(pe || KleeneanExpression(true)), KleeneanExpression(true));
+        ARIADNE_TESTING_NOTE("Executing: simplify(!( !pe ))");
+        simplify(!(!pe));
+        ARIADNE_TESTING_NOTE("Executing: simplify(pe&&qe)");
+        simplify(pe && qe);
+        ARIADNE_TESTING_NOTE("Executing: simplify(pe||qe)");
+        simplify(pe || qe);
 
-        ContinuousPredicate predicate=(x>=0)&&(y<=1);
-        ARIADNE_TESTING_NOTE("Executing: simplify(predicate)"); simplify(predicate);
-        ARIADNE_TESTING_NOTE("Executing: simplify(sgn(RealExpression(x)))"); simplify(sgn(RealExpression(x)));
-        RealVectorExpression vector_expression({x,y});
-        ARIADNE_TESTING_NOTE("Executing: simplify(vector_expression)"); simplify(vector_expression);
+        ContinuousPredicate predicate = (x >= 0) && (y <= 1);
+        ARIADNE_TESTING_NOTE("Executing: simplify(predicate)");
+        simplify(predicate);
+        ARIADNE_TESTING_NOTE("Executing: simplify(sgn(RealExpression(x)))");
+        simplify(sgn(RealExpression(x)));
+        RealVectorExpression vector_expression({x, y});
+        ARIADNE_TESTING_NOTE("Executing: simplify(vector_expression)");
+        simplify(vector_expression);
     }
 
     Void test_ordering() {
-        ARIADNE_TESTING_PROVE(before(RealExpression(x),RealExpression(y)));
-        ARIADNE_TESTING_PROVE(not before(RealExpression(x),RealExpression(x)));
-        ARIADNE_TESTING_PROVE(before(RealExpression(1),RealExpression(2)));
-        ARIADNE_TESTING_PROVE(not before(RealExpression(5),RealExpression(2)));
-        ARIADNE_TESTING_PROVE(before(pow(x,2),pow(x,3)));
-        ARIADNE_TESTING_PROVE(before(pow(y,2),pow(x,3)));
-        ARIADNE_TESTING_PROVE(before(pow(x,2),pow(x,3)));
-        ARIADNE_TESTING_PROVE(not before(sin(y),sin(x)));
-        ARIADNE_TESTING_PROVE(before(sqrt(x),sin(y)));
-        ARIADNE_TESTING_PROVE(before(x+y,y+x));
-        ARIADNE_TESTING_PROVE(not before(x+y,x+x));
-        ARIADNE_TESTING_PROVE(not before(log(x),rec(x)));
+        ARIADNE_TESTING_PROVE(before(RealExpression(x), RealExpression(y)));
+        ARIADNE_TESTING_PROVE(not before(RealExpression(x), RealExpression(x)));
+        ARIADNE_TESTING_PROVE(before(RealExpression(1), RealExpression(2)));
+        ARIADNE_TESTING_PROVE(not before(RealExpression(5), RealExpression(2)));
+        ARIADNE_TESTING_PROVE(before(pow(x, 2), pow(x, 3)));
+        ARIADNE_TESTING_PROVE(before(pow(y, 2), pow(x, 3)));
+        ARIADNE_TESTING_PROVE(before(pow(x, 2), pow(x, 3)));
+        ARIADNE_TESTING_PROVE(not before(sin(y), sin(x)));
+        ARIADNE_TESTING_PROVE(before(sqrt(x), sin(y)));
+        ARIADNE_TESTING_PROVE(before(x + y, y + x));
+        ARIADNE_TESTING_PROVE(not before(x + y, x + x));
+        ARIADNE_TESTING_PROVE(not before(log(x), rec(x)));
 
-        RealExpression named_a2=RealExpression::constant(RealConstant("a",Real(2)));
-        RealExpression named_a3=RealExpression::constant(RealConstant("a",Real(3)));
-        RealExpression named_b1=RealExpression::constant(RealConstant("b",Real(1)));
-        ARIADNE_TESTING_PROVE(before(named_a2,named_a3));
-        ARIADNE_TESTING_PROVE(before(named_a2,named_b1));
-        ARIADNE_TESTING_PROVE(before(sin(x),sin(y)));
-        ARIADNE_TESTING_PROVE(before(x+y,x+z));
+        RealExpression named_a2 = RealExpression::constant(RealConstant("a", Real(2)));
+        RealExpression named_a3 = RealExpression::constant(RealConstant("a", Real(3)));
+        RealExpression named_b1 = RealExpression::constant(RealConstant("b", Real(1)));
+        ARIADNE_TESTING_PROVE(before(named_a2, named_a3));
+        ARIADNE_TESTING_PROVE(before(named_a2, named_b1));
+        ARIADNE_TESTING_PROVE(before(sin(x), sin(y)));
+        ARIADNE_TESTING_PROVE(before(x + y, x + z));
 
-        RealVectorExpression getter_vector({x,y});
-        ARIADNE_TESTING_PROVE(before(getter_vector[0],getter_vector[1]));
-        RealVectorExpression other_getter_vector({x,z});
-        ARIADNE_TESTING_NOTE("Executing: before(getter_vector[0],other_getter_vector[0])"); before(getter_vector[0],other_getter_vector[0]);
+        RealVectorExpression getter_vector({x, y});
+        ARIADNE_TESTING_PROVE(before(getter_vector[0], getter_vector[1]));
+        RealVectorExpression other_getter_vector({x, z});
+        ARIADNE_TESTING_NOTE("Executing: before(getter_vector[0],other_getter_vector[0])");
+        before(getter_vector[0], other_getter_vector[0]);
 
-        RealVectorExpression equal_vector_left(RealVector({1,2}));
-        RealVectorExpression equal_vector_right(RealVector({1,2}));
-        ARIADNE_TESTING_PROVE(not before(equal_vector_left,equal_vector_right));
+        RealVectorExpression equal_vector_left(RealVector({1, 2}));
+        RealVectorExpression equal_vector_right(RealVector({1, 2}));
+        ARIADNE_TESTING_PROVE(not before(equal_vector_left, equal_vector_right));
     }
 
     Void test_count_nodes() {
-        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(RealExpression(x)),1);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(RealExpression(1)),1);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(2*x),3);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(x+y),3);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(x+sqr(y)),4);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(sin(y)),2);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(pow(y,2)),2);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(pow(x+cos(y),2)+cos(y)),8);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(x+cos(x)+pow(cos(x),2)),8);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(RealExpression(x)), 1);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(RealExpression(1)), 1);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(2 * x), 3);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(x + y), 3);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(x + sqr(y)), 4);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(sin(y)), 2);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(pow(y, 2)), 2);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(pow(x + cos(y), 2) + cos(y)), 8);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_nodes(x + cos(x) + pow(cos(x), 2)), 8);
     }
 
     Void test_count_distinct_nodes() {
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(RealExpression(x)),1);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(x*exp(x)),3);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(x*x),2);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(RealExpression(x)), 1);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(x * exp(x)), 3);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(x * x), 2);
         RealExpression one = 1;
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(one+cos(one)),3);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(x*y+sqr(x*y)),5);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(pow(x,2)*pow(x,2)),3);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(pow(y,2)+y*y),4);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(pow(x+cos(y),2)+cos(y)),6);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(x+cos(x)+pow(cos(x),2)),5);
-        RealVectorExpression shared_vector({x,y});
-        ARIADNE_TESTING_PROVE(count_distinct_nodes(shared_vector[0]+shared_vector[1])>1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(one + cos(one)), 3);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(x * y + sqr(x * y)), 5);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(pow(x, 2) * pow(x, 2)), 3);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(pow(y, 2) + y * y), 4);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(pow(x + cos(y), 2) + cos(y)), 6);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_nodes(x + cos(x) + pow(cos(x), 2)), 5);
+        RealVectorExpression shared_vector({x, y});
+        ARIADNE_TESTING_PROVE(count_distinct_nodes(shared_vector[0] + shared_vector[1]) > 1u);
     }
 
     Void test_count_distinct_node_pointers() {
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(RealExpression(x)),1);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(x*exp(x)),4);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(x*x),3);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(RealExpression(x)), 1);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(x * exp(x)), 4);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(x * x), 3);
         RealExpression one = 1;
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(one+cos(one)),3);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(x*y+sqr(x*y)),8);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(pow(x,2)*pow(x,2)),5);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(pow(y,2)+y*y),6);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(pow(x+cos(y),2)+cos(y)),8);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(x+cos(x)+pow(cos(x),2)),8);
-        RealVectorExpression shared_vector({x,y});
-        ARIADNE_TESTING_PROVE(count_distinct_node_pointers(shared_vector[0]+shared_vector[1])>1u);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(one + cos(one)), 3);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(x * y + sqr(x * y)), 8);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(pow(x, 2) * pow(x, 2)), 5);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(pow(y, 2) + y * y), 6);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(pow(x + cos(y), 2) + cos(y)), 8);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(x + cos(x) + pow(cos(x), 2)), 8);
+        RealVectorExpression shared_vector({x, y});
+        ARIADNE_TESTING_PROVE(count_distinct_node_pointers(shared_vector[0] + shared_vector[1]) > 1u);
     }
 
     Void test_eliminate_common_subexpressions() {
         RealExpression expr1 = x;
         ARIADNE_TESTING_NOTE("expr1 = " << (expr1));
         eliminate_common_subexpressions(expr1);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr1),1);
-        RealExpression expr2 = x*exp(x);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr1), 1);
+        RealExpression expr2 = x * exp(x);
         ARIADNE_TESTING_NOTE("expr2 = " << (expr2));
         eliminate_common_subexpressions(expr2);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr2),3);
-        RealExpression expr3 = x*x;
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr2), 3);
+        RealExpression expr3 = x * x;
         ARIADNE_TESTING_NOTE("expr3 = " << (expr3));
         eliminate_common_subexpressions(expr3);
         eliminate_common_subexpressions(expr3);
         ARIADNE_TESTING_NOTE("expr3 = " << (expr3));
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr3),2);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr3), 2);
         RealExpression one = 1;
-        RealExpression expr4 = one+cos(one);
+        RealExpression expr4 = one + cos(one);
         ARIADNE_TESTING_NOTE("expr4 = " << (expr4));
         eliminate_common_subexpressions(expr4);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr4),3);
-        RealExpression expr5 = x*y+sqr(x*y);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr4), 3);
+        RealExpression expr5 = x * y + sqr(x * y);
         ARIADNE_TESTING_NOTE("expr5 = " << (expr5));
         eliminate_common_subexpressions(expr5);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr5),5);
-        RealExpression expr6 = pow(x,2)*pow(x,2);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr5), 5);
+        RealExpression expr6 = pow(x, 2) * pow(x, 2);
         ARIADNE_TESTING_NOTE("expr6 = " << (expr6));
         eliminate_common_subexpressions(expr6);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr6),3);
-        RealExpression expr7 = pow(y,2)+y*y;
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr6), 3);
+        RealExpression expr7 = pow(y, 2) + y * y;
         ARIADNE_TESTING_NOTE("expr7 = " << (expr7));
         eliminate_common_subexpressions(expr7);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr7),4);
-        RealExpression expr8 = pow(x+cos(y),2)+cos(y);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr7), 4);
+        RealExpression expr8 = pow(x + cos(y), 2) + cos(y);
         ARIADNE_TESTING_NOTE("expr8 = " << (expr8));
         eliminate_common_subexpressions(expr8);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr8),6);
-        RealExpression expr9 = x+cos(x)+pow(cos(x),2);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr8), 6);
+        RealExpression expr9 = x + cos(x) + pow(cos(x), 2);
         ARIADNE_TESTING_NOTE("expr9 = " << (expr9));
         eliminate_common_subexpressions(expr9);
-        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr9),5);
+        ARIADNE_TESTING_EXPECT_EQUAL(count_distinct_node_pointers(expr9), 5);
 
         // Cross-output CSE must survive Expression -> Formula conversion.
-        Vector<RealExpression> expressions({x+y,x+y});
+        Vector<RealExpression> expressions({x + y, x + y});
         ARIADNE_TESTING_PROVE(
-            expressions[0].node_raw_ptr()!=expressions[1].node_raw_ptr());
+            expressions[0].node_raw_ptr() != expressions[1].node_raw_ptr());
         eliminate_common_subexpressions(expressions);
         ARIADNE_TESTING_PROVE(
-            expressions[0].node_raw_ptr()==expressions[1].node_raw_ptr());
-        auto first_root=expressions[0].node_raw_ptr();
+            expressions[0].node_raw_ptr() == expressions[1].node_raw_ptr());
+        auto first_root = expressions[0].node_raw_ptr();
         eliminate_common_subexpressions(expressions);
-        ARIADNE_TESTING_PROVE(expressions[0].node_raw_ptr()==first_root);
+        ARIADNE_TESTING_PROVE(expressions[0].node_raw_ptr() == first_root);
         ARIADNE_TESTING_PROVE(
-            expressions[0].node_raw_ptr()==expressions[1].node_raw_ptr());
-        Vector<Formula<EffectiveNumber>> formulae=
-            make_formula(expressions,RealSpace({x,y,z}));
+            expressions[0].node_raw_ptr() == expressions[1].node_raw_ptr());
+        Vector<Formula<EffectiveNumber>> formulae =
+            make_formula(expressions, RealSpace({x, y, z}));
         ARIADNE_TESTING_PROVE(
-            formulae[0].node_ptr()==formulae[1].node_ptr());
+            formulae[0].node_ptr() == formulae[1].node_ptr());
 
-        RealVectorExpression getter_vector({x,y});
-        Vector<RealExpression> getter_expressions({getter_vector[0],getter_vector[0]});
+        RealVectorExpression getter_vector({x, y});
+        Vector<RealExpression> getter_expressions({getter_vector[0], getter_vector[0]});
         ARIADNE_TESTING_PROVE(
-            getter_expressions[0].node_raw_ptr()!=getter_expressions[1].node_raw_ptr());
+            getter_expressions[0].node_raw_ptr() != getter_expressions[1].node_raw_ptr());
         eliminate_common_subexpressions(getter_expressions);
         ARIADNE_TESTING_PROVE(
-            getter_expressions[0].node_raw_ptr()==getter_expressions[1].node_raw_ptr());
+            getter_expressions[0].node_raw_ptr() == getter_expressions[1].node_raw_ptr());
 
-        RealExpression shared_x=x;
-        RealExpression shared_y=y;
-        Vector<RealExpression> canonical_cases({
-            RealExpression(1),RealExpression(2),
-            sin(shared_x),cos(shared_x),sin(shared_y),
-            shared_x+shared_y,shared_x-RealExpression(z),shared_x+RealExpression(z),
-            pow(shared_x,2),pow(shared_x,3),pow(shared_y,2)});
+        RealExpression shared_x = x;
+        RealExpression shared_y = y;
+        Vector<RealExpression> canonical_cases({RealExpression(1), RealExpression(2),
+                                                sin(shared_x), cos(shared_x), sin(shared_y),
+                                                shared_x + shared_y, shared_x - RealExpression(z), shared_x + RealExpression(z),
+                                                pow(shared_x, 2), pow(shared_x, 3), pow(shared_y, 2)});
         eliminate_common_subexpressions(canonical_cases);
     }
 
     Void test_substitute() {
-
         RealVariable u1("u1"), u2("u2");
-        RealExpression expr = -u1*x*y+2*pow(x+u2,2);
+        RealExpression expr = -u1 * x * y + 2 * pow(x + u2, 2);
 
-        List<Assignment<RealVariable,RealExpression>> subs={{u1,u1+1},{u2,u1*x}};
+        List<Assignment<RealVariable, RealExpression>> subs = {
+            {u1, u1 + 1},
+            {u2, u1 * x}
+        };
 
-        RealExpression substitution = substitute(expr,subs);
+        RealExpression substitution = substitute(expr, subs);
 
-        ARIADNE_TESTING_PROVE(identical(substitution,-(u1+1)*x*y+2*pow(x+u1*x,2)));
+        ARIADNE_TESTING_PROVE(identical(substitution, -(u1 + 1) * x * y + 2 * pow(x + u1 * x, 2)));
 
         ARIADNE_TESTING_PROVE(identical(
-            substitute(x+y,x,Real(2)),
-            RealExpression(2)+y));
+            substitute(x + y, x, Real(2)),
+            RealExpression(2) + y));
 
-        ContinuousPredicate predicate=x>=y;
-        ARIADNE_TESTING_NOTE("Executing: substitute(predicate,x,Real(2))"); substitute(predicate,x,Real(2));
+        ContinuousPredicate predicate = x >= y;
+        ARIADNE_TESTING_NOTE("Executing: substitute(predicate,x,Real(2))");
+        substitute(predicate, x, Real(2));
 
         KleeneanVariable logical_variable("logical");
         KleeneanExpression logical_expression(logical_variable);
-        KleeneanExpression logical_substitution=
-            substitute(logical_expression,logical_variable,Kleenean());
-        ARIADNE_TESTING_NOTE("Executing: logical_substitution.val()"); logical_substitution.val();
+        KleeneanExpression logical_substitution =
+            substitute(logical_expression, logical_variable, Kleenean());
+        ARIADNE_TESTING_NOTE("Executing: logical_substitution.val()");
+        logical_substitution.val();
 
-        RealVectorExpression vector_expression({x,y});
-        RealVectorExpression vector_substitution=
-            substitute(vector_expression,x,Real(2));
+        RealVectorExpression vector_expression({x, y});
+        RealVectorExpression vector_substitution =
+            substitute(vector_expression, x, Real(2));
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,simplify(vector_substitution[0]),RealExpression(2));
+            identical, simplify(vector_substitution[0]), RealExpression(2));
 
-        Vector<RealExpression> expression_vector({x+y,x});
-        List<Assignment<RealVariable,RealExpression>> x_substitution={{x,RealExpression(2)}};
-        Vector<RealExpression> substituted_vector=
-            substitute(expression_vector,x_substitution);
+        Vector<RealExpression> expression_vector({x + y, x});
+        List<Assignment<RealVariable, RealExpression>> x_substitution = {
+            {x, RealExpression(2)}
+        };
+        Vector<RealExpression> substituted_vector =
+            substitute(expression_vector, x_substitution);
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,substituted_vector[1],RealExpression(2));
+            identical, substituted_vector[1], RealExpression(2));
 
-        ARIADNE_TESTING_NOTE("Executing: substitute(predicate,x_substitution)"); substitute(predicate,x_substitution);
+        ARIADNE_TESTING_NOTE("Executing: substitute(predicate,x_substitution)");
+        substitute(predicate, x_substitution);
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,substitute(RealExpression(y),x,Real(2)),RealExpression(y));
-        ARIADNE_TESTING_NOTE("Executing: substitute(vector_expression[0],x,Real(2))"); substitute(vector_expression[0],x,Real(2));
-        ARIADNE_TESTING_NOTE("Executing: substitute(predicate,logical_variable,Kleenean())"); substitute(predicate,logical_variable,Kleenean());
+            identical, substitute(RealExpression(y), x, Real(2)), RealExpression(y));
+        ARIADNE_TESTING_NOTE("Executing: substitute(vector_expression[0],x,Real(2))");
+        substitute(vector_expression[0], x, Real(2));
+        ARIADNE_TESTING_NOTE("Executing: substitute(predicate,logical_variable,Kleenean())");
+        substitute(predicate, logical_variable, Kleenean());
         ARIADNE_TESTING_EXPECT_BINARY_PREDICATE(
-            identical,substitute(RealExpression(3),x,Real(2)),RealExpression(3));
-        ARIADNE_TESTING_NOTE("Executing: substitute(neg(RealExpression(x)),x,Real(2))"); substitute(neg(RealExpression(x)),x,Real(2));
-        ARIADNE_TESTING_NOTE("Executing: substitute(pow(RealExpression(x),3),x,Real(2))"); substitute(pow(RealExpression(x),3),x,Real(2));
-        ARIADNE_TESTING_NOTE("Executing: substitute(RealExpression(2)*RealExpression(x),x,Real(3))"); substitute(RealExpression(2)*RealExpression(x),x,Real(3));
+            identical, substitute(RealExpression(3), x, Real(2)), RealExpression(3));
+        ARIADNE_TESTING_NOTE("Executing: substitute(neg(RealExpression(x)),x,Real(2))");
+        substitute(neg(RealExpression(x)), x, Real(2));
+        ARIADNE_TESTING_NOTE("Executing: substitute(pow(RealExpression(x),3),x,Real(2))");
+        substitute(pow(RealExpression(x), 3), x, Real(2));
+        ARIADNE_TESTING_NOTE("Executing: substitute(RealExpression(2)*RealExpression(x),x,Real(3))");
+        substitute(RealExpression(2) * RealExpression(x), x, Real(3));
     }
 
     Void test_is_constant_in() {
         Real c(3);
-        ARIADNE_TESTING_PROVE(is_constant_in(3*y,{x}));
-        ARIADNE_TESTING_PROVE(is_constant_in(pow(x,2),{y}));
-        ARIADNE_TESTING_PROVE(not is_constant_in(pow(x,2),{x}));
-        ARIADNE_TESTING_PROVE(not is_constant_in(3*y,{y}));
-        ARIADNE_TESTING_PROVE(not is_constant_in(0*y,{y}));
-        ARIADNE_TESTING_PROVE(not is_constant_in((sin(2*c)-2*sin(c)*cos(c))*y,{y}));
-        ARIADNE_TESTING_PROVE(not is_constant_in((sin(2*x)-2*sin(x)*cos(x))*y,{y}));
-        ARIADNE_TESTING_PROVE(is_constant_in(simplify(0*y),{y}));
+        ARIADNE_TESTING_PROVE(is_constant_in(3 * y, {x}));
+        ARIADNE_TESTING_PROVE(is_constant_in(pow(x, 2), {y}));
+        ARIADNE_TESTING_PROVE(not is_constant_in(pow(x, 2), {x}));
+        ARIADNE_TESTING_PROVE(not is_constant_in(3 * y, {y}));
+        ARIADNE_TESTING_PROVE(not is_constant_in(0 * y, {y}));
+        ARIADNE_TESTING_PROVE(not is_constant_in((sin(2 * c) - 2 * sin(c) * cos(c)) * y, {y}));
+        ARIADNE_TESTING_PROVE(not is_constant_in((sin(2 * x) - 2 * sin(x) * cos(x)) * y, {y}));
+        ARIADNE_TESTING_PROVE(is_constant_in(simplify(0 * y), {y}));
 
-        RealVectorExpression vector_expression({x,y});
-        ARIADNE_TESTING_PROVE(is_constant_in(vector_expression,{z}));
-        ARIADNE_TESTING_PROVE(not is_constant_in(vector_expression,{x}));
+        RealVectorExpression vector_expression({x, y});
+        ARIADNE_TESTING_PROVE(is_constant_in(vector_expression, {z}));
+        ARIADNE_TESTING_PROVE(not is_constant_in(vector_expression, {x}));
 
-        Vector<RealExpression> expression_vector({x,y});
-        ARIADNE_TESTING_PROVE(is_constant_in(expression_vector,{z}));
-        ARIADNE_TESTING_PROVE(not is_constant_in(expression_vector,{y}));
+        Vector<RealExpression> expression_vector({x, y});
+        ARIADNE_TESTING_PROVE(is_constant_in(expression_vector, {z}));
+        ARIADNE_TESTING_PROVE(not is_constant_in(expression_vector, {y}));
 
-        ARIADNE_TESTING_PROVE(is_constant_in(vector_expression[0],{z}));
-        ARIADNE_TESTING_PROVE(not is_constant_in(vector_expression[0],{x}));
-        ARIADNE_TESTING_PROVE(is_constant_in(RealExpression(3),{x}));
-        ARIADNE_TESTING_PROVE(is_constant_in(RealExpression(x),{y}));
-        ARIADNE_TESTING_PROVE(not is_constant_in(RealExpression(x),{x}));
-        ARIADNE_TESTING_PROVE(is_constant_in(pow(RealExpression(x),0),{x}));
+        ARIADNE_TESTING_PROVE(is_constant_in(vector_expression[0], {z}));
+        ARIADNE_TESTING_PROVE(not is_constant_in(vector_expression[0], {x}));
+        ARIADNE_TESTING_PROVE(is_constant_in(RealExpression(3), {x}));
+        ARIADNE_TESTING_PROVE(is_constant_in(RealExpression(x), {y}));
+        ARIADNE_TESTING_PROVE(not is_constant_in(RealExpression(x), {x}));
+        ARIADNE_TESTING_PROVE(is_constant_in(pow(RealExpression(x), 0), {x}));
     }
 
     Void test_is_additive_in() {
         RealVariable u1("u1"), u2("u2");
-        ARIADNE_TESTING_PROVE(is_additive_in(u1,u1));
-        ARIADNE_TESTING_PROVE(is_additive_in(x,u1));
-        ARIADNE_TESTING_PROVE(is_additive_in(x+u1,u1));
-        ARIADNE_TESTING_PROVE(is_additive_in(x+u1,u2));
-        ARIADNE_TESTING_PROVE(is_additive_in(Vector<RealExpression>({x+u1}),{u1}));
-        ARIADNE_TESTING_PROVE(is_additive_in(Vector<RealExpression>({x+u1}),{u2}));
-        ARIADNE_TESTING_PROVE(is_additive_in(Vector<RealExpression>({x+u1,y+u2}),{u1,u2}));
-        ARIADNE_TESTING_PROVE(is_additive_in(Vector<RealExpression>({x+u2,y+u1}),{u1,u2}));
-        ARIADNE_TESTING_PROVE(is_additive_in(Vector<RealExpression>({x+u1,y}),{u1}));
-        ARIADNE_TESTING_PROVE(is_additive_in(Vector<RealExpression>({x,y+u1}),{u1}));
-        ARIADNE_TESTING_PROVE(not is_additive_in(Vector<RealExpression>({x,y+2*u1}),{u1}));
-        ARIADNE_TESTING_PROVE(not is_additive_in(Vector<RealExpression>({x+u1,y+2*u2}),{u1,u2}));
-        ARIADNE_TESTING_PROVE(not is_additive_in(Vector<RealExpression>({x+u1,y+u1}),{u1}));
-        ARIADNE_TESTING_PROVE(not is_additive_in(Vector<RealExpression>({x*u1,y+u2}),{u1,u2}));
-        ARIADNE_TESTING_PROVE(not is_additive_in(Vector<RealExpression>({x+u1,y+sqr(u2)}),{u1,u2}));
+        ARIADNE_TESTING_PROVE(is_additive_in(u1, u1));
+        ARIADNE_TESTING_PROVE(is_additive_in(x, u1));
+        ARIADNE_TESTING_PROVE(is_additive_in(x + u1, u1));
+        ARIADNE_TESTING_PROVE(is_additive_in(x + u1, u2));
+        ARIADNE_TESTING_PROVE(is_additive_in(Vector<RealExpression>({x + u1}), {u1}));
+        ARIADNE_TESTING_PROVE(is_additive_in(Vector<RealExpression>({x + u1}), {u2}));
+        ARIADNE_TESTING_PROVE(is_additive_in(Vector<RealExpression>({x + u1, y + u2}), {u1, u2}));
+        ARIADNE_TESTING_PROVE(is_additive_in(Vector<RealExpression>({x + u2, y + u1}), {u1, u2}));
+        ARIADNE_TESTING_PROVE(is_additive_in(Vector<RealExpression>({x + u1, y}), {u1}));
+        ARIADNE_TESTING_PROVE(is_additive_in(Vector<RealExpression>({x, y + u1}), {u1}));
+        ARIADNE_TESTING_PROVE(not is_additive_in(Vector<RealExpression>({x, y + 2 * u1}), {u1}));
+        ARIADNE_TESTING_PROVE(not is_additive_in(Vector<RealExpression>({x + u1, y + 2 * u2}), {u1, u2}));
+        ARIADNE_TESTING_PROVE(not is_additive_in(Vector<RealExpression>({x + u1, y + u1}), {u1}));
+        ARIADNE_TESTING_PROVE(not is_additive_in(Vector<RealExpression>({x * u1, y + u2}), {u1, u2}));
+        ARIADNE_TESTING_PROVE(not is_additive_in(Vector<RealExpression>({x + u1, y + sqr(u2)}), {u1, u2}));
     }
 
     Void test_is_affine_in() {
-        ARIADNE_TESTING_PROVE(is_affine_in(sqr(x),{y}));
-        ARIADNE_TESTING_PROVE(is_affine_in(neg(x),{x}));
-        ARIADNE_TESTING_PROVE(is_affine_in(pow(x,3),{y}));
-        ARIADNE_TESTING_PROVE(is_affine_in(pow(x,3)+y,{y}));
-        ARIADNE_TESTING_PROVE(is_affine_in(2+3*x-5*y-x,{x,y}));
-        ARIADNE_TESTING_PROVE(is_affine_in(3*y,{x,y}));
-        ARIADNE_TESTING_PROVE(is_affine_in(x*y,{x}));
-        ARIADNE_TESTING_PROVE(is_affine_in(3*x/y,{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(atan(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(acos(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(asin(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(cos(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(sin(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(tan(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(abs(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(log(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(sqrt(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(exp(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(rec(x),{x}));
-        ARIADNE_TESTING_PROVE(is_affine_in(hlf(x),{x}));
-        ARIADNE_TESTING_PROVE(is_affine_in(nul(exp(x)),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(x),{x}));
-        ARIADNE_TESTING_PROVE(is_affine_in(neg(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(pow(x,3),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(x*y,{x,y}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(x*x,{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(0*x*x,{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(x/y,{y}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(tanh(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(sigmoid(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(softplus(x),{x}));
-        ARIADNE_TESTING_PROVE(is_affine_in(tanh(RealExpression(2)),{x}));
-        ARIADNE_TESTING_PROVE(is_affine_in(max(RealExpression(1),RealExpression(2)),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(max(RealExpression(x),RealExpression(2)),{x}));
-        ARIADNE_TESTING_PROVE(is_affine_in(min(RealExpression(1),RealExpression(2)),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(min(RealExpression(2),RealExpression(x)),{x}));
-        ARIADNE_TESTING_PROVE(is_affine_in(pow(RealExpression(x),0),{x}));
-        ARIADNE_TESTING_PROVE(is_affine_in(pow(RealExpression(x),1),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(RealExpression(y)+sqr(RealExpression(x)),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(RealExpression(x))+RealExpression(y),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(RealExpression(y)-sqr(RealExpression(x)),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(RealExpression(x))-RealExpression(y),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(RealExpression(x))*RealExpression(2),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(RealExpression(2)*sqr(RealExpression(x)),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(RealExpression(x))/RealExpression(2),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(max(RealExpression(2),RealExpression(x)),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(min(RealExpression(x),RealExpression(2)),{x}));
-        ARIADNE_TESTING_PROVE(not is_affine_in(pow(sqr(RealExpression(x)),1),{x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(sqr(x), {y}));
+        ARIADNE_TESTING_PROVE(is_affine_in(neg(x), {x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(pow(x, 3), {y}));
+        ARIADNE_TESTING_PROVE(is_affine_in(pow(x, 3) + y, {y}));
+        ARIADNE_TESTING_PROVE(is_affine_in(2 + 3 * x - 5 * y - x, {x, y}));
+        ARIADNE_TESTING_PROVE(is_affine_in(3 * y, {x, y}));
+        ARIADNE_TESTING_PROVE(is_affine_in(x * y, {x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(3 * x / y, {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(atan(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(acos(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(asin(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(cos(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(sin(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(tan(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(abs(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(log(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(sqrt(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(exp(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(rec(x), {x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(hlf(x), {x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(nul(exp(x)), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(x), {x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(neg(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(pow(x, 3), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(x * y, {x, y}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(x * x, {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(0 * x * x, {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(x / y, {y}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(tanh(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(sigmoid(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(softplus(x), {x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(tanh(RealExpression(2)), {x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(max(RealExpression(1), RealExpression(2)), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(max(RealExpression(x), RealExpression(2)), {x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(min(RealExpression(1), RealExpression(2)), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(min(RealExpression(2), RealExpression(x)), {x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(pow(RealExpression(x), 0), {x}));
+        ARIADNE_TESTING_PROVE(is_affine_in(pow(RealExpression(x), 1), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(RealExpression(y) + sqr(RealExpression(x)), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(RealExpression(x)) + RealExpression(y), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(RealExpression(y) - sqr(RealExpression(x)), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(RealExpression(x)) - RealExpression(y), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(RealExpression(x)) * RealExpression(2), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(RealExpression(2) * sqr(RealExpression(x)), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(sqr(RealExpression(x)) / RealExpression(2), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(max(RealExpression(2), RealExpression(x)), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(min(RealExpression(x), RealExpression(2)), {x}));
+        ARIADNE_TESTING_PROVE(not is_affine_in(pow(sqr(RealExpression(x)), 1), {x}));
     }
 
     Void test_is_polynomial_in() {
-        ARIADNE_TESTING_PROVE(is_polynomial_in(1,{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(x,{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(x*x,{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(atan(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(acos(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(asin(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(cos(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(tan(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(abs(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(log(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(sqrt(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(exp(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(rec(x),{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(hlf(x),{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(nul(exp(x)),{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(sqr(x),{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(neg(x),{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x,2),{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x,3),{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x+sqr(x),3),{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(x/y,{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(x/y,{y}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(x/y,{x,y}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in({x,sqr(y)},{x,y}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in({x/y,sqr(y)},{x,y}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(pos(x),{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(x+y,{x,y}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(x-y,{x,y}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(x*y,{x,y}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(max(RealExpression(1),RealExpression(2)),{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(min(RealExpression(1),RealExpression(2)),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(max(x,RealExpression(2)),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(min(RealExpression(2),x),{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x,0),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(pow(x,-1),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(tanh(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(sigmoid(x),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(softplus(x),{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in(tanh(RealExpression(2)),{x}));
-        ARIADNE_TESTING_PROVE(is_polynomial_in((x+y)*(x-y),{x,y}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(x/(x+y),{x,y}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(RealExpression(y)+sin(RealExpression(x)),{x,y}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x))+RealExpression(y),{x,y}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(RealExpression(y)-sin(RealExpression(x)),{x,y}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x))-RealExpression(y),{x,y}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(RealExpression(y)*sin(RealExpression(x)),{x,y}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x))*RealExpression(y),{x,y}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x))/RealExpression(2),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(max(RealExpression(2),RealExpression(x)),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(min(RealExpression(x),RealExpression(2)),{x}));
-        ARIADNE_TESTING_PROVE(not is_polynomial_in(pow(sin(RealExpression(x)),2),{x}));
-        RealVectorExpression polynomial_vector({x,sqr(y)});
-        ARIADNE_TESTING_PROVE(is_polynomial_in(polynomial_vector[0],{x,y}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(1, {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(x, {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(x * x, {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(atan(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(acos(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(asin(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(cos(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(tan(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(abs(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(log(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sqrt(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(exp(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(rec(x), {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(hlf(x), {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(nul(exp(x)), {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(sqr(x), {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(neg(x), {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x, 2), {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x, 3), {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x + sqr(x), 3), {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(x / y, {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(x / y, {y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(x / y, {x, y}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in({x, sqr(y)}, {x, y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in({x / y, sqr(y)}, {x, y}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(pos(x), {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(x + y, {x, y}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(x - y, {x, y}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(x * y, {x, y}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(max(RealExpression(1), RealExpression(2)), {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(min(RealExpression(1), RealExpression(2)), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(max(x, RealExpression(2)), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(min(RealExpression(2), x), {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(pow(x, 0), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(pow(x, -1), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(tanh(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sigmoid(x), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(softplus(x), {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in(tanh(RealExpression(2)), {x}));
+        ARIADNE_TESTING_PROVE(is_polynomial_in((x + y) * (x - y), {x, y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(x / (x + y), {x, y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(RealExpression(y) + sin(RealExpression(x)), {x, y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x)) + RealExpression(y), {x, y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(RealExpression(y) - sin(RealExpression(x)), {x, y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x)) - RealExpression(y), {x, y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(RealExpression(y) * sin(RealExpression(x)), {x, y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x)) * RealExpression(y), {x, y}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(sin(RealExpression(x)) / RealExpression(2), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(max(RealExpression(2), RealExpression(x)), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(min(RealExpression(x), RealExpression(2)), {x}));
+        ARIADNE_TESTING_PROVE(not is_polynomial_in(pow(sin(RealExpression(x)), 2), {x}));
+        RealVectorExpression polynomial_vector({x, sqr(y)});
+        ARIADNE_TESTING_PROVE(is_polynomial_in(polynomial_vector[0], {x, y}));
     }
 
-    Void test_vector_expression()
-    {
-        ARIADNE_TESTING_COMPILE_SAME_TYPE(RealVariables,Variables<Real>);
-        ARIADNE_TESTING_COMPILE_SAME_TYPE(RealVectorExpression,Expression<RealVector>);
+    Void test_vector_expression() {
+        ARIADNE_TESTING_COMPILE_SAME_TYPE(RealVariables, Variables<Real>);
+        ARIADNE_TESTING_COMPILE_SAME_TYPE(RealVectorExpression, Expression<RealVector>);
         // Validate each vector component using the exact same() relation.
-        RealVector cs={-2,3,-5};
-        RealVariables xs("x",3);
-        RealVectorVariable vv("v",3);
-        RealVectorExpression vce(cs); ARIADNE_TESTING_NOTE("Constructed RealVectorExpression vce = " << vce);
-        RealVectorExpression vexs(xs); ARIADNE_TESTING_NOTE("Constructed RealVectorExpression vexs = " << vexs);
-        RealVectorExpression evv(vv); ARIADNE_TESTING_NOTE("Constructed RealVectorExpression evv = " << evv);
-        RealVectorExpression vle({xs[0],cs[1],xs[2]+cs[2]}); ARIADNE_TESTING_NOTE("Constructed RealVectorExpression vle = " << vle);
-        ARIADNE_TESTING_EXPECT_EQUAL(vce.size(),cs.size());
-        ARIADNE_TESTING_EXPECT_EQUAL(vexs.size(),xs.size());
-        ARIADNE_TESTING_EXPECT_EQUAL(evv.size(),3u);
-        ARIADNE_TESTING_EXPECT_EQUAL(vle.size(),3u);
-        ARIADNE_TESTING_EXPECT_EQUAL((vce+evv).size(),vce.size());
-        RealVectorExpression vee=Vector<RealExpression>({xs[0],xs[1],xs[2]});
-        RealVectorExpression vex=xs;
-        ARIADNE_TESTING_PROVE(vex.node_ptr().operator->()==vex.node_raw_ptr());
-        ARIADNE_TESTING_PROVE(vex.node_raw_ptr()==&vex.node_ref());
-        RealVectorExpression vyce({cs[0],y,cs[2]});
-        RealValuation val({xs[0]=7, xs[1]=11, xs[2]=13});
+        RealVector cs = {-2, 3, -5};
+        RealVariables xs("x", 3);
+        RealVectorVariable vv("v", 3);
+        RealVectorExpression vce(cs);
+        ARIADNE_TESTING_NOTE("Constructed RealVectorExpression vce = " << vce);
+        RealVectorExpression vexs(xs);
+        ARIADNE_TESTING_NOTE("Constructed RealVectorExpression vexs = " << vexs);
+        RealVectorExpression evv(vv);
+        ARIADNE_TESTING_NOTE("Constructed RealVectorExpression evv = " << evv);
+        RealVectorExpression vle({xs[0], cs[1], xs[2] + cs[2]});
+        ARIADNE_TESTING_NOTE("Constructed RealVectorExpression vle = " << vle);
+        ARIADNE_TESTING_EXPECT_EQUAL(vce.size(), cs.size());
+        ARIADNE_TESTING_EXPECT_EQUAL(vexs.size(), xs.size());
+        ARIADNE_TESTING_EXPECT_EQUAL(evv.size(), 3u);
+        ARIADNE_TESTING_EXPECT_EQUAL(vle.size(), 3u);
+        ARIADNE_TESTING_EXPECT_EQUAL((vce + evv).size(), vce.size());
+        RealVectorExpression vee = Vector<RealExpression>({xs[0], xs[1], xs[2]});
+        RealVectorExpression vex = xs;
+        ARIADNE_TESTING_PROVE(vex.node_ptr().operator->() == vex.node_raw_ptr());
+        ARIADNE_TESTING_PROVE(vex.node_raw_ptr() == &vex.node_ref());
+        RealVectorExpression vyce({cs[0], y, cs[2]});
+        RealValuation val({xs[0] = 7, xs[1] = 11, xs[2] = 13});
         RealVector vec({val[xs[0]], val[xs[1]], val[xs[2]]});
-        RealValuation valv({vv[0]=7, vv[1]=11, vv[2]=13});
+        RealValuation valv({vv[0] = 7, vv[1] = 11, vv[2] = 13});
         RealVector vecv({valv[vv[0]], valv[vv[1]], valv[vv[2]]});
-        expect_same_real_vector(evaluate(vce,val),cs);
-        ARIADNE_TESTING_NOTE("evaluate(vex,val) = " << (evaluate(vex,val)));
-        expect_same_real_vector(evaluate(vex,val),vec);
-        RealVector evaluated_sum=evaluate(vex+vce,val);
-        ARIADNE_TESTING_EXPECT_SAME(evaluated_sum[0],val[xs[0]]+cs[0]);
-        expect_same_real_vector(evaluate(vex+vce,val),evaluate(vex,val)+cs);
-        ARIADNE_TESTING_NOTE("(vex+vce)/vex[1] = " << ((vex+vce)/vex[1]));
-        ARIADNE_TESTING_NOTE("evaluate((vex+vce)/vex[1],val) = " << (evaluate((vex+vce)/vex[1],val)));
-        ARIADNE_TESTING_NOTE("simplify(((vex+vce)/vex[1])[2]) = " << (simplify(((vex+vce)/vex[1])[2])));
-        ARIADNE_TESTING_EXPECT_SAME(simplify(((vex+vce)/vex[1])[2]),(xs[2]+cs[2])/xs[1]);
+        expect_same_real_vector(evaluate(vce, val), cs);
+        ARIADNE_TESTING_NOTE("evaluate(vex,val) = " << (evaluate(vex, val)));
+        expect_same_real_vector(evaluate(vex, val), vec);
+        RealVector evaluated_sum = evaluate(vex + vce, val);
+        ARIADNE_TESTING_EXPECT_SAME(evaluated_sum[0], val[xs[0]] + cs[0]);
+        expect_same_real_vector(evaluate(vex + vce, val), evaluate(vex, val) + cs);
+        ARIADNE_TESTING_NOTE("(vex+vce)/vex[1] = " << ((vex + vce) / vex[1]));
+        ARIADNE_TESTING_NOTE("evaluate((vex+vce)/vex[1],val) = " << (evaluate((vex + vce) / vex[1], val)));
+        ARIADNE_TESTING_NOTE("simplify(((vex+vce)/vex[1])[2]) = " << (simplify(((vex + vce) / vex[1])[2])));
+        ARIADNE_TESTING_EXPECT_SAME(simplify(((vex + vce) / vex[1])[2]), (xs[2] + cs[2]) / xs[1]);
 
-        ARIADNE_TESTING_EXPECT_SAME(simplify((vex+vce)[0]),xs[0]+cs[0]);
-        ARIADNE_TESTING_EXPECT_SAME(simplify((vex+vce)[1]),xs[1]+cs[1]);
-        ARIADNE_TESTING_EXPECT_SAME(simplify((vex-vce)[0]),xs[0]-cs[0]);
-        ARIADNE_TESTING_EXPECT_SAME(simplify((vex*y)[1]),xs[1]*y);
-        ARIADNE_TESTING_EXPECT_SAME(simplify((y*(vex-vce))[0]),y*(xs[0]-cs[0]));
-        ARIADNE_TESTING_EXPECT_SAME(simplify(((vex-vce)*y)[0]),(xs[0]-cs[0])*y);
-        ARIADNE_TESTING_EXPECT_SAME(simplify(((vex-vce)/y)[0]),(xs[0]-cs[0])/y);
+        ARIADNE_TESTING_EXPECT_SAME(simplify((vex + vce)[0]), xs[0] + cs[0]);
+        ARIADNE_TESTING_EXPECT_SAME(simplify((vex + vce)[1]), xs[1] + cs[1]);
+        ARIADNE_TESTING_EXPECT_SAME(simplify((vex - vce)[0]), xs[0] - cs[0]);
+        ARIADNE_TESTING_EXPECT_SAME(simplify((vex * y)[1]), xs[1] * y);
+        ARIADNE_TESTING_EXPECT_SAME(simplify((y * (vex - vce))[0]), y * (xs[0] - cs[0]));
+        ARIADNE_TESTING_EXPECT_SAME(simplify(((vex - vce) * y)[0]), (xs[0] - cs[0]) * y);
+        ARIADNE_TESTING_EXPECT_SAME(simplify(((vex - vce) / y)[0]), (xs[0] - cs[0]) / y);
 
-        ARIADNE_TESTING_NOTE("Executing: vexs.op()"); vexs.op();
-        RealVectorExpression unary_vector=neg(vex);
-        RealVectorExpression binary_vector=vce+evv;
-        RealVectorExpression left_scaled_vector=y*vex;
-        RealVectorExpression right_scaled_vector=vex*y;
-        RealVectorExpression divided_vector=vex/y;
-        ARIADNE_TESTING_EXPECT_EQUAL(unary_vector.size(),vex.size());
-        ARIADNE_TESTING_EXPECT_EQUAL(left_scaled_vector.size(),vex.size());
-        ARIADNE_TESTING_EXPECT_EQUAL(right_scaled_vector.size(),vex.size());
-        ARIADNE_TESTING_EXPECT_EQUAL(divided_vector.size(),vex.size());
+        ARIADNE_TESTING_NOTE("Executing: vexs.op()");
+        vexs.op();
+        RealVectorExpression unary_vector = neg(vex);
+        RealVectorExpression binary_vector = vce + evv;
+        RealVectorExpression left_scaled_vector = y * vex;
+        RealVectorExpression right_scaled_vector = vex * y;
+        RealVectorExpression divided_vector = vex / y;
+        ARIADNE_TESTING_EXPECT_EQUAL(unary_vector.size(), vex.size());
+        ARIADNE_TESTING_EXPECT_EQUAL(left_scaled_vector.size(), vex.size());
+        ARIADNE_TESTING_EXPECT_EQUAL(right_scaled_vector.size(), vex.size());
+        ARIADNE_TESTING_EXPECT_EQUAL(divided_vector.size(), vex.size());
 
-        ARIADNE_TESTING_PROVE(is_constant_in(vce[0],{x}));
-        ARIADNE_TESTING_PROVE(is_constant_in(evv[0],{x}));
-        ARIADNE_TESTING_PROVE(is_constant_in(unary_vector[0],{z}));
-        ARIADNE_TESTING_PROVE(not is_constant_in(unary_vector[0],{xs[0]}));
-        ARIADNE_TESTING_PROVE(is_constant_in(binary_vector[0],{z}));
-        ARIADNE_TESTING_PROVE(not is_constant_in(binary_vector[0],{vv[0]}));
-        ARIADNE_TESTING_PROVE(is_constant_in(left_scaled_vector[0],{z}));
-        ARIADNE_TESTING_PROVE(not is_constant_in(left_scaled_vector[0],{y}));
-        ARIADNE_TESTING_PROVE(is_constant_in(right_scaled_vector[0],{z}));
-        ARIADNE_TESTING_PROVE(not is_constant_in(right_scaled_vector[0],{xs[0]}));
-        ARIADNE_TESTING_PROVE(not is_constant_in((vex+vce)[0],{xs[0]}));
-        ARIADNE_TESTING_PROVE(not is_constant_in(left_scaled_vector[0],{xs[0]}));
-        ARIADNE_TESTING_PROVE(not is_constant_in(right_scaled_vector[0],{y}));
+        ARIADNE_TESTING_PROVE(is_constant_in(vce[0], {x}));
+        ARIADNE_TESTING_PROVE(is_constant_in(evv[0], {x}));
+        ARIADNE_TESTING_PROVE(is_constant_in(unary_vector[0], {z}));
+        ARIADNE_TESTING_PROVE(not is_constant_in(unary_vector[0], {xs[0]}));
+        ARIADNE_TESTING_PROVE(is_constant_in(binary_vector[0], {z}));
+        ARIADNE_TESTING_PROVE(not is_constant_in(binary_vector[0], {vv[0]}));
+        ARIADNE_TESTING_PROVE(is_constant_in(left_scaled_vector[0], {z}));
+        ARIADNE_TESTING_PROVE(not is_constant_in(left_scaled_vector[0], {y}));
+        ARIADNE_TESTING_PROVE(is_constant_in(right_scaled_vector[0], {z}));
+        ARIADNE_TESTING_PROVE(not is_constant_in(right_scaled_vector[0], {xs[0]}));
+        ARIADNE_TESTING_PROVE(not is_constant_in((vex + vce)[0], {xs[0]}));
+        ARIADNE_TESTING_PROVE(not is_constant_in(left_scaled_vector[0], {xs[0]}));
+        ARIADNE_TESTING_PROVE(not is_constant_in(right_scaled_vector[0], {y}));
 
-        ARIADNE_TESTING_EXPECT_SAME(simplify(evv[0]),RealExpression(vv[0]));
-        ARIADNE_TESTING_EXPECT_SAME(simplify(unary_vector[0]),-xs[0]);
+        ARIADNE_TESTING_EXPECT_SAME(simplify(evv[0]), RealExpression(vv[0]));
+        ARIADNE_TESTING_EXPECT_SAME(simplify(unary_vector[0]), -xs[0]);
 
-        RealVectorExpression node_vector=
-            neg(vce+evv)+y*vex+vex/y;
-        RealExpression node_getter=node_vector[0];
-        ARIADNE_TESTING_PROVE(count_nodes(node_getter)>1u);
-        ARIADNE_TESTING_PROVE(count_distinct_nodes(node_getter)>1u);
-        ARIADNE_TESTING_PROVE(count_distinct_node_pointers(node_getter)>1u);
+        RealVectorExpression node_vector =
+            neg(vce + evv) + y * vex + vex / y;
+        RealExpression node_getter = node_vector[0];
+        ARIADNE_TESTING_PROVE(count_nodes(node_getter) > 1u);
+        ARIADNE_TESTING_PROVE(count_distinct_nodes(node_getter) > 1u);
+        ARIADNE_TESTING_PROVE(count_distinct_node_pointers(node_getter) > 1u);
 
-        Constant<RealVector> same_name_short(Identifier("vector_constant"),RealVector({1,2}));
-        Constant<RealVector> same_name_long(Identifier("vector_constant"),RealVector({1,2,3}));
-        Constant<RealVector> same_name_greater(Identifier("vector_constant"),RealVector({1,3}));
+        Constant<RealVector> same_name_short(Identifier("vector_constant"), RealVector({1, 2}));
+        Constant<RealVector> same_name_long(Identifier("vector_constant"), RealVector({1, 2, 3}));
+        Constant<RealVector> same_name_greater(Identifier("vector_constant"), RealVector({1, 3}));
         RealVectorExpression short_constant(same_name_short);
         RealVectorExpression long_constant(same_name_long);
         RealVectorExpression greater_constant(same_name_greater);
-        ARIADNE_TESTING_NOTE("Executing: before(short_constant[0],long_constant[0])"); before(short_constant[0],long_constant[0]);
-        ARIADNE_TESTING_NOTE("Executing: before(long_constant[0],short_constant[0])"); before(long_constant[0],short_constant[0]);
-        ARIADNE_TESTING_NOTE("Executing: before(short_constant[0],greater_constant[0])"); before(short_constant[0],greater_constant[0]);
-        ARIADNE_TESTING_NOTE("Executing: before(greater_constant[0],short_constant[0])"); before(greater_constant[0],short_constant[0]);
-        Constant<RealVector> same_name_equal(Identifier("vector_constant"),RealVector({1,2}));
+        ARIADNE_TESTING_NOTE("Executing: before(short_constant[0],long_constant[0])");
+        before(short_constant[0], long_constant[0]);
+        ARIADNE_TESTING_NOTE("Executing: before(long_constant[0],short_constant[0])");
+        before(long_constant[0], short_constant[0]);
+        ARIADNE_TESTING_NOTE("Executing: before(short_constant[0],greater_constant[0])");
+        before(short_constant[0], greater_constant[0]);
+        ARIADNE_TESTING_NOTE("Executing: before(greater_constant[0],short_constant[0])");
+        before(greater_constant[0], short_constant[0]);
+        Constant<RealVector> same_name_equal(Identifier("vector_constant"), RealVector({1, 2}));
         RealVectorExpression equal_constant(same_name_equal);
-        ARIADNE_TESTING_PROVE(not before(short_constant,equal_constant));
-        ARIADNE_TESTING_PROVE(not before(equal_constant,short_constant));
-        ARIADNE_TESTING_NOTE("Executing: before(short_constant[0],equal_constant[0])"); before(short_constant[0],equal_constant[0]);
-        Constant<RealVector> different_name(Identifier("z_vector_constant"),RealVector({1,2}));
+        ARIADNE_TESTING_PROVE(not before(short_constant, equal_constant));
+        ARIADNE_TESTING_PROVE(not before(equal_constant, short_constant));
+        ARIADNE_TESTING_NOTE("Executing: before(short_constant[0],equal_constant[0])");
+        before(short_constant[0], equal_constant[0]);
+        Constant<RealVector> different_name(Identifier("z_vector_constant"), RealVector({1, 2}));
         RealVectorExpression different_name_constant(different_name);
-        ARIADNE_TESTING_NOTE("Executing: before(short_constant[0],different_name_constant[0])"); before(short_constant[0],different_name_constant[0]);
+        ARIADNE_TESTING_NOTE("Executing: before(short_constant[0],different_name_constant[0])");
+        before(short_constant[0], different_name_constant[0]);
 
-        RealVectorExpression vector_a({x,y});
-        RealVectorExpression vector_b({x,y});
-        RealVectorExpression vector_c({x,z});
+        RealVectorExpression vector_a({x, y});
+        RealVectorExpression vector_b({x, y});
+        RealVectorExpression vector_c({x, z});
         RealVectorExpression vector_short({x});
-        ARIADNE_TESTING_NOTE("Executing: before(vector_c[0],vector_a[0])"); before(vector_c[0],vector_a[0]);
-        ARIADNE_TESTING_NOTE("Executing: before((vector_a+vce)[0],(vector_b+vce)[0])"); before((vector_a+vce)[0],(vector_b+vce)[0]);
-        ARIADNE_TESTING_NOTE("Executing: before((vector_a+vce)[0],(vector_c+vce)[0])"); before((vector_a+vce)[0],(vector_c+vce)[0]);
-        ARIADNE_TESTING_NOTE("Executing: before((vector_short+vector_short)[0],(vector_a+vector_a)[0])"); before((vector_short+vector_short)[0],(vector_a+vector_a)[0]);
-        ARIADNE_TESTING_NOTE("Executing: before((vector_a+vce)[0],(vector_a+evv)[0])"); before((vector_a+vce)[0],(vector_a+evv)[0]);
-        ARIADNE_TESTING_NOTE("Executing: before((vector_a+vce)[0],(evv+vce)[0])"); before((vector_a+vce)[0],(evv+vce)[0]);
-        ARIADNE_TESTING_NOTE("Executing: before((vector_a+vce)[0],(vector_a-vce)[0])"); before((vector_a+vce)[0],(vector_a-vce)[0]);
-        ARIADNE_TESTING_NOTE("Executing: before(pos(vector_a)[0],neg(vector_a)[0])"); before(pos(vector_a)[0],neg(vector_a)[0]);
-
+        ARIADNE_TESTING_NOTE("Executing: before(vector_c[0],vector_a[0])");
+        before(vector_c[0], vector_a[0]);
+        ARIADNE_TESTING_NOTE("Executing: before((vector_a+vce)[0],(vector_b+vce)[0])");
+        before((vector_a + vce)[0], (vector_b + vce)[0]);
+        ARIADNE_TESTING_NOTE("Executing: before((vector_a+vce)[0],(vector_c+vce)[0])");
+        before((vector_a + vce)[0], (vector_c + vce)[0]);
+        ARIADNE_TESTING_NOTE("Executing: before((vector_short+vector_short)[0],(vector_a+vector_a)[0])");
+        before((vector_short + vector_short)[0], (vector_a + vector_a)[0]);
+        ARIADNE_TESTING_NOTE("Executing: before((vector_a+vce)[0],(vector_a+evv)[0])");
+        before((vector_a + vce)[0], (vector_a + evv)[0]);
+        ARIADNE_TESTING_NOTE("Executing: before((vector_a+vce)[0],(evv+vce)[0])");
+        before((vector_a + vce)[0], (evv + vce)[0]);
+        ARIADNE_TESTING_NOTE("Executing: before((vector_a+vce)[0],(vector_a-vce)[0])");
+        before((vector_a + vce)[0], (vector_a - vce)[0]);
+        ARIADNE_TESTING_NOTE("Executing: before(pos(vector_a)[0],neg(vector_a)[0])");
+        before(pos(vector_a)[0], neg(vector_a)[0]);
     }
 
-    Void test_function()
-    {
+    Void test_function() {
         // Test to ensure that constants are handled correctly.
         // Inputs and polynomial results are exact dyadics; check same().
-        Real tc=Dyadic(5.0);
-        Real tx=Dyadic(1.125);
-        Real ty=Dyadic(2.375);
-        Real tz=Dyadic(3.750);
+        Real tc = Dyadic(5.0);
+        Real tx = Dyadic(1.125);
+        Real ty = Dyadic(2.375);
+        Real tz = Dyadic(3.750);
 
-        Vector<Real> tv={tx,ty,tz};
-        Valuation<Real> tw({{x,tx},{y,ty},{z,tz}});
+        Vector<Real> tv = {tx, ty, tz};
+        Valuation<Real> tw({
+            {x, tx},
+            {y, ty},
+            {z, tz}
+        });
 
-        RealConstant c("5",tc);
+        RealConstant c("5", tc);
 
-        RealExpression e1=c;
-        EffectiveScalarMultivariateFunction f1=make_function(RealSpace(List<RealVariable>({x,y,z})),e1);
+        RealExpression e1 = c;
+        EffectiveScalarMultivariateFunction f1 = make_function(RealSpace(List<RealVariable>({x, y, z})), e1);
         ARIADNE_TESTING_NOTE("f1 = " << (f1));
         ARIADNE_TESTING_EXPECT_SAME(f1.evaluate(tv), tc);
 
-        RealExpression e2=c+x;
-        EffectiveScalarMultivariateFunction f2=make_function(RealSpace(List<RealVariable>({x,y,z})),e2);
+        RealExpression e2 = c + x;
+        EffectiveScalarMultivariateFunction f2 = make_function(RealSpace(List<RealVariable>({x, y, z})), e2);
         ARIADNE_TESTING_NOTE("f2 = " << (f2));
-        ARIADNE_TESTING_EXPECT_SAME(f2.evaluate(tv), tc+tx);
+        ARIADNE_TESTING_EXPECT_SAME(f2.evaluate(tv), tc + tx);
 
-        RealExpression e3=c+x+c*y;
-        EffectiveScalarMultivariateFunction f3=make_function({x,y,z},e3);
+        RealExpression e3 = c + x + c * y;
+        EffectiveScalarMultivariateFunction f3 = make_function({x, y, z}, e3);
         ARIADNE_TESTING_NOTE("f3 = " << (f3));
-        ARIADNE_TESTING_EXPECT_SAME(f3.evaluate(tv), tc+tx+tc*ty);
+        ARIADNE_TESTING_EXPECT_SAME(f3.evaluate(tv), tc + tx + tc * ty);
 
-        RealExpression e4=exp(c+x);
-        EffectiveScalarMultivariateFunction f4=make_function({x,y,z},e4);
+        RealExpression e4 = exp(c + x);
+        EffectiveScalarMultivariateFunction f4 = make_function({x, y, z}, e4);
         ARIADNE_TESTING_NOTE("f4 = " << (f4));
-        ARIADNE_TESTING_PROVE(possibly((f4.evaluate(tv) == exp(tc+tx)).check(Effort(0))));
+        ARIADNE_TESTING_PROVE(possibly((f4.evaluate(tv) == exp(tc + tx)).check(Effort(0))));
 
-        RealElementaryAlgebra ax=RealExpression(x);
-        RealElementaryAlgebra ay=RealExpression(y);
-        RealElementaryAlgebra az=RealExpression(z);
-        Vector<RealElementaryAlgebra> va={ax,ay,az};
+        RealElementaryAlgebra ax = RealExpression(x);
+        RealElementaryAlgebra ay = RealExpression(y);
+        RealElementaryAlgebra az = RealExpression(z);
+        Vector<RealElementaryAlgebra> va = {ax, ay, az};
         ARIADNE_TESTING_NOTE("va.element_characteristics() = " << (va.element_characteristics()));
         ARIADNE_TESTING_NOTE("va.zero_element() = " << (va.zero_element()));
         ARIADNE_TESTING_NOTE("va = " << (va));
         ARIADNE_TESTING_NOTE("f3(va) = " << (f3(va)));
-        RealExpression g3(f3(va).extract<RealExpression>()); ARIADNE_TESTING_NOTE("Constructed RealExpression g3 = " << g3);
+        RealExpression g3(f3(va).extract<RealExpression>());
+        ARIADNE_TESTING_NOTE("Constructed RealExpression g3 = " << g3);
         ARIADNE_TESTING_NOTE("e3 = " << (e3));
         ARIADNE_TESTING_NOTE("f3 = " << (f3));
         ARIADNE_TESTING_NOTE("g3 = " << (g3));
-        ARIADNE_TESTING_NOTE("5+va[0]+5*va[1] = " << (5+va[0]+5*va[1]));
-        ARIADNE_TESTING_EXPECT_SAME(evaluate(g3,tw),evaluate(e3,tw));
+        ARIADNE_TESTING_NOTE("5+va[0]+5*va[1] = " << (5 + va[0] + 5 * va[1]));
+        ARIADNE_TESTING_EXPECT_SAME(evaluate(g3, tw), evaluate(e3, tw));
     }
-
-
 };
 
-
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     ARIADNE_TESTING_SUITE("test_expression");
     ARIADNE_TESTING_ADD_TEST(TestExpression, test_variables);
     ARIADNE_TESTING_ADD_TEST(TestExpression, test_space);

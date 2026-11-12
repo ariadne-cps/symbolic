@@ -35,67 +35,79 @@ class String;
 class Integer;
 class Real;
 
-template<class T> class Vector;
+template<class T>
+class Vector;
 
 class Identifier;
 
-template<class T> class Vector;
-template<class T> class Matrix;
+template<class T>
+class Vector;
+template<class T>
+class Matrix;
 using RealVector = Vector<Real>;
 using RealMatrix = Matrix<Real>;
 
-template<class T> class Constant;
-template<class T> class Variable;
-template<class T> class Variables;
-template<class T> class Space;
-template<class T> class Expression;
+template<class T>
+class Constant;
+template<class T>
+class Variable;
+template<class T>
+class Variables;
+template<class T>
+class Space;
+template<class T>
+class Expression;
 
-template<class T> class LetVariable;
-template<class T> class DottedVariable;
-template<class T> class PrimedVariable;
-template<class V,class E> class Assignment;
+template<class T>
+class LetVariable;
+template<class T>
+class DottedVariable;
+template<class T>
+class PrimedVariable;
+template<class V, class E>
+class Assignment;
 
 //!@{
 //! \ingroup SymbolicModule
 //! \relates Constant
 //! \name Type synonyms
-using StringConstant = Constant<String>; //!< <p/>
+using StringConstant = Constant<String>;   //!< <p/>
 using IntegerConstant = Constant<Integer>; //!< <p/>
-using RealConstant = Constant<Real>; //!< <p/>
+using RealConstant = Constant<Real>;       //!< <p/>
 //!@}
 
 //!@{
 //! \ingroup SymbolicModule
 //! \relates Variable
 //! \name Type synonyms
-using BooleanVariable = Variable<Boolean>; //!< <p/>
+using BooleanVariable = Variable<Boolean>;   //!< <p/>
 using KleeneanVariable = Variable<Kleenean>; //!< <p/>
-using StringVariable = Variable<String>; //!< <p/>
-using IntegerVariable = Variable<Integer>; //!< <p/>
-using RealVariable = Variable<Real>; //!< <p/>
+using StringVariable = Variable<String>;     //!< <p/>
+using IntegerVariable = Variable<Integer>;   //!< <p/>
+using RealVariable = Variable<Real>;         //!< <p/>
 //!@}
 
 //!@{
 //! \relates Variables
 //! \name Type synonyms
-using RealVariables = Variables<Real>; //!< <p/>
+using RealVariables = Variables<Real>;           //!< <p/>
 using RealVectorVariable = Variable<RealVector>; //!< <p/>
 //!@}
 
 //!@{
 //! \relates LetVariable
 //! \name Type synonyms
-using LetStringVariable = LetVariable<String>; //!< <p/>
+using LetStringVariable = LetVariable<String>;   //!< <p/>
 using LetIntegerVariable = LetVariable<Integer>; //!< <p/>
-using LetRealVariable = LetVariable<Real>; //!< <p/>
+using LetRealVariable = LetVariable<Real>;       //!< <p/>
 //!@}
 
 //!@{
 //! \relates PrimedVariable
 //! \name Type synonyms
-using PrimedStringVariable = PrimedVariable<String>; //!< <p/>
+using PrimedStringVariable = PrimedVariable<String>;   //!< <p/>
 using PrimedIntegerVariable = PrimedVariable<Integer>; //!< <p/>
-using PrimedRealVariable = PrimedVariable<Real>; //!< <p/>
+using PrimedRealVariable = PrimedVariable<Real>;       //!< <p/>
 //!@}
 
 //! \relates DottedVariable
@@ -106,54 +118,53 @@ using DottedRealVariable = DottedVariable<Real>; //!< <p/>
 //!@{
 //! \relates Expression
 //! \name Type synonyms
-using BooleanExpression = Expression<Boolean>; //!< <p/>
-using KleeneanExpression = Expression<Kleenean>; //!< <p/>
-using StringExpression = Expression<String>; //!< <p/>
-using IntegerExpression = Expression<Integer>; //!< <p/>
-using RealExpression = Expression<Real>; //!< <p/>
-using RealExpressions = List<Expression<Real>>; //!< <p/>
+using BooleanExpression = Expression<Boolean>;         //!< <p/>
+using KleeneanExpression = Expression<Kleenean>;       //!< <p/>
+using StringExpression = Expression<String>;           //!< <p/>
+using IntegerExpression = Expression<Integer>;         //!< <p/>
+using RealExpression = Expression<Real>;               //!< <p/>
+using RealExpressions = List<Expression<Real>>;        //!< <p/>
 using RealExpressionVector = Vector<Expression<Real>>; //!< <p/>
 using RealVectorExpression = Expression<RealVector>;
 using RealMatrixExpression = Expression<RealMatrix>;
 
-
-using DiscretePredicate = Expression<Boolean>; //!< \brief A decidable predicate over discrete variables.
+using DiscretePredicate = Expression<Boolean>;    //!< \brief A decidable predicate over discrete variables.
 using ContinuousPredicate = Expression<Kleenean>; //!< \brief A quasidecidable predicate over continuous variables.
 //!@}
 
 //!@{
 //! \relates Assignment
 //! \name Type synonyms
-using StringAssignment = Assignment<StringVariable,StringExpression>; //!< <p/>
-using PrimedStringAssignment = Assignment<PrimedStringVariable,StringExpression>; //!< <p/>
-using IntegerAssignment = Assignment<IntegerVariable,IntegerExpression>; //!< <p/>
-using PrimedIntegerAssignment = Assignment<PrimedIntegerVariable,IntegerExpression>; //!< <p/>
-using RealAssignment = Assignment<RealVariable,RealExpression>; //!< <p/>
-using PrimedRealAssignment = Assignment<PrimedRealVariable,RealExpression>; //!< <p/>
-using DottedRealAssignment = Assignment<DottedRealVariable,RealExpression>; //!< <p/>
+using StringAssignment = Assignment<StringVariable, StringExpression>;                //!< <p/>
+using PrimedStringAssignment = Assignment<PrimedStringVariable, StringExpression>;    //!< <p/>
+using IntegerAssignment = Assignment<IntegerVariable, IntegerExpression>;             //!< <p/>
+using PrimedIntegerAssignment = Assignment<PrimedIntegerVariable, IntegerExpression>; //!< <p/>
+using RealAssignment = Assignment<RealVariable, RealExpression>;                      //!< <p/>
+using PrimedRealAssignment = Assignment<PrimedRealVariable, RealExpression>;          //!< <p/>
+using DottedRealAssignment = Assignment<DottedRealVariable, RealExpression>;          //!< <p/>
 
 using PrimedStringAssignments = List<PrimedStringAssignment>; //!< <p/>
-using RealAssignments = List<RealAssignment>; //!< <p/>
-using PrimedRealAssignments = List<PrimedRealAssignment>; //!< <p/>
-using DottedRealAssignments = List<DottedRealAssignment>; //!< <p/>
+using RealAssignments = List<RealAssignment>;                 //!< <p/>
+using PrimedRealAssignments = List<PrimedRealAssignment>;     //!< <p/>
+using DottedRealAssignments = List<DottedRealAssignment>;     //!< <p/>
 
-using RealConstantAssignment = Assignment<RealVariable,Real>; //!< <p/>
+using RealConstantAssignment = Assignment<RealVariable, Real>; //!< <p/>
 //!@}
 
 typedef Space<Real> RealSpace;
 
-template<class T, class X=T> class Valuation;
+template<class T, class X = T>
+class Valuation;
 //!@{
 //! \relates Valuation
 //! \name Type synonyms
-using StringValuation = Valuation<String>; //!< <p/>
+using StringValuation = Valuation<String>;   //!< <p/>
 using IntegerValuation = Valuation<Integer>; //!< <p/>
 //!@}
 
 class DiscreteValuation;
-template<class X> class ContinuousValuation;
-
-
+template<class X>
+class ContinuousValuation;
 
 } // namespace Ariadne
 

@@ -33,17 +33,17 @@
 #include <iosfwd>
 #include <iostream>
 
+#include "symbolic/variable.hpp"
+#include "utility/container.hpp"
 #include "utility/macros.hpp"
 #include "utility/pointer.hpp"
-#include "utility/container.hpp"
-
-#include "symbolic/variable.hpp"
 
 namespace Ariadne {
 
-
-template<class T> class Space;
-template<class T> OutputStream& operator<<(OutputStream& os, const Space<T>& spc);
+template<class T>
+class Space;
+template<class T>
+OutputStream& operator<<(OutputStream& os, const Space<T>& spc);
 
 class Real;
 
@@ -68,10 +68,11 @@ typedef Space<Real> RealSpace;
 //! \b Example
 //! \snippet tutorials/symbolic_usage.cpp Space_usage
 //! \see Variable
-template<class T> class Space
-{
+template<class T>
+class Space {
   public:
     typedef Variable<T> VariableType;
+
   public:
     //! \brief The trivial space \f$T^0\f$.
     Space();
@@ -96,9 +97,9 @@ template<class T> class Space
     //! \brief A list giving ordered variables.
     List<VariableType> variables() const;
     //! \brief A map giving the index of a given variable.
-    Map<Identifier,SizeType> indices_from_names() const;
+    Map<Identifier, SizeType> indices_from_names() const;
     //! \brief A map giving the index of a given variable.
-    Map<VariableType,SizeType> indices() const;
+    Map<VariableType, SizeType> indices() const;
 
     //! \brief Tests if the variable \a v is in the space.
     Bool contains(const VariableType& v) const;
@@ -116,18 +117,28 @@ template<class T> class Space
     Space<T>& adjoin(const Space<T>& spc);
     //! \brief Append the named variable \a v to the variables defining the space.
     Space<T>& append(const VariableType& v);
+
   private:
     List<Identifier> _variables;
 };
 
-template<class T> OutputStream& operator<<(OutputStream& os, const Space<T>& spc) { return os << spc.variables(); }
+template<class T>
+OutputStream& operator<<(OutputStream& os, const Space<T>& spc) { return os << spc.variables(); }
 
 /** @brief Join two typed variable spaces. */
-template<class T> Space<T> join(const Space<T>& spc1, const Space<T>& spc2) {
-    Space<T> r(spc1); r.adjoin(spc2); return r; }
+template<class T>
+Space<T> join(const Space<T>& spc1, const Space<T>& spc2) {
+    Space<T> r(spc1);
+    r.adjoin(spc2);
+    return r;
+}
 /** @brief Extend a typed space with a variable. */
-template<class T> Space<T> join(const Space<T>& spc1, const Variable<T>& var2) {
-    Space<T> r(spc1); r.append(var2); return r; }
+template<class T>
+Space<T> join(const Space<T>& spc1, const Variable<T>& var2) {
+    Space<T> r(spc1);
+    r.append(var2);
+    return r;
+}
 
 // Compiled conversion operators to allow conversion between expression and function.
 /** @brief Return the dimension of a real variable space. */
@@ -140,10 +151,11 @@ List<Identifier> variable_names(const List<Variable<Real>>& spc);
 Space<Real> real_space(const List<Identifier>& vars);
 
 /** @brief Construct a typed variable from its identifier. */
-template<class T> Variable<T> variable(const Identifier& s);
+template<class T>
+Variable<T> variable(const Identifier& s);
 /** @brief Create a typed space from a sequence of identifiers. */
-template<class T> Space<T> variables(const List<Identifier>& s);
-
+template<class T>
+Space<T> variables(const List<Identifier>& s);
 
 } // namespace Ariadne
 

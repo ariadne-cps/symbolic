@@ -37,13 +37,12 @@ namespace Ariadne {
 //! \brief A class representing the name of a constant or variable.
 //! \details A proxy for a standard string; used to distinguish a string used as a variable name from a value.
 //! \sa Constant, Variable, String
-class Identifier : public std::string
-{
+class Identifier : public std::string {
   public:
-    Identifier() : std::string() { }
-    Identifier(const char* cstr) : std::string(cstr) { }
+    Identifier() : std::string() {}
+    Identifier(const char* cstr) : std::string(cstr) {}
     //! \brief Construct an identifier from a standard string.
-    Identifier(const std::string& str) : std::string(str) { }
+    Identifier(const std::string& str) : std::string(str) {}
 };
 
 } // namespace Ariadne

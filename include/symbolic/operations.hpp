@@ -33,22 +33,29 @@
 #include <iosfwd>
 #include <iostream>
 
-#include "utility/typedefs.hpp"
-#include "numeric/concepts.hpp"
 #include "function/formula.decl.hpp"
+#include "numeric/concepts.hpp"
+#include "utility/typedefs.hpp"
 
 namespace Ariadne {
 
 class Identifier;
 
-template<class T> class Variable;
-template<class T> class Space;
-template<class T> class Expression;
-template<class LHS,class RHS> class Assignment;
+template<class T>
+class Variable;
+template<class T>
+class Space;
+template<class T>
+class Expression;
+template<class LHS, class RHS>
+class Assignment;
 
-template<class X> class Vector;
-template<class X> class Matrix;
-template<class X> class Algebra;
+template<class X>
+class Vector;
+template<class X>
+class Matrix;
+template<class X>
+class Algebra;
 
 using RealVector = Vector<Real>;
 using RealMatrix = Matrix<Real>;
@@ -59,21 +66,26 @@ typedef Expression<String> StringExpression;
 typedef Expression<Integer> IntegerExpression;
 typedef Expression<Real> RealExpression;
 
-
-
-template<class X> struct ExpressionNode;
+template<class X>
+struct ExpressionNode;
 
 //! \name Methods for building expressions
 //! \related Expression
-template<class T> struct DeclareExpressionOperations;
+template<class T>
+struct DeclareExpressionOperations;
 
-template<class A> using NotType = decltype(!declval<A>());
-template<class A1, class A2> using AndType = decltype(declval<A1>()&&declval<A2>());
-template<class A1, class A2> using OrType = decltype(declval<A1>()||declval<A2>());
+template<class A>
+using NotType = decltype(!declval<A>());
+template<class A1, class A2>
+using AndType = decltype(declval<A1>() && declval<A2>());
+template<class A1, class A2>
+using OrType = decltype(declval<A1>() || declval<A2>());
 
-template<class A1, class A2> using DivideType = decltype(declval<A1>()/declval<A2>());
+template<class A1, class A2>
+using DivideType = decltype(declval<A1>() / declval<A2>());
 
-template<class A> using SgnType = decltype(sgn(-declval<A>()));
+template<class A>
+using SgnType = decltype(sgn(-declval<A>()));
 
 /*
 template<template<class> class T>
@@ -132,187 +144,191 @@ struct DeclareOperations {
 };
 */
 
-template<> struct DeclareExpressionOperations<Boolean>  {
+template<>
+struct DeclareExpressionOperations<Boolean> {
     //! \related Expression \brief Logical disjunction.
-    friend Expression<Boolean> operator&&(Expression<Boolean> const& e1, Expression<Boolean> const& e2);
+    friend Expression<Boolean> operator&&(const Expression<Boolean>& e1, const Expression<Boolean>& e2);
     //! \related Expression \brief Logical conjunction.
-    friend Expression<Boolean> operator||(Expression<Boolean> const& e1, Expression<Boolean> const& e2);
+    friend Expression<Boolean> operator||(const Expression<Boolean>& e1, const Expression<Boolean>& e2);
     //! \related Expression \brief Logical negation.
-    friend Expression<Boolean> operator!(Expression<Boolean> const& e);
+    friend Expression<Boolean> operator!(const Expression<Boolean>& e);
 };
 
-template<> struct DeclareExpressionOperations<Kleenean> {
+template<>
+struct DeclareExpressionOperations<Kleenean> {
     //! \related Expression \brief Fuzzy logical disjunction.
-    friend Expression<Kleenean> operator&&(Expression<Kleenean> const& e1, Expression<Kleenean> const& e2);
+    friend Expression<Kleenean> operator&&(const Expression<Kleenean>& e1, const Expression<Kleenean>& e2);
     //! \related Expression \brief Fuzzy logical conjunction.
-    friend Expression<Kleenean> operator||(Expression<Kleenean> const& e1, Expression<Kleenean> const& e2);
+    friend Expression<Kleenean> operator||(const Expression<Kleenean>& e1, const Expression<Kleenean>& e2);
     //! \related Expression \brief Fuzzy logical negation.
-    friend Expression<Kleenean> operator!(Expression<Kleenean> const& e);
+    friend Expression<Kleenean> operator!(const Expression<Kleenean>& e);
 };
 
-template<> struct DeclareExpressionOperations<String>  {
+template<>
+struct DeclareExpressionOperations<String> {
     //! \related Expression \brief %String equality.
     friend Expression<Boolean> operator==(Variable<String> v1, const String& s2);
     //! \related Expression \brief %String inequality.
     friend Expression<Boolean> operator!=(Variable<String> v1, const String& s2);
 };
 
-template<> struct DeclareExpressionOperations<Integer>  {
+template<>
+struct DeclareExpressionOperations<Integer> {
     //! \related Expression \brief %Integer equality predicate.
-    friend Expression<Boolean> operator==(Expression<Integer> const& e1, Expression<Integer> const& e2);
+    friend Expression<Boolean> operator==(const Expression<Integer>& e1, const Expression<Integer>& e2);
     //! \related Expression \brief %Integer inequality predicate.
-    friend Expression<Boolean> operator!=(Expression<Integer> const& e1, Expression<Integer> const& e2);
+    friend Expression<Boolean> operator!=(const Expression<Integer>& e1, const Expression<Integer>& e2);
     //! \related Expression \brief %Integer comparison predicate (greater or equal).
-    friend Expression<Boolean> operator>=(Expression<Integer> const& e1, Expression<Integer> const& e2);
+    friend Expression<Boolean> operator>=(const Expression<Integer>& e1, const Expression<Integer>& e2);
     //! \related Expression \brief %Integer comparison (less or equal)..
-    friend Expression<Boolean> operator<=(Expression<Integer> const& e1, Expression<Integer> const& e2);
+    friend Expression<Boolean> operator<=(const Expression<Integer>& e1, const Expression<Integer>& e2);
     //! \related Expression \brief %Integer comparison (greater).
-    friend Expression<Boolean> operator> (Expression<Integer> const& e1, Expression<Integer> const& e2);
+    friend Expression<Boolean> operator>(const Expression<Integer>& e1, const Expression<Integer>& e2);
     //! \related Expression \brief %Integer comparison (less).
-    friend Expression<Boolean> operator< (Expression<Integer> const& e1, Expression<Integer> const& e2);
+    friend Expression<Boolean> operator<(const Expression<Integer>& e1, const Expression<Integer>& e2);
 
     //! \related Expression \brief %Integer unary plus expression (identity).
-    friend Expression<Integer> operator+(Expression<Integer> const& e);
+    friend Expression<Integer> operator+(const Expression<Integer>& e);
     //! \related Expression \brief %Integer unary minus expression.
-    friend Expression<Integer> operator-(Expression<Integer> const& e);
+    friend Expression<Integer> operator-(const Expression<Integer>& e);
     //! \related Expression \brief %Integer addition expression.
-    friend Expression<Integer> operator+(Expression<Integer> const& e1, Expression<Integer> const& e2);
+    friend Expression<Integer> operator+(const Expression<Integer>& e1, const Expression<Integer>& e2);
     //! \related Expression \brief %Integer subtraction expression.
-    friend Expression<Integer> operator-(Expression<Integer> const& e1, Expression<Integer> const& e2);
+    friend Expression<Integer> operator-(const Expression<Integer>& e1, const Expression<Integer>& e2);
     //! \related Expression \brief %Integer multiplication expression.
-    friend Expression<Integer> operator*(Expression<Integer> const& e1, Expression<Integer> const& e2);
+    friend Expression<Integer> operator*(const Expression<Integer>& e1, const Expression<Integer>& e2);
 
-    friend Expression<Integer>& operator+=(Expression<Integer>& e1, Expression<Integer> const& e2);
-    friend Expression<Integer>& operator-=(Expression<Integer>& e1, Expression<Integer> const& e2);
-    friend Expression<Integer>& operator*=(Expression<Integer>& e1, Expression<Integer> const& e2);
+    friend Expression<Integer>& operator+=(Expression<Integer>& e1, const Expression<Integer>& e2);
+    friend Expression<Integer>& operator-=(Expression<Integer>& e1, const Expression<Integer>& e2);
+    friend Expression<Integer>& operator*=(Expression<Integer>& e1, const Expression<Integer>& e2);
 };
 
-template<> struct DeclareExpressionOperations<Real> {
+template<>
+struct DeclareExpressionOperations<Real> {
     //! \related Expression \brief Positivity test.
     //! Returns \c indeterminate if the value cannot be distinguished from zero.
-    friend Expression<Kleenean> sgn(Expression<Real> const& e);
+    friend Expression<Kleenean> sgn(const Expression<Real>& e);
     //! \related Expression \brief Fuzzy inequality comparison predicate (less) of real expressions.
-    friend Expression<Kleenean> operator<=(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Kleenean> operator<=(const Expression<Real>& e1, const Expression<Real>& e2);
     //! \related Expression \brief Fuzzy inequality comparison predicate (greater) of real expressions.
-    friend Expression<Kleenean> operator>=(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Kleenean> operator>=(const Expression<Real>& e1, const Expression<Real>& e2);
     //! \related Expression \brief Fuzzy inequality comparison predicate (less) of real expressions.
-    friend Expression<Kleenean> operator< (Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Kleenean> operator<(const Expression<Real>& e1, const Expression<Real>& e2);
     //! \related Expression \brief Fuzzy inequality comparison predicate (greater) of real expressions.
-    friend Expression<Kleenean> operator> (Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Kleenean> operator>(const Expression<Real>& e1, const Expression<Real>& e2);
 
     //! \related Expression \brief Equality comparison predicate of real expressions.
-    friend Expression<Kleenean> operator==(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Kleenean> operator==(const Expression<Real>& e1, const Expression<Real>& e2);
     //! \related Expression \brief Negated equality comparison predicate of real expressions.
-    friend Expression<Kleenean> operator!=(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Kleenean> operator!=(const Expression<Real>& e1, const Expression<Real>& e2);
 
     //! \related Expression \brief %Real unary plus expression.
-    friend Expression<Real> operator+(Expression<Real> const& e);
+    friend Expression<Real> operator+(const Expression<Real>& e);
     //! \related Expression \brief %Real unary minus expression.
-    friend Expression<Real> operator-(Expression<Real> const& e);
+    friend Expression<Real> operator-(const Expression<Real>& e);
     //! \related Expression \brief %Real addition expression.
-    friend Expression<Real> operator+(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Real> operator+(const Expression<Real>& e1, const Expression<Real>& e2);
     //! \related Expression \brief %Real subtraction expression.
-    friend Expression<Real> operator-(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Real> operator-(const Expression<Real>& e1, const Expression<Real>& e2);
     //! \related Expression \brief %Real multiplication expression.
-    friend Expression<Real> operator*(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Real> operator*(const Expression<Real>& e1, const Expression<Real>& e2);
     //! \related Expression \brief %Real division expression.
-    friend Expression<Real> operator/(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Real> operator/(const Expression<Real>& e1, const Expression<Real>& e2);
 
-    friend Expression<Real>& operator+=(Expression<Real>& e1, Expression<Real> const& e2);
-    friend Expression<Real>& operator-=(Expression<Real>& e1, Expression<Real> const& e2);
-    friend Expression<Real>& operator*=(Expression<Real>& e1, Expression<Real> const& e2);
-    friend Expression<Real>& operator/=(Expression<Real>& e1, Expression<Real> const& e2);
+    friend Expression<Real>& operator+=(Expression<Real>& e1, const Expression<Real>& e2);
+    friend Expression<Real>& operator-=(Expression<Real>& e1, const Expression<Real>& e2);
+    friend Expression<Real>& operator*=(Expression<Real>& e1, const Expression<Real>& e2);
+    friend Expression<Real>& operator/=(Expression<Real>& e1, const Expression<Real>& e2);
 
     //! \related Expression \brief %Real zero expression.
-    friend Expression<Real> nul(Expression<Real> const& e);
+    friend Expression<Real> nul(const Expression<Real>& e);
     //! \related Expression \brief %Real unary plus expression.
     //! Equivalent to +\a e.
-    friend Expression<Real> pos(Expression<Real> const& e);
+    friend Expression<Real> pos(const Expression<Real>& e);
     //! \related Expression \brief %Real negation expression.
     //! Equivalent to -\a e.
-    friend Expression<Real> neg(Expression<Real> const& e);
+    friend Expression<Real> neg(const Expression<Real>& e);
     //! \related Expression \brief %Real squaring expression.
     //! Equivalent to \a e*e.
-    friend Expression<Real> hlf(Expression<Real> const& e);
+    friend Expression<Real> hlf(const Expression<Real>& e);
     //! \related Expression \brief %Real halving expression.
     //! Equivalent to \a e/2.
-    friend Expression<Real> sqr(Expression<Real> const& e);
-     //! \related Expression \brief %Real addition expression.
-    friend Expression<Real> add(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Real> sqr(const Expression<Real>& e);
+    //! \related Expression \brief %Real addition expression.
+    friend Expression<Real> add(const Expression<Real>& e1, const Expression<Real>& e2);
     //! \related Expression \brief %Real subtraction expression.
-    friend Expression<Real> sub(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Real> sub(const Expression<Real>& e1, const Expression<Real>& e2);
     //! \related Expression \brief %Real multiplication expression.
-    friend Expression<Real> mul(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Real> mul(const Expression<Real>& e1, const Expression<Real>& e2);
     //! \related Expression \brief %Real division expression.
-    friend Expression<Real> div(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Real> div(const Expression<Real>& e1, const Expression<Real>& e2);
     //! \related Expression \brief %Real integer power expression.
-    friend Expression<Real> pow(Expression<Real> const& e, Int n);
+    friend Expression<Real> pow(const Expression<Real>& e, Int n);
     //! \related Expression \brief %Real reciprocal expression.
     //! Equivalent to 1/\a e.
-    friend Expression<Real> rec(Expression<Real> const& e);
+    friend Expression<Real> rec(const Expression<Real>& e);
     //! \related Expression \brief %Real square root expression.
-    friend Expression<Real> sqrt(Expression<Real> const& e);
+    friend Expression<Real> sqrt(const Expression<Real>& e);
     //! \related Expression \brief %Real exponential expression.
-    friend Expression<Real> exp(Expression<Real> const& e);
+    friend Expression<Real> exp(const Expression<Real>& e);
     //! \related Expression \brief %Real natural logarithm expression.
-    friend Expression<Real> log(Expression<Real> const& e);
+    friend Expression<Real> log(const Expression<Real>& e);
     //! \related Expression \brief %Real sine expression.
-    friend Expression<Real> sin(Expression<Real> const& e);
+    friend Expression<Real> sin(const Expression<Real>& e);
     //! \related Expression \brief %Real cosine expression.
-    friend Expression<Real> cos(Expression<Real> const& e);
+    friend Expression<Real> cos(const Expression<Real>& e);
     //! \related Expression \brief %Real tangent expression.
-    friend Expression<Real> tan(Expression<Real> const& e);
+    friend Expression<Real> tan(const Expression<Real>& e);
     //! \related Expression \brief %Real hyperbolic tangent expression.
-    friend Expression<Real> tanh(Expression<Real> const& e);
+    friend Expression<Real> tanh(const Expression<Real>& e);
     //! \related Expression \brief Logistic sigmoid, defined by real expressions.
-    friend Expression<Real> sigmoid(Expression<Real> const& e);
+    friend Expression<Real> sigmoid(const Expression<Real>& e);
     //! \related Expression \brief Softplus, defined by real expressions.
-    friend Expression<Real> softplus(Expression<Real> const& e);
+    friend Expression<Real> softplus(const Expression<Real>& e);
     //! \related Expression \brief %Real arc-sine expression.
-    friend Expression<Real> asin(Expression<Real> const& e);
+    friend Expression<Real> asin(const Expression<Real>& e);
     //! \related Expression \brief %Real arc-cosine expression.
-    friend Expression<Real> acos(Expression<Real> const& e);
+    friend Expression<Real> acos(const Expression<Real>& e);
     //! \related Expression \brief %Real arc-tangent expression.
-    friend Expression<Real> atan(Expression<Real> const& e);
+    friend Expression<Real> atan(const Expression<Real>& e);
 
     //! \related Expression \brief Real maximum expression.
-    friend Expression<Real> max(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Real> max(const Expression<Real>& e1, const Expression<Real>& e2);
     //! \related Expression \brief %Real minimum expression.
-    friend Expression<Real> min(Expression<Real> const& e1, Expression<Real> const& e2);
+    friend Expression<Real> min(const Expression<Real>& e1, const Expression<Real>& e2);
     //! \related Expression \brief %Real absolute value expression.
-    friend Expression<Real> abs(Expression<Real> const& e);
+    friend Expression<Real> abs(const Expression<Real>& e);
 };
 
-
-template<> struct DeclareExpressionOperations<RealVector> {
-    //friend Expression<Vector<Real>> expression(Vector<Expression<Real>>);
-    //friend Expression<Real> get(Expression<Vector<Real>> const&, SizeType);
-    friend Expression<RealVector> operator-(Expression<RealVector> const&);
-    friend Expression<RealVector> operator+(Expression<RealVector> const&, Expression<RealVector> const&);
-    friend Expression<RealVector> operator-(Expression<RealVector> const&, Expression<RealVector> const&);
-    friend Expression<RealVector> operator*(Expression<Real> const&, Expression<RealVector> const&);
-    friend Expression<RealVector> operator*(Expression<RealVector> const&, Expression<Real> const&);
-    friend Expression<RealVector> operator/(Expression<RealVector> const&, Expression<Real> const&);
+template<>
+struct DeclareExpressionOperations<RealVector> {
+    // friend Expression<Vector<Real>> expression(Vector<Expression<Real>>);
+    // friend Expression<Real> get(Expression<Vector<Real>> const&, SizeType);
+    friend Expression<RealVector> operator-(const Expression<RealVector>&);
+    friend Expression<RealVector> operator+(const Expression<RealVector>&, const Expression<RealVector>&);
+    friend Expression<RealVector> operator-(const Expression<RealVector>&, const Expression<RealVector>&);
+    friend Expression<RealVector> operator*(const Expression<Real>&, const Expression<RealVector>&);
+    friend Expression<RealVector> operator*(const Expression<RealVector>&, const Expression<Real>&);
+    friend Expression<RealVector> operator/(const Expression<RealVector>&, const Expression<Real>&);
 };
 
-
-template<> struct DeclareExpressionOperations<RealMatrix> {
+template<>
+struct DeclareExpressionOperations<RealMatrix> {
     friend Expression<Matrix<Real>> expression(Matrix<Expression<Real>>);
-    friend Expression<Real> get(Expression<Matrix<Real>> const&, SizeType, SizeType);
-    friend Expression<RealMatrix> operator-(Expression<RealMatrix> const&);
-    friend Expression<RealMatrix> operator+(Expression<RealMatrix> const&, Expression<RealMatrix> const&);
-    friend Expression<RealMatrix> operator-(Expression<RealMatrix> const&, Expression<RealMatrix> const&);
-    friend Expression<RealMatrix> operator*(Expression<RealMatrix> const&, Expression<RealMatrix> const&);
-    friend Expression<RealMatrix> operator*(Expression<Real> const&, Expression<RealMatrix> const&);
-    friend Expression<RealMatrix> operator*(Expression<RealMatrix> const&, Expression<Real> const&);
-    friend Expression<RealMatrix> operator/(Expression<RealMatrix> const&, Expression<Real> const&);
-    friend Expression<RealVector> operator*(Expression<RealMatrix> const&, Expression<RealVector> const&);
-    friend Expression<RealMatrix> transpose(Expression<RealMatrix> const&);
-    friend Expression<RealMatrix> inverse(Expression<RealMatrix> const&);
-    friend Expression<RealMatrix> solve(Expression<RealMatrix> const&);
-    friend Expression<RealVector> solve(Expression<RealVector> const&);
+    friend Expression<Real> get(const Expression<Matrix<Real>>&, SizeType, SizeType);
+    friend Expression<RealMatrix> operator-(const Expression<RealMatrix>&);
+    friend Expression<RealMatrix> operator+(const Expression<RealMatrix>&, const Expression<RealMatrix>&);
+    friend Expression<RealMatrix> operator-(const Expression<RealMatrix>&, const Expression<RealMatrix>&);
+    friend Expression<RealMatrix> operator*(const Expression<RealMatrix>&, const Expression<RealMatrix>&);
+    friend Expression<RealMatrix> operator*(const Expression<Real>&, const Expression<RealMatrix>&);
+    friend Expression<RealMatrix> operator*(const Expression<RealMatrix>&, const Expression<Real>&);
+    friend Expression<RealMatrix> operator/(const Expression<RealMatrix>&, const Expression<Real>&);
+    friend Expression<RealVector> operator*(const Expression<RealMatrix>&, const Expression<RealVector>&);
+    friend Expression<RealMatrix> transpose(const Expression<RealMatrix>&);
+    friend Expression<RealMatrix> inverse(const Expression<RealMatrix>&);
+    friend Expression<RealMatrix> solve(const Expression<RealMatrix>&);
+    friend Expression<RealVector> solve(const Expression<RealVector>&);
 };
-
 
 } // namespace Ariadne
 
