@@ -6,24 +6,24 @@
  ****************************************************************************/
 
 /*
- *  This file is part of Ariadne.
+ *  This file is part of Ariadne Symbolic.
  *
- *  Ariadne is free software: you can redistribute it and/or modify
+ *  Ariadne Symbolic is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  Ariadne is distributed in the hope that it will be useful,
+ *  Ariadne Symbolic is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with Ariadne.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with Ariadne Symbolic. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*! \file symbolic/predicate.hpp
- *  \brief Predicates.
+/** @file symbolic/predicate.hpp
+ *  @brief Predicates and Boolean combinations of expression constraints.
  */
 
 #ifndef ARIADNE_PREDICATE_HPP
@@ -45,6 +45,7 @@
 namespace Ariadne {
 
 
+/** @brief Provide the abstract interface for evaluating a predicate. */
 class PredicateInterface {
   public:
     typedef std::size_t SizeType;
@@ -54,6 +55,7 @@ class PredicateInterface {
     virtual Kleenean evaluate(const Vector<ValidatedNumericType>& x) const = 0;
 };
 
+/** @brief Represent a signed scalar expression predicate. */
 class ExpressionPredicate
     : public PredicateInterface
 {
@@ -61,12 +63,16 @@ class ExpressionPredicate
   public:
     ExpressionPredicate(const EffectiveScalarMultivariateFunction& expression)
         : _expression(expression), _sign(+1) { }
+    /** @brief Return the scalar expression being tested. */
     const EffectiveScalarMultivariateFunction& expression() const { return _expression; }
+    /** @brief Return the expression polarity. */
     Int sign() const { return _sign; }
 
+    /** @brief Check whether two predicates are semantically identical. */
     Bool same(const ExpressionPredicate& ep2) const {
         const ExpressionPredicate& ep1=*this;
         return ep1._expression.pointer()==ep2._expression.pointer() && ep1._sign==ep2._sign; }
+    /** @brief Check whether two predicates have opposite polarity. */
     Bool opposite(const ExpressionPredicate& ep2) const {
         const ExpressionPredicate& ep1=*this;
         return ep1._expression.pointer()==ep2._expression.pointer() && ep1._sign!=ep2._sign; }
@@ -97,7 +103,9 @@ class DisjunctivePredicate
     SizeType size() const { return _predicates.size(); }
     const ExpressionPredicate& operator[](SizeType i) const { return _predicates[i]; }
 
+    /** @brief Report whether this disjunction contains no predicates. */
     Bool vacuous() const { return _predicates.empty(); }
+    /** @brief Report whether the disjunction is always true. */
     Bool tautologous() const { return _tautology; }
 
     DisjunctivePredicate& operator|=(ExpressionPredicate p) {

@@ -6,24 +6,24 @@
  ****************************************************************************/
 
 /*
- *  This file is part of Ariadne.
+ *  This file is part of Ariadne Symbolic.
  *
- *  Ariadne is free software: you can redistribute it and/or modify
+ *  Ariadne Symbolic is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  Ariadne is distributed in the hope that it will be useful,
+ *  Ariadne Symbolic is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with Ariadne.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with Ariadne Symbolic. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*! \file symbolic/space.hpp
- *  \brief Spaces formed by variables.
+/** @file symbolic/space.hpp
+ *  @brief Typed variable spaces and variable collections.
  */
 
 #ifndef ARIADNE_SPACE_HPP
@@ -122,18 +122,26 @@ template<class T> class Space
 
 template<class T> OutputStream& operator<<(OutputStream& os, const Space<T>& spc) { return os << spc.variables(); }
 
+/** @brief Join two typed variable spaces. */
 template<class T> Space<T> join(const Space<T>& spc1, const Space<T>& spc2) {
     Space<T> r(spc1); r.adjoin(spc2); return r; }
+/** @brief Extend a typed space with a variable. */
 template<class T> Space<T> join(const Space<T>& spc1, const Variable<T>& var2) {
     Space<T> r(spc1); r.append(var2); return r; }
 
 // Compiled conversion operators to allow conversion between expression and function.
+/** @brief Return the dimension of a real variable space. */
 SizeType dimension(const Space<Real>& spc);
+/** @brief Return variable identifiers in order. */
 List<Identifier> variable_names(const Space<Real>& spc);
+/** @brief Return variable identifiers in order. */
 List<Identifier> variable_names(const List<Variable<Real>>& spc);
+/** @brief Create a real variable space from identifiers. */
 Space<Real> real_space(const List<Identifier>& vars);
 
+/** @brief Construct a typed variable from its identifier. */
 template<class T> Variable<T> variable(const Identifier& s);
+/** @brief Create a typed space from a sequence of identifiers. */
 template<class T> Space<T> variables(const List<Identifier>& s);
 
 
