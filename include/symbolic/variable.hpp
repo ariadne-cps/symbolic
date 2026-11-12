@@ -6,24 +6,24 @@
  ****************************************************************************/
 
 /*
- *  This file is part of Ariadne.
+ *  This file is part of Ariadne Symbolic.
  *
- *  Ariadne is free software: you can redistribute it and/or modify
+ *  Ariadne Symbolic is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  Ariadne is distributed in the hope that it will be useful,
+ *  Ariadne Symbolic is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with Ariadne.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with Ariadne Symbolic. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*! \file symbolic/variable.hpp
- *  \brief Internal variables
+/** @file symbolic/variable.hpp
+ *  @brief Typed, dotted and primed symbolic variable representations.
  */
 
 #ifndef ARIADNE_VARIABLE_HPP
@@ -48,9 +48,11 @@
 namespace Ariadne {
 
 class UntypedVariable;
+/** @brief Represent a named variable with an extension category. */
 class ExtendedUntypedVariable;
 
 
+/** @brief Enumerate the supported types of symbolic variables. */
 enum class VariableType : char { BOOLEAN, KLEENEAN, ENUMERATED, STRING, INTEGER, REAL, REAL_VECTOR, REAL_MATRIX };
 
 template<class T> inline VariableType variable_type() { ARIADNE_FAIL_MSG("Unknown variable type"); }
@@ -176,6 +178,7 @@ template<class T> class Variable<Vector<T>>
     Expression<Vector<T>> create_zero() const { return Expression<Vector<T>>::constant(Vector<T>(this->_size,static_cast<T>(0))); }
 };
 
+/** @brief Distinguish ordinary, dotted and primed symbolic variables. */
 enum class VariableCategory : char { SIMPLE, DOTTED, PRIMED };
 
 inline OutputStream& operator<<(OutputStream& os, VariableCategory const& cat) {
@@ -191,11 +194,13 @@ inline OutputStream& operator<<(OutputStream& os, VariableCategory const& cat) {
 
 // A named variable of type \a T, possibly decorated by a "let", "dot" or "prime"
 // representing a time derivative or updated value.
+/** @brief Represent a named variable with an extension category. */
 class ExtendedUntypedVariable
     : public UntypedVariable
 {
     VariableCategory _category;
   public:
+    /** @brief Return the variable's extension category. */
     VariableCategory category() const { return this->_category; }
   protected:
     explicit ExtendedUntypedVariable(const Identifier& name, VariableType type, VariableCategory category)
@@ -215,13 +220,16 @@ inline OutputStream& operator<<(OutputStream& os, ExtendedUntypedVariable const&
 
 
 
+/** @brief Represent a typed variable with an extension category. */
 template<class T> class ExtendedVariable
     : public ExtendedUntypedVariable
 {
   public:
     typedef Variable<T> BaseType;
+    /** @brief Return the underlying unextended variable. */
     Variable<T> base() const { return Variable<T>(this->name()); }
   protected:
+    /** @brief Construct an extended typed variable. */
     explicit ExtendedVariable(const Variable<T>& var, VariableCategory category) : ExtendedUntypedVariable(var.name(),variable_type<T>(),category) { }
 };
 
@@ -283,6 +291,7 @@ DottedVariable<Real> inline dot(const Variable<Real>& var) { return DottedVariab
 
 
 
+/** @brief Hold a collection of variables for simultaneous assignment. */
 template<class T> struct LetVariables {
     const List<Variable<T>> _lhs;
     LetVariables(const List<Variable<T>>& lhs) : _lhs(lhs) { }
@@ -293,6 +302,7 @@ template<class T> inline LetVariables<T> set(const List<Variable<T>>& lhs) { ret
 inline LetVariables<Real> let(const InitializerList<Variable<Real>>& lhs) { return let(List<Variable<Real>>(lhs)); }
 inline LetVariables<Real> set(const InitializerList<Variable<Real>>& lhs) { return set(List<Variable<Real>>(lhs)); }
 
+/** @brief Hold variables denoting the next state. */
 template<class T> struct PrimedVariables {
     const List<Variable<T>> _lhs;
     PrimedVariables(const List<Variable<T>>& lhs) : _lhs(lhs) { }
@@ -304,6 +314,7 @@ template<class T> inline PrimedVariables<T> next(const List<Variable<T>>& lhs) {
 inline PrimedVariables<Real> prime(const InitializerList<Variable<Real>>& lhs) { return prime(List<Variable<Real>>(lhs)); }
 inline PrimedVariables<Real> next(const InitializerList<Variable<Real>>& lhs) { return next(List<Variable<Real>>(lhs)); }
 
+/** @brief Hold variables denoting time derivatives. */
 template<class T> struct DottedVariables {
     const List<Variable<T>> _lhs;
     DottedVariables(const List<Variable<T>>& lhs) : _lhs(lhs) { }

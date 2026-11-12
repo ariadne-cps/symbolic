@@ -6,24 +6,24 @@
  ****************************************************************************/
 
 /*
- *  This file is part of Ariadne.
+ *  This file is part of Ariadne Symbolic.
  *
- *  Ariadne is free software: you can redistribute it and/or modify
+ *  Ariadne Symbolic is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  Ariadne is distributed in the hope that it will be useful,
+ *  Ariadne Symbolic is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with Ariadne.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with Ariadne Symbolic. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*! \file symbolic/valuation.hpp
- *  \brief Valuations over named variables.
+/** @file symbolic/valuation.hpp
+ *  @brief Named variable valuations and symbolic environment mappings.
  */
 
 #ifndef ARIADNE_VALUATION_HPP
@@ -82,9 +82,13 @@ class Valuation
         for(auto val : m) { this->_values.insert(val.first.name(),val.second); } }
     Valuation(Array<X> ary, Space<T> const& spc){
         for(SizeType i=0; i!=ary.size(); ++i) { this->insert(spc[i],ary[i]); } }
+    /** @brief Construct a valuation from one variable assignment. */
     Valuation(const Assignment<Variable<T>,X>& a);
+    /** @brief Construct a valuation from a list of assignments. */
     Valuation(const List<Assignment<Variable<T>,X> >& la);
+    /** @brief Construct a valuation from variable/value pairs. */
     Valuation(const InitializerList<Pair<Variable<T>,X> >& lst);
+    /** @brief Add or replace the value assigned to a variable. */
     Void insert(const Variable<Type>& v, const ValueType& s) { this->_values.insert(v.name(),s); }
     //! \brief %Set the value associated with variable \a v to \a s.
     Void set(const Variable<Type>& v, const ValueType& s) { this->_values[v.name()]=s; }
@@ -98,7 +102,9 @@ class Valuation
     const Map<Identifier,ValueType>& values() const { return _values; }
     Map<Identifier,ValueType>& values() { return _values; }
     Set<Identifier> defined() const { return _values.keys(); }
+    /** @brief Return the first valuation entry. */
     ConstIterator begin() const { return _values.begin(); }
+    /** @brief Return the position past the last valuation entry. */
     ConstIterator end() const { return _values.end(); }
     Vector<ValueType> operator[](const Space<Type>& spc) {
         return Vector<ValueType>(spc.dimension(),[&](SizeType i){return _values[spc[i]];}); }
@@ -141,9 +147,13 @@ class DiscreteValuation
     typedef String StringType;
     typedef Integer IntegerType;
   public:
+    /** @brief Construct an empty discrete valuation. */
     DiscreteValuation() { }
+    /** @brief Construct a discrete valuation of string variables. */
     DiscreteValuation(const Map<Identifier,StringType>& sm) : Valuation<String>(sm) { }
+    /** @brief Construct a discrete valuation of integer variables. */
     DiscreteValuation(const Map<Identifier,IntegerType>& zm) : Valuation<Integer>(zm) { }
+    /** @brief Construct a valuation of both string and integer variables. */
     DiscreteValuation(const Map<Identifier,StringType>& sm,const Map<Identifier,IntegerType>& zm) : Valuation<String>(sm), Valuation<Integer>(zm) { }
     using Valuation<String>::insert; using Valuation<Integer>::insert;
     using Valuation<String>::get; using Valuation<Integer>::get;
@@ -166,8 +176,10 @@ class ContinuousValuation
     : public Valuation<Real,X>
 {
   public:
+    /** @brief Construct an empty continuous valuation. */
     ContinuousValuation() : Valuation<Real,X>() { }
 //    ContinuousValuation(const Map<Identifier,X>& rm) : Valuation<Real,X>(rm) { }
+    /** @brief Construct a continuous valuation from real variable values. */
     ContinuousValuation(const Map<Variable<Real>,X>& rm) : Valuation<Real,X>(rm) { }
     typedef X RealType;
 };
@@ -189,7 +201,9 @@ template<class X> class HybridValuation
     using ContinuousValuation<X>::get;
     using DiscreteValuation::operator[];
     using ContinuousValuation<X>::operator[];
+    /** @brief Access the real-valued assignments. */
     const Map<Identifier,X>& real_values() const { return this->ContinuousValuation<X>::values(); }
+    /** @brief Modify the real-valued assignments. */
     Map<Identifier,X>& real_values() { return this->ContinuousValuation<X>::values(); }
 };
 
