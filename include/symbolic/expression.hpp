@@ -80,7 +80,9 @@ class Expression
     typedef SharedPointer<const ExpressionNode<T>> Pointer;
     static Writer<Expression<T>> _default_writer;
   public:
+    /** @brief Set the default symbolic expression writer. */
     static Void set_default_writer(Writer<Expression<T>> w);
+    /** @brief Return the current default expression writer. */
     static Writer<Expression<T>> default_writer();
   public:
     typedef Real NumericType;
@@ -91,6 +93,7 @@ class Expression
   public:
     // Use template formulation to avoid ambiguity treating Expression(0) as a pointer construction.
     template<ConvertibleTo<SharedPointer<const ExpressionNode<T>>> P>
+        /** @brief Construct an expression from an existing expression node. */
         explicit Expression(P const& eptr) : _root(eptr) { }
   public:
     //! \brief Default expression is a constant with default value.
@@ -114,16 +117,25 @@ class Expression
     //! \brief Create a constant element.
     Expression<T> create_constant(T const& t) const { return Expression<T>::constant(t); }
   public:
+    /** @brief Return the root operator of this vector expression. */
     Operator op() const;
     OperatorCode code() const;
     OperatorKind kind() const;
+    /** @brief Return the value of a constant expression. */
     const ValueType& val() const;
+    /** @brief Return the identifier of a variable expression. */
     const Identifier& var() const;
+    /** @brief Return the operand of a unary expression. */
     const Expression<T>& arg() const;
+    /** @brief Return the integer exponent of a graded expression. */
     const Int& num() const;
+    /** @brief Return the first operand of a binary expression. */
     const Expression<T>& arg1() const;
+    /** @brief Return the second operand of a binary expression. */
     const Expression<T>& arg2() const;
+    /** @brief Return the first operand of a comparison expression. */
     template<class A> const Expression<A>& cmp1(A* dummy=0) const;
+    /** @brief Return the second operand of a comparison expression. */
     template<class A> const Expression<A>& cmp2(A* dummy=0) const;
     //! \brief Write to an output stream.
     friend OutputStream& operator<<(OutputStream& os, Expression<T> const& e) { return e._write(os); }
@@ -157,6 +169,7 @@ extern template class Expression<Integer>;
 extern template class Expression<Real>;
 
 template<>
+/** @brief Specialize symbolic expressions for vectors of real values. */
 class Expression<Vector<Real>>
     : public DeclareExpressionOperations<Real>
     , public DeclareExpressionOperations<RealVector>
@@ -165,6 +178,7 @@ class Expression<Vector<Real>>
   public:
     // Use template formulation to avoid ambiguity treating Expression(0) as a pointer construction.
     template<ConvertibleTo<SharedPointer<const ExpressionNode<T>>> P>
+        /** @brief Construct an expression from an existing expression node. */
         explicit Expression(P const& eptr) : _root(eptr) { }
   public:
     typedef Expression<Real> ScalarType;
@@ -174,9 +188,13 @@ class Expression<Vector<Real>>
     Expression(Constant<Vector<Real>> c);
     Expression(Variable<Vector<Real>>);
     Expression(Vector<Expression<Real>>);
+    /** @brief Return the root operator of this vector expression. */
     Operator op() const;
+    /** @brief Return the number of vector components. */
     SizeType size() const;
+    /** @brief Return the selected scalar component. */
     Expression<Real> get(SizeType i) const;
+    /** @brief Replace the selected scalar component. */
     Void set(SizeType i, Expression<Real>);
     Expression<Real> operator[](SizeType i) const { return this->get(i); }
     friend Expression<Vector<Real>> nul(Expression<Vector<Real>>);
@@ -319,11 +337,15 @@ template<class T> Void eliminate_common_subexpressions(Vector<Expression<T>>& e)
 //! \brief Make a formula in terms of numbered coordinates from an expression in named variables.
 //! Shared expression nodes remain shared in the resulting formula DAG.
 Formula<EffectiveNumber> make_formula(const Expression<Real>& e, const Map<Identifier,SizeType>& v);
+/** @brief Convert a real expression to an effective-number formula. */
 Formula<EffectiveNumber> make_formula(const Expression<Real>& e, const Space<Real>& spc);
 Vector<Formula<EffectiveNumber>> make_formula(const Vector<Expression<Real>>& e, const Space<Real>& spc);
+/** @brief Convert a real expression to an effective-number formula. */
 Formula<EffectiveNumber> make_formula(const Expression<Real>& e, const Variable<Real>& var);
 Vector<Formula<EffectiveNumber>> make_formula(const Vector<Expression<Real>>& e, const Variable<Real>& spc);
+/** @brief Convert a real expression to an effective-number formula. */
 Formula<EffectiveNumber> make_formula(const Expression<Real>& e, const List<Variable<Real>>& vars);
+/** @brief Convert a real expression to an effective-number formula. */
 Formula<EffectiveNumber> make_formula(const Expression<Real>& out, const List<Assignment<Variable<Real>,Expression<Real>>>& aux, const Space<Real> spc);
 Vector<Formula<EffectiveNumber>> make_formula(const Vector<Expression<Real>>& out, const List<Assignment<Variable<Real>,Expression<Real>>>& aux, const Space<Real> spc);
 

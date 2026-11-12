@@ -55,6 +55,7 @@ class ExtendedUntypedVariable;
 /** @brief Enumerate the supported types of symbolic variables. */
 enum class VariableType : char { BOOLEAN, KLEENEAN, ENUMERATED, STRING, INTEGER, REAL, REAL_VECTOR, REAL_MATRIX };
 
+/** @brief Map a C++ value type to its symbolic variable type. */
 template<class T> inline VariableType variable_type() { ARIADNE_FAIL_MSG("Unknown variable type"); }
 template<> inline constexpr VariableType variable_type<Boolean>() { return VariableType::BOOLEAN; }
 template<> inline constexpr VariableType variable_type<Kleenean>() { return VariableType::KLEENEAN; }
@@ -64,6 +65,7 @@ template<> inline constexpr VariableType variable_type<Real>() { return Variable
 template<> inline constexpr VariableType variable_type<RealVector>() { return VariableType::REAL_VECTOR; }
 template<> inline constexpr VariableType variable_type<RealMatrix>() { return VariableType::REAL_MATRIX; }
 
+/** @brief Return the readable name of a symbolic variable type. */
 inline String class_name(const VariableType& tp) {
     switch(tp) {
         case VariableType::BOOLEAN: return "Boolean";
@@ -175,6 +177,7 @@ template<class T> class Variable<Vector<T>>
     SizeType size() const { return this->_size; }
     Variable<T> operator[] (SizeType i) const { ARIADNE_PRECONDITION(i<this->_size); return Variable<T>(this->name()+'['+to_str(i)+']'); }
     inline Assignment<Variable<Vector<T>>,Vector<T>> operator=(const Vector<T>& c) const;
+    /** @brief Construct a zero-valued symbolic vector expression. */
     Expression<Vector<T>> create_zero() const { return Expression<Vector<T>>::constant(Vector<T>(this->_size,static_cast<T>(0))); }
 };
 
@@ -297,7 +300,9 @@ template<class T> struct LetVariables {
     LetVariables(const List<Variable<T>>& lhs) : _lhs(lhs) { }
     List<Assignment<Variable<T>,Expression<T>>> operator=(const List<Expression<T>>&);
 };
+/** @brief Construct a simultaneous-assignment variable collection. */
 template<class T> inline LetVariables<T> let(const List<Variable<T>>& lhs) { return LetVariables<T>(lhs); }
+/** @brief Construct variables for a simultaneous set expression. */
 template<class T> inline LetVariables<T> set(const List<Variable<T>>& lhs) { return LetVariables<T>(lhs); }
 inline LetVariables<Real> let(const InitializerList<Variable<Real>>& lhs) { return let(List<Variable<Real>>(lhs)); }
 inline LetVariables<Real> set(const InitializerList<Variable<Real>>& lhs) { return set(List<Variable<Real>>(lhs)); }
@@ -309,7 +314,9 @@ template<class T> struct PrimedVariables {
     List<Assignment<PrimedVariable<T>,Expression<T>>> operator=(const List<Expression<T>>&);
     friend OutputStream& operator<<(OutputStream& os, PrimedVariables<T> const& dv) { return os <<"prime("<<dv._lhs<<")"; }
 };
+/** @brief Construct the primed versions of the given variables. */
 template<class T> inline PrimedVariables<T> prime(const List<Variable<T>>& lhs) { return PrimedVariables<T>(lhs); }
+/** @brief Construct the next-state versions of the given variables. */
 template<class T> inline PrimedVariables<T> next(const List<Variable<T>>& lhs) { return PrimedVariables<T>(lhs); }
 inline PrimedVariables<Real> prime(const InitializerList<Variable<Real>>& lhs) { return prime(List<Variable<Real>>(lhs)); }
 inline PrimedVariables<Real> next(const InitializerList<Variable<Real>>& lhs) { return next(List<Variable<Real>>(lhs)); }
