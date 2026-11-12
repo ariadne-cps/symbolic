@@ -6,24 +6,24 @@
  ****************************************************************************/
 
 /*
- *  This file is part of Ariadne.
+ *  This file is part of Ariadne Symbolic.
  *
- *  Ariadne is free software: you can redistribute it and/or modify
+ *  Ariadne Symbolic is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  Ariadne is distributed in the hope that it will be useful,
+ *  Ariadne Symbolic is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with Ariadne.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with Ariadne Symbolic. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*! \file symbolic/constant.hpp
- *  \brief Named constants
+/** @file symbolic/constant.hpp
+ *  @brief Named, typed symbolic constants.
  */
 
 #ifndef ARIADNE_CONSTANT_HPP
@@ -60,13 +60,18 @@ template<class T> class Constant
     Identifier _name;
 };
 
+/** @brief Specialize named constants for string values. */
 template<> class Constant<String>
     : public String
 {
   public:
+    /** @brief Construct a string constant from its value. */
     explicit Constant(const String& value) : String(value) { }
+    /** @brief Return the name associated with the string constant. */
     const Identifier& name() const { return static_cast<const Identifier&>(static_cast<const std::string&>(*this)); }
+    /** @brief Return the stored string value. */
     const String& value() const { return *this; }
+    /** @brief Return the stored string value. */
     const String& val() const { return *this; }
 };
 

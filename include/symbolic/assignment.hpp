@@ -6,24 +6,24 @@
  ****************************************************************************/
 
 /*
- *  This file is part of Ariadne.
+ *  This file is part of Ariadne Symbolic.
  *
- *  Ariadne is free software: you can redistribute it and/or modify
+ *  Ariadne Symbolic is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  Ariadne is distributed in the hope that it will be useful,
+ *  Ariadne Symbolic is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with Ariadne.  If not, see <https://www.gnu.org/licenses/>.
+ *  along with Ariadne Symbolic. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/*! \file symbolic/assignment.hpp
- *  \brief Assignment expressions
+/** @file symbolic/assignment.hpp
+ *  @brief Assignments of typed variables to values or expressions.
  */
 
 #ifndef ARIADNE_ASSIGNMENT_HPP
@@ -83,26 +83,36 @@ template<class V, class E> inline OutputStream& operator<<(OutputStream& os, con
     return os<<a.lhs<<"="<<a.rhs;
 }
 
+/** @brief Return the base variable assigned by the statement. */
 template<class V, class E> typename V::BaseType left_hand_side(const Assignment<V,E>& assignment) {
     return assignment.lhs.base();
 }
+/** @brief Collect the assigned base variables in order. */
 template<class V, class E> List<typename V::BaseType> left_hand_sides(const List<Assignment<V,E>>& assignments) {
     return elementwise([](Assignment<V,E>const&a){return a.lhs.base();},assignments);
 }
+/** @brief Collect the right-hand-side values in order. */
 template<class V, class E> List<E> right_hand_sides(const List<Assignment<V,E>>& assignments) {
     return elementwise([](Assignment<V,E>const&a){return a.rhs;},assignments);
 }
 
 
 template<class T>
+/** @brief Represent a typed assignment from a variable to a value. */
 class Assignment<Variable<T>,T>
 {
   public:
+    /** @brief Construct a typed variable assignment. */
     Assignment(const Variable<T>& l, const T& r) : lhs(l), rhs(r) { }
+    /** @brief Return the assigned variable. */
     const Variable<T>& variable() const { return this->lhs; }
+    /** @brief Return the assigned value. */
     const T& value() const { return this->rhs; }
+    /** @brief Represent the assigned value as a symbolic expression. */
     const Expression<T>& expression() const { return Expression<T>(this->rhs); }
+    /** @brief Return the left-hand-side variable. */
     const Variable<T>& left_hand_side() const { return this->lhs; }
+    /** @brief Return the right-hand-side value. */
     const T& right_hand_side() const { return this->rhs; }
     inline operator Valuation<T,T> () const;
     Variable<T> lhs; T rhs;
