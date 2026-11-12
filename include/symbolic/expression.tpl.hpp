@@ -33,6 +33,7 @@
 #include "symbolic/assignment.hpp"
 #include "symbolic/constant.hpp"
 #include "symbolic/space.hpp"
+#include "symbolic/templates.tpl.hpp"
 #include "symbolic/valuation.hpp"
 #include "symbolic/variable.hpp"
 #include "utility/standard.hpp"

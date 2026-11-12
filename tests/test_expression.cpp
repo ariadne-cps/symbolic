@@ -30,6 +30,7 @@
 #include <sstream>
 
 #include "algebra/algebra.hpp"
+#include "algebra/matrix.hpp"
 #include "algebra/matrix.tpl.hpp"
 #include "function/formula.hpp"
 #include "function/function.hpp"

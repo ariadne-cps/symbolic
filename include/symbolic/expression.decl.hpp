@@ -37,6 +37,8 @@ class Real;
 
 template<class T>
 class Vector;
+template<class T>
+class List;
 
 class Identifier;
 
